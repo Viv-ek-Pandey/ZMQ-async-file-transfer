@@ -182,11 +182,25 @@ post_messages_on_channel()
     #echo "Fetched channel id: ${channel_id}"
 
     # post messages using the channel id
-    msg="Test load gen."
-    post_message="{\"channel_id\": \"${channel_id}\", \"message\": \"${msg}\"}"
+    declare -a arr_msgs=(
+        "Sync-up will be scheduled at 10:00 AM everyday." 
+        "There will be a townhall meeting today at 4:00 PM" 
+        "Release planning meeting got rescheduled"
+        "When was the bug scrub done?"
+        "Test infrastructure will be updated on Sunday at 08:00 PM. Hope all the backups are in place"
+        "Infra team will renew licenses by end of this month"
+        "Customer support team will publish the escalation data today. We will have to analyze it and identify top 3 impact zones of the product."
+        "HR programs are published on internal-bulletin"
+        "Salary credits may be delayed this month due to bank holidays"
+        "New deals signed with Fusion Inc..."
+        )
     echo "Posting ${cnt} Messages on Channel: "$channel_id
-    while [ $cnt -gt 0 ] do
+    while [ $cnt -gt 0 ] 
+    do
         #echo "Message# ${count}"
+        r=$(( $RANDOM % 10 ))
+        msg=${arr_msgs[$r]}
+        post_message="{\"channel_id\": \"${channel_id}\", \"message\": \"${msg}\"}"
         post_resp=$(curl -si -H "Authorization: Bearer ${TOKEN}" --request POST -d "${post_message}" http://${server}:${server_port}/api/v4/posts)
         (( cnt-- ))
     done
@@ -248,10 +262,11 @@ post_messages() {
 
 recursive_post_messages() 
 {
-    while true; do
+    while true; 
+    do
         post_messages $1 $2 $3 $4 $5
-        echo "Sleeping for 60 secs"
-        sleep 60
+        echo "Sleeping for 5 secs"
+        sleep 5
     done
 }
 help()
