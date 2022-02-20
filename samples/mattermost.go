@@ -56,7 +56,7 @@ func runRemoteLinuxCommand(ip string, username string, pasword string, dbIP stri
 	}
 
 	commandList := []string{
-		`sudo sed -i 's/192.168.2.133/192.168.2.135/g' /opt/mattermost/config/config.json`,
+		`sudo sed -i 's/192.168.1.124/192.168.2.151/g' /opt/mattermost/config/config.json`,
 		`service mattermost restart`,
 	}
 
