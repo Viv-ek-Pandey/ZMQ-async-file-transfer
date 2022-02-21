@@ -1,0 +1,1418 @@
+[
+  {
+    "Title": "Need Ethernet access",
+    "Resolution": "Please connect the LAN cable to the red port on your workstation. Please write back to IT if you are unable to get the IP addresss",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Create new account and share the username and password",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "FW: Myspace Login Issue-- Ania",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Login credetials are not working.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "New Account is needed for a new joinee.",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Request to configure the system to share it among users",
+    "Resolution": "They won't be able to access other profiles if they login with their account. Please ask users to reach out to IT if they have any issues.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Needs permission wifi access to laptop",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "LAN not working in a VM",
+    "Resolution": "changed network settings to Bridged and configured network in VM.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Wifi access needed.",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Space QA application is down",
+    "Resolution": "We regret for the inconvinience caused. The issue is with Host server which got rebooted due to a power failure.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Configure outlook in my system",
+    "Resolution": "IT Team has sent the instructions to configure outlook -follow the instructions on https:ticket.abc.comkbfaq.php and click on O365 and solution and then outlook configuration for your machines",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Install postgres database on my machine",
+    "Resolution": "Go to imfssoftwarepostgres location, copy postgresql database into local and install",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System showing blue screen on startup",
+    "Resolution": "1. Hold the power button until system gets shut down, then hit the power button to boot the machine. If still blue screen appears contact IT team and surrender the laptop.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Desktop not working",
+    "Resolution": "Please check the Power cables are properly plugged , Please write back to us if the Problem still persists.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System behaving strangely, blue screen is appearing in middle",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Internet is not working",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Account got locked, because of 3 wrong attempts os password. Could you please reset the password",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System hangs with blue screen on startup",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Unable to connect to Internet",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Facing networkinternet issue with wifi xwq090",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Replace the battery for my Macbook laptop",
+    "Resolution": "Please run Battery Helath test and send us the results IT team will do the needful accordingly. Please follow the steps to cehck the battery Helath https:ticket.abc.comkbfaq.phpardware issue-Battery issue",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Computer is not getting switched on",
+    "Resolution": "Contact IT support.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Forgot the password, can you please reset the password for me.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "MySpace Password Expiry",
+    "Resolution": "Please reset the passowrd using self service Portal http:ssp.abc.com, Please write back to us if you face any issue.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "install MS office",
+    "Resolution": "Please login to web mail and go to settings -office 365 -install applications- download and install MS office for your machine.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Password expired.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Account locked. Not able to login",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Are spaces allowed in email addresses?",
+    "Resolution": " Just like an Internet URL no spaces are allowed in an e-mail address. However, names can be broken up using a period; for example, John Smith may have an e-mail address: john.smith@example.com or john.s@example.com because no spaces are allowed in the e-mail address.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Can a virus damage computer hardware?",
+    "Resolution": " No. Computer viruses are software code designed to spread to computer files and other computers, delete files, and cause other problems with the data on the computer. So if you're experiencing an issue with a hardware device such as your printer, video card, sound card, etc. it is not due to a virus.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Does Windows come with a virus protection program?",
+    "Resolution": " All versions of Microsoft Windows do not come pre-installed with a virus protection program. This includes: Microsoft Windows 7 and Windows 10.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I clean my keyboard?",
+    "Resolution": " The keys on a keyboard are only clipped on, with a knife or other thin object, carefully pop the keys off, this will allow you to clean under the keys as well as cleaning the keys themselves (make sure you remember where they went!).",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I recover a file from the recycle bin?",
+    "Resolution": " Double click the recycle bin icon on your desktop, here you will see all of the files within your bin. Select the files you wish to recover, right click and choose restore.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I update my Microsoft Windows computer?",
+    "Resolution": " If you are running Microsoft Windows 7, Windows 10, or a later version of Microsoft Windows, you are eligible to update Microsoft Windows, and in some cases, your computer hardware with the latest drivers through Microsoft's update site, visit http:windowsupdate.microsoft.com. In most cases your computer should be set to automatically update when a new update becomes available.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I delete Internet cookies?",
+    "Resolution": " Microsoft Internet Explorer users can go to 'Tools' (or the little cog icon in the top left), then go to 'Safety' and choose 'Delete browsing history...', you can then choose to delete your Internet cookies. In Google Chrome, go to 'More Tools' and choose 'Clear browsing data...'. Firefox users can go to 'History', then choose 'Clear recent history...'.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I determine my computer's name?",
+    "Resolution": " Right-click My Computer. Click Properties. In the Properties window, click the Computer Name tab. Within this tab you'll be able to see the full computer name, workgroup and also a description. If you wish to change the name or workgroup, click the Change button.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I fix a paper jam?",
+    "Resolution": " Turn off the printer. Inspect the location or tray the printed paper ejects to. If the stuck paper is visible manually remove it. Remove all paper trays and any paper that may be stuck between the tray and the printer. If the stuck paper is visible manually remove it. Open the printer door that allows you access to the printer ink cartridges or toner and look for any stuck paper. If the stuck paper is visible manually remove it. Turn the printer back on.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I get into safe mode?",
+    "Resolution": " To get into the Windows 7  10 Safe mode, as the computer is starting up press and hold your F8 key which should bring up the Windows Advanced Options Menu. Use your arrow keys to move to Safe Mode and press your Enter key.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I map a network drive?",
+    "Resolution": " Open Microsoft Explorer. From Explorer, click the Tools drop down menu and click the option Map Network Drive. Specify the network drive or network computer as the folder. If the computer's name was hope, to map to that computer, type hope If you wished to map to a shared folder on the hope computer such as a mp3 folder, you would type hopemp3. If a different username or login is required to connect to this computer or drive it must be specified in this window before clicking the finish.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I am unable to send or receive email?",
+    "Resolution": " Verify that your computer is able to see the Internet andor other computers to ensure that your computer is not encountering a connection issue, which would be causing your e-mail issue. Ensure that your Internet e-mail server or your Network e-mail server is not encountering issues by contacting either your Internet Service Provider or your Network administrator.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can't connect to my network drive anymore?",
+    "Resolution": " Verify that the network cable is properly connected to the back of the computer. In addition, when checking the connection of the network cable, ensure that the LED's on the network are properly illuminated. For example, a network card with a solid green LED or light usually indicates that the card is either connected or receiving a signal. Note: generally, when the green light is flashing, this is an indication of data being sent or received.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can't delete a file because it is being used by Windows?",
+    "Resolution": " Close all programs running on the computer and try again. If after closing all programs running on the computer you are still encountering the same issue when attempting to delete files, load the computer into Safe Mode and delete the files.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can't receive any email attachments?",
+    "Resolution": " If the e-mail box is full of other e-mail messages, andor your storage space is only a few megabytes, it's possible that the attachment being sent cannot be received. Often if this problem is occurring the person sending the e-mail should get a response back from your e-mail server indicating that your mailbox is full andor has exceeded its allocated size. Because computer viruses and other malware are best distributed through e-mail, many e-mail service providers, companies, and e-mail programs prevent certain types of file extensions from being distributed or received through e-mail. For example, Microsoft Outlook protect its users by automatically disabling certain file extension types from being received in e-mail.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I get a 'no signal input' message, what do I do?",
+    "Resolution": " Verify that the monitor is properly connected in the back of the monitor as well as to the back of the computer. If the monitor appears to be connected properly, verify that a cable is not loose by disconnecting all cables that can be disconnected in the back of the monitor (generally the data cable cannot be disconnected). Next, disconnect the data cable connected to the back of the computer and then reconnect the cable. When connecting the cable in the back of the computer ensure the cable connection is tight. Most Computers will also have screw ends that can be screwed in to hold the connector in place.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I lost my printer installation disk, how can I install my printer?",
+    "Resolution": " Thankfully a missing printer installation disk or disc is not the end of the world and will not require you to wait until a new diskette or CD can be sent to you. Today all printer and other hardware manufacturers are providing downloads on the Internet to their software programs and drivers that are included with their products.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "If I format or erase my hard drive will it remove a virus?",
+    "Resolution": " If your computer is infected with a virus formatting or erasing the hard disk drive and starting over will almost always remove any type of virus. However, keep in mind if backups have been made that contain the virus, other media or drives connected to the computer have a virus, your computer is connected to another computer on a network with a virus, andor the virus is stored on some other type of software you use with your computer it can become re-infected if not properly protected.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Is it safe to turn off a Windows computer without doing a shut down?",
+    "Resolution": " Users should not simply press the power button or restart the computer while Windows is still running unless there is an issue with the computer. Microsoft has included the shut down feature because it enables a computer to go through all the necessary steps that are required before turning off the computer. In fact many versions of Microsoft Windows will check the computer for any problems if the computer is not shut down properly.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Computer doesn’t power up?",
+    "Resolution": " Check that all the cables are securely plugged into the back of the machine and the monitor. Check that the power cables are plugged into a power socket and the socket has been turned on. Try using a different power socket or, if you are using a power extension strip, plug the power cable directly into a power socket in the wall. Replace the power cable with one that you know works. Check if there are any lights on at the front of the machine: If there are lights on the machine but not the monitor, then it's probably a monitor issue. If there are lights on the monitor but not the machine, then it's probably a machine issue. If there are no lights on anything, then it may be possible there is a local power cut. With laptops, try removing the power cable and the battery. Hold down the power button for about ten seconds, and then plug the battery and power cable in again. Press the power button to see if it switches on. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Computer freezes or is behaving strangely?",
+    "Resolution": " Try restarting your computer. Many basic problems can be resolved easily and quickly this way. Press the Ctrl & Alt & Del keys on your keyboard together at the same time. This should bring up a menu that will allow you to run Task Manager. In Task Manager, switch to the Applications tab. Highlight any programs with the status 'Not Responding' and choose End Task. You may be asked to confirm if you want to end the unresponsive program, so choose Yes. Do this for all programs that are not responding. If all else fails and you cannot shutdownrestart your computer, then hold down the power button on the machine until it forcibly turns off. Wait a few seconds and then turn it back on again. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer does not turn on, what do I do now?",
+    "Resolution": " First check the computer's power cord to make sure it is completely plugged into the wall socket. If you are using a plug strip, make sure it is completely plugged into the wall socket and that the power switch on the plug strip is turned on. Some plug strips also have a built in circuit breaker which usually looks like a black or red button near the power switch. Press the button to reset it and see if that solves the problem.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My printer is printing smudgeddistorted pages?",
+    "Resolution": " When printing on untraditional paper your printer may experience smudges, un-even or crooked text, andor text that runs off the edges of the paper. Your printer may be printing fuzzy, blurry, andor other faint text because of dirty print heads. All modern printers have some type of printer cleaning, self-test, andor diagnose mode that can be performed to check and clean the printers print heads and other internal equipment used to print.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Nothing appears on Monitor?",
+    "Resolution": " Make sure both the computer and monitor are on. Make sure the monitor is securely plugged into the computer. Make sure the power cable is firmly plugged into the monitor. Some computers have multiple display ports, so make sure you have plugged the monitor into the correct one. Try each one in turn, switching the monitor off then on in between moves. Most monitors have a status window displayed when you turn it on. Check if you can see this status window when you press the power button on the monitor. You can also try this with the menu button on the monitor, which should bring up an options menu on the screen. This shows the screen is working ok, so it may be an issue with the video cable from the monitor or the machine itself. Check the brightness & contrast levels of the monitor via the menu button, to make sure it has not been set too dark. Move the mouse and press any key on the keyboard to make sure the screensaver hasn't activated or that the computer hasn't gone into standbyhibernation mode.  ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The wheel on my mouse isn't working properly, what do I do?",
+    "Resolution": " If you're running any version of Microsoft Windows and are encountering issues with the mouse wheel, first attempt to adjust the mouse settings through the Mouse Properties window. This window can be accessed by opening the Control Panel and double-clicking the Mouse icon.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There are black borders on my screen, what do I do?",
+    "Resolution": " If the resolution was recently changed it is possible for the monitor to not auto adjust or shift to the correct size. If this occurs, the resolution can be changed back to the original setting or you can manually adjust the monitor. If a black border exists on the monitor it can generally be resolved by manually adjusting the horizontal or vertical width. Because each monitor is different, the method of adjusting this setting will vary; consult your monitor documentation.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There is no display on the monitor, what do I do now?",
+    "Resolution": " Make sure the monitor is on. If no power light (green or orange light) is seen on the monitor display try pressing the power button until it comes on. If your computer monitor was on and you stepped away from the computer and upon returning it was black, it's likely that the computer is asleep. Try moving your mouse, clicking the mouse buttons, andor pressing any key (space bar) on the keyboard to wake it up. Make sure that the monitor is connected properly to the back of the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if my hard disk fails to work?",
+    "Resolution": " As with most computer errors, your first step is to shut down your computer and restart it. This will help you determine whether or not you actually have a hard disk problem. If the disk is severely damaged then your computer will probably fail to restart properly. If this is the case then contact MCWare IT Solutions, this is a job for the professionals.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if the image on screen is distorted or skewed?",
+    "Resolution": " You may receive a distorted image when the cable is loose or defective. Disconnect the video cable going from the back of the computer and verify that no pins are bent, burnt or broken. Once verified re-connect the monitor cable. If the refresh rate is not properly set the monitor may have a wavy or an appearance that lines are going down or across the monitor slowly or fast, this may also cause a flickering affect. A distorted image can be caused by magnetic or other types of interference. Verify no speakers, fans or other magnetic devices are close to the monitor.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do when my computer crashes?",
+    "Resolution": " There are many reasons why a computer may just stop working or freeze. Most of the time there isn't much we can do about it, it is a fact of life that computer programs have become so complex that occasionally users will experience problems even when performing common tasks. When your computer no longer responds to keyboard commands your best bet is to restart the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What is a computer virus?",
+    "Resolution": " A computer virus is a software program that has been intentionally created to cause a user grief, spread to other computers, or destroy data on an individual's computer. To help prevent a computer from becoming infected by a virus, software developers have developed anti virus programs that stay active on the computer helping to protect it. It is important to realize that many computers do not come pre-loaded with these already installed and that if computers do come with these programs, the programs may expire within 90 days.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Why is my mouse acting erratically?",
+    "Resolution": " Users who have an optical mechanical mouse (most common mouse for desktop computers) are likely experiencing erratic behaviour because the mouse is not clean or is dirty. If you've cleaned the mouse and continue to encounter issues and this mouse has worked in the past fine unfortunately your mouse is likely defective. One additional test that can be done to help determine if this is the case or not is to connect the mouse to another computer. Otherwise we suggest replacing the mouse.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "A new account is required for a new client.",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Are spaces allowed in e-mail addresses?",
+    "Resolution": " Just like an Internet URL no spaces are allowed in an e-mail address. However, names can be broken up using a period; for example, John Smith may have an e-mail address: john.smith@example.com or john.s@example.com because no spaces are allowed in the e-mail address.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Blocked account. Impossible to connect",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Can a virus damage computer hardware?",
+    "Resolution": " No. Computer viruses are software code designed to spread to computer files and other computers, delete files, and cause other problems with the data on the computer. So if you're experiencing an issue with a hardware device such as your printer, video card, sound card, etc. it is not due to a virus.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Can not connect to the Internet",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Compte a été verrouillé, à cause de 3 mauvaises tentatives os mot de passe. Pourriez-vous réinitialiser le mot de passe?",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Configure Outlook in my system",
+    "Resolution": "IT Team has sent the instructions to configure outlook -follow the instructions onttps:ticket.abc.comkbfaq.php and click on O365 and solution and then outlook configuration for your machines",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Create a new account and share the username and password",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Does Windows come with a virus protection program?",
+    "Resolution": " All versions of Microsoft Windows do not come pre-installed with a virus protection program. This includes: Microsoft Windows 7 and Windows 10.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "FW: Connection issue of Myspace-- Ania",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Faced with a network  internet problem with wifi xwq090",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Forgotten password, can you please reset the password for me.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I clean my keyboard?",
+    "Resolution": " The keys on a keyboard are only clipped on, with a knife or other thin object, carefully pop the keys off, this will allow you to clean under the keys as well as cleaning the keys themselves (make sure you remember where they went!).",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I determine the name of my computer?",
+    "Resolution": " Right-click My Computer. Click Properties. In the Properties window, click the Computer Name tab. Within this tab you'll be able to see the full computer name, workgroup and also a description. If you wish to change the name or workgroup, click the Change button.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I enter safe mode?",
+    "Resolution": " To get into the Windows 7  10 Safe mode, as the computer is starting up press and hold your F8 key which should bring up the Windows Advanced Options Menu. Use your arrow keys to move to Safe Mode and press your Enter key.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I recover a file from the recycle bin?",
+    "Resolution": " Double click the recycle bin icon on your desktop, here you will see all of the files within your bin. Select the files you wish to recover, right click and choose restore.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I update my Microsoft Windows computer?",
+    "Resolution": " If you are running Microsoft Windows 7, Windows 10, or a later version of Microsoft Windows, you are eligible to update Microsoft Windows, and in some cases, your computer hardware with the latest drivers through Microsoft's update site, visit http:windowsupdate.microsoft.com. In most cases your computer should be set to automatically update when a new update becomes available.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How to delete Internet cookies?",
+    "Resolution": " Microsoft Internet Explorer users can go to 'Tools' (or the little cog icon in the top left), then go to 'Safety' and choose 'Delete browsing history...', you can then choose to delete your Internet cookies. In Google Chrome, go to 'More Tools' and choose 'Clear browsing data...'. Firefox users can go to 'History', then choose 'Clear recent history...'.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How to fix a paper jam?",
+    "Resolution": " Turn off the printer. Inspect the location or tray the printed paper ejects to. If the stuck paper is visible manually remove it. Remove all paper trays and any paper that may be stuck between the tray and the printer. If the stuck paper is visible manually remove it. Open the printer door that allows you access to the printer ink cartridges or toner and look for any stuck paper. If the stuck paper is visible manually remove it. Turn the printer back on.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How to map a network drive?",
+    "Resolution": "Open Microsoft Explorer. From Explorer, click the Tools drop down menu and click the option Map Network Drive. Specify the network drive or network computer as the folder. If the computer's name was hope, to map to that computer, type hope If you wished to map to a shared folder on the hope computer such as a mp3 folder, you would type hopemp3. If a different username or login is required to connect to this computer or drive it must be specified in this window before clicking the finish.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not connect to my network drive anymore?",
+    "Resolution": " Verify that the network cable is properly connected to the back of the computer. In addition, when checking the connection of the network cable, ensure that the LED's on the network are properly illuminated. For example, a network card with a solid green LED or light usually indicates that the card is either connected or receiving a signal. Note: generally, when the green light is flashing, this is an indication of data being sent or received.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not delete a file because it is used by Windows?",
+    "Resolution": " Close all programs running on the computer and try again. If after closing all programs running on the computer you are still encountering the same issue when attempting to delete files, load the computer into Safe Mode and delete the files.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not receive any attachments?",
+    "Resolution": " If the e-mail box is full of other e-mail messages, andor your storage space is only a few megabytes, it's possible that the attachment being sent cannot be received. Often if this problem is occurring the person sending the e-mail should get a response back from your e-mail server indicating that your mailbox is full andor has exceeded its allocated size. Because computer viruses and other malware are best distributed through e-mail, many e-mail service providers, companies, and e-mail programs prevent certain types of file extensions from being distributed or received through e-mail. For example, Microsoft Outlook protect its users by automatically disabling certain file extension types from being received in e-mail.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not send or receive e-mail?",
+    "Resolution": " Verify that your computer is able to see the Internet andor other computers to ensure that your computer is not encountering a connection issue, which would be causing your e-mail issue. Ensure that your Internet e-mail server or your Network e-mail server is not encountering issues by contacting either your Internet Service Provider or your Network administrator.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I lost my printer installation disc, how can I install my printer?",
+    "Resolution": " Thankfully a missing printer installation disk or disc is not the end of the world and will not require you to wait until a new diskette or CD can be sent to you. Today all printer and other hardware manufacturers are providing downloads on the Internet to their software programs and drivers that are included with their products.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I receive a message no signal input, what should I do?",
+    "Resolution": " Verify that the monitor is properly connected in the back of the monitor as well as to the back of the computer. If the monitor appears to be connected properly, verify that a cable is not loose by disconnecting all cables that can be disconnected in the back of the monitor (generally the data cable cannot be disconnected). Next, disconnect the data cable connected to the back of the computer and then reconnect the cable. When connecting the cable in the back of the computer ensure the cable connection is tight. Most Computers will also have screw ends that can be screwed in to hold the connector in place.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "If I format or erase my hard drive, will it remove a virus?",
+    "Resolution": " If your computer is infected with a virus formatting or erasing the hard disk drive and starting over will almost always remove any type of virus. However, keep in mind if backups have been made that contain the virus, other media or drives connected to the computer have a virus, your computer is connected to another computer on a network with a virus, andor the virus is stored on some other type of software you use with your computer it can become re-infected if not properly protected.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Install the postgres database on my machine",
+    "Resolution": "Go to imfssoftwarepostgres location, copy postgresql database into local and install",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Is it safe to turn off a Windows computer without shutting down?",
+    "Resolution": " Users should not simply press the power button or restart the computer while Windows is still running unless there is an issue with the computer. Microsoft has included the shut down feature because it enables a computer to go through all the necessary steps that are required before turning off the computer. In fact many versions of Microsoft Windows will check the computer for any problems if the computer is not shut down properly.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "LAN does not work in a virtual machine",
+    "Resolution": "changed network settings to Bridged and configured network in VM.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Login credetials do not work.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Internet does not work",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer does not turn on, what should I do now?",
+    "Resolution": " First check the computer's power cord to make sure it is completely plugged into the wall socket. If you are using a plug strip, make sure it is completely plugged into the wall socket and that the power switch on the plug strip is turned on. Some plug strips also have a built in circuit breaker which usually looks like a black or red button near the power switch. Press the button to reset it and see if that solves the problem.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer does not turn on?",
+    "Resolution": " Check that all the cables are securely plugged into the back of the machine and the monitor. Check that the power cables are plugged into a power socket and the socket has been turned on. Try using a different power socket or, if you are using a power extension strip, plug the power cable directly into a power socket in the wall. Replace the power cable with one that you know works. Check if there are any lights on at the front of the machine: If there are lights on the machine but not the monitor, then it's probably a monitor issue. If there are lights on the monitor but not the machine, then it's probably a machine issue. If there are no lights on anything, then it may be possible there is a local power cut. With laptops, try removing the power cable and the battery. Hold down the power button for about ten seconds, and then plug the battery and power cable in again. Press the power button to see if it switches on. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer freezes or behaves strangely?",
+    "Resolution": " Try restarting your computer. Many basic problems can be resolved easily and quickly this way. Press the Ctrl & Alt & Del keys on your keyboard together at the same time. This should bring up a menu that will allow you to run Task Manager. In Task Manager, switch to the Applications tab. Highlight any programs with the status 'Not Responding' and choose End Task. You may be asked to confirm if you want to end the unresponsive program, so choose Yes. Do this for all programs that are not responding. If all else fails and you cannot shutdownrestart your computer, then hold down the power button on the machine until it forcibly turns off. Wait a few seconds and then turn it back on again. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My mouse wheel is not working properly, what should I do?",
+    "Resolution": " If you're running any version of Microsoft Windows and are encountering issues with the mouse wheel, first attempt to adjust the mouse settings through the Mouse Properties window. This window can be accessed by opening the Control Panel and double-clicking the Mouse icon.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My printer prints stained  distorted pages?",
+    "Resolution": " When printing on untraditional paper your printer may experience smudges, un-even or crooked text, andor text that runs off the edges of the paper. Your printer may be printing fuzzy, blurry, andor other faint text because of dirty print heads. All modern printers have some type of printer cleaning, self-test, andor diagnose mode that can be performed to check and clean the printers print heads and other internal equipment used to print.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "MySpace Password Expiry",
+    "Resolution": "Please reset the passowrd using self service Portal http:ssp.abc.com, Please write back to us if you face any issue.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Need Ethernet access",
+    "Resolution": "Please connect the LAN cable to the red port on your workstation. Please write back to IT if you are unable to get the IP addresss",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Need authorization wifi access to a laptop",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Nothing appears on Monitor?",
+    "Resolution": " Make sure both the computer and monitor are on. Make sure the monitor is securely plugged into the computer. Make sure the power cable is firmly plugged into the monitor. Some computers have multiple display ports, so make sure you have plugged the monitor into the correct one. Try each one in turn, switching the monitor off then on in between moves. Most monitors have a status window displayed when you turn it on. Check if you can see this status window when you press the power button on the monitor. You can also try this with the menu button on the monitor, which should bring up an options menu on the screen. This shows the screen is working ok, so it may be an issue with the video cable from the monitor or the machine itself. Check the brightness & contrast levels of the monitor via the menu button, to make sure it has not been set too dark. Move the mouse and press any key on the keyboard to make sure the screensaver hasn't activated or that the computer hasn't gone into standbyhibernation mode.  ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Password expired.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Replace the battery for my Macbook laptop",
+    "Resolution": "Please run Battery Helath test and send us the results IT team will do the needful accordingly. Please follow the steps to cehck the battery Helath https:ticket.abc.comkbfaq.phpardware issue-Battery issue",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System behaving strangely, the blue screen appears in the middle",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System configuration request to share it between users",
+    "Resolution": "They won't be able to access other profiles if they login with their account. Please ask users to reach out to IT if they have any issues.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System showing the blue screen at startup",
+    "Resolution": "1. Hold the power button until system gets shut down, then hit the power button to boot the machine. If still blue screen appears contact IT team and surrender the laptop.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The My Space QA app is down",
+    "Resolution": "We regret for the inconvinience caused. The issue is with Host server which got rebooted due to a power failure.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The computer does not turn on",
+    "Resolution": "Contact IT support.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The office does not work",
+    "Resolution": "Please check the Power cables are properly plugged , Please write back to us if the Problem still persists.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The system hangs with a blue screen at startup",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There are black borders on my screen, what should I do?",
+    "Resolution": " If the resolution was recently changed it is possible for the monitor to not auto adjust or shift to the correct size. If this occurs, the resolution can be changed back to the original setting or you can manually adjust the monitor. If a black border exists on the monitor it can generally be resolved by manually adjusting the horizontal or vertical width. Because each monitor is different, the method of adjusting this setting will vary; consult your monitor documentation.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There is no display on the monitor, what should I do now?",
+    "Resolution": " Make sure the monitor is on. If no power light (green or orange light) is seen on the monitor display try pressing the power button until it comes on. If your computer monitor was on and you stepped away from the computer and upon returning it was black, it's likely that the computer is asleep. Try moving your mouse, clicking the mouse buttons, andor pressing any key (space bar) on the keyboard to wake it up. Make sure that the monitor is connected properly to the back of the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What if my hard drive does not work?",
+    "Resolution": " As with most computer errors, your first step is to shut down your computer and restart it. This will help you determine whether or not you actually have a hard disk problem. If the disk is severely damaged then your computer will probably fail to restart properly. If this is the case then contact MCWare IT Solutions, this is a job for the professionals.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What is a computer virus?",
+    "Resolution": " A computer virus is a software program that has been intentionally created to cause a user grief, spread to other computers, or destroy data on an individual's computer. To help prevent a computer from becoming infected by a virus, software developers have developed anti virus programs that stay active on the computer helping to protect it. It is important to realize that many computers do not come pre-loaded with these already installed and that if computers do come with these programs, the programs may expire within 90 days.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What to do if the image on the screen is distorted or tilted?",
+    "Resolution": " You may receive a distorted image when the cable is loose or defective. Disconnect the video cable going from the back of the computer and verify that no pins are bent, burnt or broken. Once verified re-connect the monitor cable. If the refresh rate is not properly set the monitor may have a wavy or an appearance that lines are going down or across the monitor slowly or fast, this may also cause a flickering affect. A distorted image can be caused by magnetic or other types of interference. Verify no speakers, fans or other magnetic devices are close to the monitor.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What to do when my computer crashes?",
+    "Resolution": " There are many reasons why a computer may just stop working or freeze. Most of the time there isn't much we can do about it, it is a fact of life that computer programs have become so complex that occasionally users will experience problems even when performing common tasks. When your computer no longer responds to keyboard commands your best bet is to restart the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Why does my mouse act erratically?",
+    "Resolution": " Users who have an optical mechanical mouse (most common mouse for desktop computers) are likely experiencing erratic behaviour because the mouse is not clean or is dirty. If you've cleaned the mouse and continue to encounter issues and this mouse has worked in the past fine unfortunately your mouse is likely defective. One additional test that can be done to help determine if this is the case or not is to connect the mouse to another computer. Otherwise we suggest replacing the mouse.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Wifi access required.",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "installer MS Office",
+    "Resolution": "Please login to web mail and go to settings -office 365 -install applications- download and install MS office for your machine.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Are spaces allowed in email addresses?",
+    "Resolution": " Just like an Internet URL no spaces are allowed in an e-mail address. However, names can be broken up using a period; for example, John Smith may have an e-mail address: john.smith@example.com or john.s@example.com because no spaces are allowed in the e-mail address.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Blocked account. I can not log in",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Can a virus damage computer hardware?",
+    "Resolution": " No. Computer viruses are software code designed to spread to computer files and other computers, delete files, and cause other problems with the data on the computer. So if you're experiencing an issue with a hardware device such as your printer, video card, sound card, etc. it is not due to a virus.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Can not connect to the Internet",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Configure Outlook on my system",
+    "Resolution": "IT Team has sent the instructions to configure outlook -follow the instructions onttps:ticket.abc.comkbfaq.php and click on O365 and solution and then outlook configuration for your machines",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Create a new account and share the username and password",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Does Windows come with a virus protection program?",
+    "Resolution": " All versions of Microsoft Windows do not come pre-installed with a virus protection program. This includes: Microsoft Windows 7 and Windows 10.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "FW: Myspace login problem-- Ania",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Facing network  internet problem with wifi xwq090",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I clean my keyboard?",
+    "Resolution": " The keys on a keyboard are only clipped on, with a knife or other thin object, carefully pop the keys off, this will allow you to clean under the keys as well as cleaning the keys themselves (make sure you remember where they went!).",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I recover a file from the recycle bin?",
+    "Resolution": " Double click the recycle bin icon on your desktop, here you will see all of the files within your bin. Select the files you wish to recover, right click and choose restore.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I update my computer with Microsoft Windows?",
+    "Resolution": " If you are running Microsoft Windows 7, Windows 10, or a later version of Microsoft Windows, you are eligible to update Microsoft Windows, and in some cases, your computer hardware with the latest drivers through Microsoft's update site, visit http:windowsupdate.microsoft.com. In most cases your computer should be set to automatically update when a new update becomes available.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I delete Internet cookies?",
+    "Resolution": " Microsoft Internet Explorer users can go to 'Tools' (or the little cog icon in the top left), then go to 'Safety' and choose 'Delete browsing history...', you can then choose to delete your Internet cookies. In Google Chrome, go to 'More Tools' and choose 'Clear browsing data...'. Firefox users can go to 'History', then choose 'Clear recent history...'.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I determine the name of my computer?",
+    "Resolution": " Right-click My Computer. Click Properties. In the Properties window, click the Computer Name tab. Within this tab you'll be able to see the full computer name, workgroup and also a description. If you wish to change the name or workgroup, click the Change button.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I fix a paper jam?",
+    "Resolution": " Turn off the printer. Inspect the location or tray the printed paper ejects to. If the stuck paper is visible manually remove it. Remove all paper trays and any paper that may be stuck between the tray and the printer. If the stuck paper is visible manually remove it. Open the printer door that allows you access to the printer ink cartridges or toner and look for any stuck paper. If the stuck paper is visible manually remove it. Turn the printer back on.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I get in safe mode?",
+    "Resolution": " To get into the Windows 7  10 Safe mode, as the computer is starting up press and hold your F8 key which should bring up the Windows Advanced Options Menu. Use your arrow keys to move to Safe Mode and press your Enter key.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I map a network drive?",
+    "Resolution": " Open Microsoft Explorer. From Explorer, click the Tools drop down menu and click the option Map Network Drive. Specify the network drive or network computer as the folder. If the computer's name was hope, to map to that computer, type hope If you wished to map to a shared folder on the hope computer such as a mp3 folder, you would type hopemp3. If a different username or login is required to connect to this computer or drive it must be specified in this window before clicking the finish.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not connect to my network drive anymore?",
+    "Resolution": " Verify that the network cable is properly connected to the back of the computer. In addition, when checking the connection of the network cable, ensure that the LED's on the network are properly illuminated. For example, a network card with a solid green LED or light usually indicates that the card is either connected or receiving a signal. Note: generally, when the green light is flashing, this is an indication of data being sent or received.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not delete a file because it is using Windows.",
+    "Resolution": " Close all programs running on the computer and try again. If after closing all programs running on the computer you are still encountering the same issue when attempting to delete files, load the computer into Safe Mode and delete the files.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not receive any email attachment?",
+    "Resolution": " If the e-mail box is full of other e-mail messages, andor your storage space is only a few megabytes, it's possible that the attachment being sent cannot be received. Often if this problem is occurring the person sending the e-mail should get a response back from your e-mail server indicating that your mailbox is full andor has exceeded its allocated size. Because computer viruses and other malware are best distributed through e-mail, many e-mail service providers, companies, and e-mail programs prevent certain types of file extensions from being distributed or received through e-mail. For example, Microsoft Outlook protect its users by automatically disabling certain file extension types from being received in e-mail.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not send or receive emails?",
+    "Resolution": " Verify that your computer is able to see the Internet andor other computers to ensure that your computer is not encountering a connection issue, which would be causing your e-mail issue. Ensure that your Internet e-mail server or your Network e-mail server is not encountering issues by contacting either your Internet Service Provider or your Network administrator.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I forgot the password, can you reset the password for me?",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I lost the printer installation disk, how can I install my printer?",
+    "Resolution": " Thankfully a missing printer installation disk or disc is not the end of the world and will not require you to wait until a new diskette or CD can be sent to you. Today all printer and other hardware manufacturers are providing downloads on the Internet to their software programs and drivers that are included with their products.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I receive a no signal input message, what should I do?",
+    "Resolution": " Verify that the monitor is properly connected in the back of the monitor as well as to the back of the computer. If the monitor appears to be connected properly, verify that a cable is not loose by disconnecting all cables that can be disconnected in the back of the monitor (generally the data cable cannot be disconnected). Next, disconnect the data cable connected to the back of the computer and then reconnect the cable. When connecting the cable in the back of the computer ensure the cable connection is tight. Most Computers will also have screw ends that can be screwed in to hold the connector in place.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "If I format or erase my hard drive, will it eliminate a virus?",
+    "Resolution": " If your computer is infected with a virus formatting or erasing the hard disk drive and starting over will almost always remove any type of virus. However, keep in mind if backups have been made that contain the virus, other media or drives connected to the computer have a virus, your computer is connected to another computer on a network with a virus, andor the virus is stored on some other type of software you use with your computer it can become re-infected if not properly protected.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Install the postgres database on my machine",
+    "Resolution": "Go to imfssoftwarepostgres location, copy postgresql database into local and install",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Is it safe to turn off a Windows computer without closing it?",
+    "Resolution": " Users should not simply press the power button or restart the computer while Windows is still running unless there is an issue with the computer. Microsoft has included the shut down feature because it enables a computer to go through all the necessary steps that are required before turning off the computer. In fact many versions of Microsoft Windows will check the computer for any problems if the computer is not shut down properly.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "LAN does not work in a VM",
+    "Resolution": "changed network settings to Bridged and configured network in VM.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "La cuenta se bloqueó debido a 3 intentos incorrectos de contraseña. ¿Podrías por favor reiniciar la contraseña?",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Login credentials do not work.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Internet does not work",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer does not turn on, what do I do now?",
+    "Resolution": " First check the computer's power cord to make sure it is completely plugged into the wall socket. If you are using a plug strip, make sure it is completely plugged into the wall socket and that the power switch on the plug strip is turned on. Some plug strips also have a built in circuit breaker which usually looks like a black or red button near the power switch. Press the button to reset it and see if that solves the problem.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer does not turn on?",
+    "Resolution": " Check that all the cables are securely plugged into the back of the machine and the monitor. Check that the power cables are plugged into a power socket and the socket has been turned on. Try using a different power socket or, if you are using a power extension strip, plug the power cable directly into a power socket in the wall. Replace the power cable with one that you know works. Check if there are any lights on at the front of the machine: If there are lights on the machine but not the monitor, then it's probably a monitor issue. If there are lights on the monitor but not the machine, then it's probably a machine issue. If there are no lights on anything, then it may be possible there is a local power cut. With laptops, try removing the power cable and the battery. Hold down the power button for about ten seconds, and then plug the battery and power cable in again. Press the power button to see if it switches on. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer freezes or behaves strangely",
+    "Resolution": " Try restarting your computer. Many basic problems can be resolved easily and quickly this way. Press the Ctrl & Alt & Del keys on your keyboard together at the same time. This should bring up a menu that will allow you to run Task Manager. In Task Manager, switch to the Applications tab. Highlight any programs with the status 'Not Responding' and choose End Task. You may be asked to confirm if you want to end the unresponsive program, so choose Yes. Do this for all programs that are not responding. If all else fails and you cannot shutdownrestart your computer, then hold down the power button on the machine until it forcibly turns off. Wait a few seconds and then turn it back on again. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My printer is printing stained  distorted pages?",
+    "Resolution": " When printing on untraditional paper your printer may experience smudges, un-even or crooked text, andor text that runs off the edges of the paper. Your printer may be printing fuzzy, blurry, andor other faint text because of dirty print heads. All modern printers have some type of printer cleaning, self-test, andor diagnose mode that can be performed to check and clean the printers print heads and other internal equipment used to print.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "MySpace Password Expiration",
+    "Resolution": "Please reset the passowrd using self service Portal http:ssp.abc.com, Please write back to us if you face any issue.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "New account is necessary for a new member.",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Nothing appears on the monitor?",
+    "Resolution": " Make sure both the computer and monitor are on. Make sure the monitor is securely plugged into the computer. Make sure the power cable is firmly plugged into the monitor. Some computers have multiple display ports, so make sure you have plugged the monitor into the correct one. Try each one in turn, switching the monitor off then on in between moves. Most monitors have a status window displayed when you turn it on. Check if you can see this status window when you press the power button on the monitor. You can also try this with the menu button on the monitor, which should bring up an options menu on the screen. This shows the screen is working ok, so it may be an issue with the video cable from the monitor or the machine itself. Check the brightness & contrast levels of the monitor via the menu button, to make sure it has not been set too dark. Move the mouse and press any key on the keyboard to make sure the screensaver hasn't activated or that the computer hasn't gone into standbyhibernation mode.  ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Replace the battery of my Macbook laptop",
+    "Resolution": "Please run Battery Helath test and send us the results IT team will do the needful accordingly. Please follow the steps to cehck the battery Helath https:ticket.abc.comkbfaq.phpardware issue-Battery issue",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Request to configure the system to share it among users",
+    "Resolution": "They won't be able to access other profiles if they login with their account. Please ask users to reach out to IT if they have any issues.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System that shows the blue screen at the beginning",
+    "Resolution": "1. Hold the power button until system gets shut down, then hit the power button to boot the machine. If still blue screen appears contact IT team and surrender the laptop.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The My Space QA application is inactive",
+    "Resolution": "We regret for the inconvinience caused. The issue is with Host server which got rebooted due to a power failure.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The computer does not turn on",
+    "Resolution": "Contact IT support.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The desktop does not work",
+    "Resolution": "Please check the Power cables are properly plugged , Please write back to us if the Problem still persists.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The password expired.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The system behaves strangely, the blue screen appears in the middle",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The system hangs with a blue screen at the start",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The wheel of my mouse does not work correctly, what should I do?",
+    "Resolution": " If you're running any version of Microsoft Windows and are encountering issues with the mouse wheel, first attempt to adjust the mouse settings through the Mouse Properties window. This window can be accessed by opening the Control Panel and double-clicking the Mouse icon.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There are black borders on my screen, what should I do?",
+    "Resolution": " If the resolution was recently changed it is possible for the monitor to not auto adjust or shift to the correct size. If this occurs, the resolution can be changed back to the original setting or you can manually adjust the monitor. If a black border exists on the monitor it can generally be resolved by manually adjusting the horizontal or vertical width. Because each monitor is different, the method of adjusting this setting will vary; consult your monitor documentation.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There is no screen on the monitor, what do I do now?",
+    "Resolution": " Make sure the monitor is on. If no power light (green or orange light) is seen on the monitor display try pressing the power button until it comes on. If your computer monitor was on and you stepped away from the computer and upon returning it was black, it's likely that the computer is asleep. Try moving your mouse, clicking the mouse buttons, andor pressing any key (space bar) on the keyboard to wake it up. Make sure that the monitor is connected properly to the back of the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if my hard drive does not work?",
+    "Resolution": " As with most computer errors, your first step is to shut down your computer and restart it. This will help you determine whether or not you actually have a hard disk problem. If the disk is severely damaged then your computer will probably fail to restart properly. If this is the case then contact MCWare IT Solutions, this is a job for the professionals.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if the image on the screen is distorted or skewed?",
+    "Resolution": " You may receive a distorted image when the cable is loose or defective. Disconnect the video cable going from the back of the computer and verify that no pins are bent, burnt or broken. Once verified re-connect the monitor cable. If the refresh rate is not properly set the monitor may have a wavy or an appearance that lines are going down or across the monitor slowly or fast, this may also cause a flickering affect. A distorted image can be caused by magnetic or other types of interference. Verify no speakers, fans or other magnetic devices are close to the monitor.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do when my computer crashes?",
+    "Resolution": " There are many reasons why a computer may just stop working or freeze. Most of the time there isn't much we can do about it, it is a fact of life that computer programs have become so complex that occasionally users will experience problems even when performing common tasks. When your computer no longer responds to keyboard commands your best bet is to restart the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What is a computer virus?",
+    "Resolution": " A computer virus is a software program that has been intentionally created to cause a user grief, spread to other computers, or destroy data on an individual's computer. To help prevent a computer from becoming infected by a virus, software developers have developed anti virus programs that stay active on the computer helping to protect it. It is important to realize that many computers do not come pre-loaded with these already installed and that if computers do come with these programs, the programs may expire within 90 days.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Why is my mouse acting erratically?",
+    "Resolution": " Users who have an optical mechanical mouse (most common mouse for desktop computers) are likely experiencing erratic behaviour because the mouse is not clean or is dirty. If you've cleaned the mouse and continue to encounter issues and this mouse has worked in the past fine unfortunately your mouse is likely defective. One additional test that can be done to help determine if this is the case or not is to connect the mouse to another computer. Otherwise we suggest replacing the mouse.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Wifi access is required.",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "You need Ethernet access",
+    "Resolution": "Please connect the LAN cable to the red port on your workstation. Please write back to IT if you are unable to get the IP addresss",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "You need wifi access permission to the laptop",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "install the MS office",
+    "Resolution": "Please login to web mail and go to settings -office 365 -install applications- download and install MS office for your machine.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "A new account is needed for a new participant.",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Are spaces allowed in e-mail addresses?",
+    "Resolution": " Just like an Internet URL no spaces are allowed in an e-mail address. However, names can be broken up using a period; for example, John Smith may have an e-mail address: john.smith@example.com or john.s@example.com because no spaces are allowed in the e-mail address.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Blocked account. Do not log in",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Can a virus damage computer hardware?",
+    "Resolution": " No. Computer viruses are software code designed to spread to computer files and other computers, delete files, and cause other problems with the data on the computer. So if you're experiencing an issue with a hardware device such as your printer, video card, sound card, etc. it is not due to a virus.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Configure Outlook in my system",
+    "Resolution": "IT Team has sent the instructions to configure outlook -follow the instructions onttps:ticket.abc.comkbfaq.php and click on O365 and solution and then outlook configuration for your machines",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Create a new account and share the username and password",
+    "Resolution": "Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "FW: Myspace Login Problem - Ania",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Forgotten password, please reset the password for me.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Given the problem with the network  Internet with Wifi xwq090",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I clean my keyboard?",
+    "Resolution": " The keys on a keyboard are only clipped on, with a knife or other thin object, carefully pop the keys off, this will allow you to clean under the keys as well as cleaning the keys themselves (make sure you remember where they went!).",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I recover a file from the Recycle Bin?",
+    "Resolution": " Double click the recycle bin icon on your desktop, here you will see all of the files within your bin. Select the files you wish to recover, right click and choose restore.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How can I update my Microsoft Windows computer?",
+    "Resolution": " If you are running Microsoft Windows 7, Windows 10, or a later version of Microsoft Windows, you are eligible to update Microsoft Windows, and in some cases, your computer hardware with the latest drivers through Microsoft's update site, visit http:windowsupdate.microsoft.com. In most cases your computer should be set to automatically update when a new update becomes available.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I delete internet cookies?",
+    "Resolution": " Microsoft Internet Explorer users can go to 'Tools' (or the little cog icon in the top left), then go to 'Safety' and choose 'Delete browsing history...', you can then choose to delete your Internet cookies. In Google Chrome, go to 'More Tools' and choose 'Clear browsing data...'. Firefox users can go to 'History', then choose 'Clear recent history...'.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I find the name of my computer?",
+    "Resolution": " Right-click My Computer. Click Properties. In the Properties window, click the Computer Name tab. Within this tab you'll be able to see the full computer name, workgroup and also a description. If you wish to change the name or workgroup, click the Change button.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I fix a paper jam?",
+    "Resolution": " Turn off the printer. Inspect the location or tray the printed paper ejects to. If the stuck paper is visible manually remove it. Remove all paper trays and any paper that may be stuck between the tray and the printer. If the stuck paper is visible manually remove it. Open the printer door that allows you access to the printer ink cartridges or toner and look for any stuck paper. If the stuck paper is visible manually remove it. Turn the printer back on.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I get into safe mode?",
+    "Resolution": " To get into the Windows 7  10 Safe mode, as the computer is starting up press and hold your F8 key which should bring up the Windows Advanced Options Menu. Use your arrow keys to move to Safe Mode and press your Enter key.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "How do I map a network drive?",
+    "Resolution": " Open Microsoft Explorer. From Explorer, click the Tools drop down menu and click the option Map Network Drive. Specify the network drive or network computer as the folder. If the computer's name was hope, to map to that computer, type hope If you wished to map to a shared folder on the hope computer such as a mp3 folder, you would type hopemp3. If a different username or login is required to connect to this computer or drive it must be specified in this window before clicking the finish.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not connect to my network drive anymore.",
+    "Resolution": " Verify that the network cable is properly connected to the back of the computer. In addition, when checking the connection of the network cable, ensure that the LED's on the network are properly illuminated. For example, a network card with a solid green LED or light usually indicates that the card is either connected or receiving a signal. Note: generally, when the green light is flashing, this is an indication of data being sent or received.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not delete a file because it is used by Windows.",
+    "Resolution": " Close all programs running on the computer and try again. If after closing all programs running on the computer you are still encountering the same issue when attempting to delete files, load the computer into Safe Mode and delete the files.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not receive e-mail attachments.",
+    "Resolution": " If the e-mail box is full of other e-mail messages, andor your storage space is only a few megabytes, it's possible that the attachment being sent cannot be received. Often if this problem is occurring the person sending the e-mail should get a response back from your e-mail server indicating that your mailbox is full andor has exceeded its allocated size. Because computer viruses and other malware are best distributed through e-mail, many e-mail service providers, companies, and e-mail programs prevent certain types of file extensions from being distributed or received through e-mail. For example, Microsoft Outlook protect its users by automatically disabling certain file extension types from being received in e-mail.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I can not send or receive emails.",
+    "Resolution": " Verify that your computer is able to see the Internet andor other computers to ensure that your computer is not encountering a connection issue, which would be causing your e-mail issue. Ensure that your Internet e-mail server or your Network e-mail server is not encountering issues by contacting either your Internet Service Provider or your Network administrator.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I get a 'no signal input' message, what should I do?",
+    "Resolution": " Verify that the monitor is properly connected in the back of the monitor as well as to the back of the computer. If the monitor appears to be connected properly, verify that a cable is not loose by disconnecting all cables that can be disconnected in the back of the monitor (generally the data cable cannot be disconnected). Next, disconnect the data cable connected to the back of the computer and then reconnect the cable. When connecting the cable in the back of the computer ensure the cable connection is tight. Most Computers will also have screw ends that can be screwed in to hold the connector in place.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "I lost my printer installation disk. How can I install my printer?",
+    "Resolution": " Thankfully a missing printer installation disk or disc is not the end of the world and will not require you to wait until a new diskette or CD can be sent to you. Today all printer and other hardware manufacturers are providing downloads on the Internet to their software programs and drivers that are included with their products.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "If I format or delete my drive, will it remove a virus?",
+    "Resolution": " If your computer is infected with a virus formatting or erasing the hard disk drive and starting over will almost always remove any type of virus. However, keep in mind if backups have been made that contain the virus, other media or drives connected to the computer have a virus, your computer is connected to another computer on a network with a virus, andor the virus is stored on some other type of software you use with your computer it can become re-infected if not properly protected.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Install MS Office",
+    "Resolution": "Please login to web mail and go to settings -office 365 -install applications- download and install MS office for your machine.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Install the Postgres database on my computer",
+    "Resolution": "Go to imfssoftwarepostgres location, copy postgresql database into local and install",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Is Windows equipped with an anti-virus program?",
+    "Resolution": " All versions of Microsoft Windows do not come pre-installed with a virus protection program. This includes: Microsoft Windows 7 and Windows 10.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Is it safe to turn off a Windows computer without shutting down?",
+    "Resolution": " Users should not simply press the power button or restart the computer while Windows is still running unless there is an issue with the computer. Microsoft has included the shut down feature because it enables a computer to go through all the necessary steps that are required before turning off the computer. In fact many versions of Microsoft Windows will check the computer for any problems if the computer is not shut down properly.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "LAN does not work in a VM",
+    "Resolution": "changed network settings to Bridged and configured network in VM.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Login credentials do not work.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My Space QA application is not available",
+    "Resolution": "We regret for the inconvinience caused. The issue is with Host server which got rebooted due to a power failure.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer does not power up?",
+    "Resolution": " Check that all the cables are securely plugged into the back of the machine and the monitor. Check that the power cables are plugged into a power socket and the socket has been turned on. Try using a different power socket or, if you are using a power extension strip, plug the power cable directly into a power socket in the wall. Replace the power cable with one that you know works. Check if there are any lights on at the front of the machine: If there are lights on the machine but not the monitor, then it's probably a monitor issue. If there are lights on the monitor but not the machine, then it's probably a machine issue. If there are no lights on anything, then it may be possible there is a local power cut. With laptops, try removing the power cable and the battery. Hold down the power button for about ten seconds, and then plug the battery and power cable in again. Press the power button to see if it switches on. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer freezes or behaves strangely?",
+    "Resolution": " Try restarting your computer. Many basic problems can be resolved easily and quickly this way. Press the Ctrl & Alt & Del keys on your keyboard together at the same time. This should bring up a menu that will allow you to run Task Manager. In Task Manager, switch to the Applications tab. Highlight any programs with the status 'Not Responding' and choose End Task. You may be asked to confirm if you want to end the unresponsive program, so choose Yes. Do this for all programs that are not responding. If all else fails and you cannot shutdownrestart your computer, then hold down the power button on the machine until it forcibly turns off. Wait a few seconds and then turn it back on again. ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My computer will not turn on. What do I do now?",
+    "Resolution": " First check the computer's power cord to make sure it is completely plugged into the wall socket. If you are using a plug strip, make sure it is completely plugged into the wall socket and that the power switch on the plug strip is turned on. Some plug strips also have a built in circuit breaker which usually looks like a black or red button near the power switch. Press the button to reset it and see if that solves the problem.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My internet is not working",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "My printer prints smeared  distorted pages?",
+    "Resolution": " When printing on untraditional paper your printer may experience smudges, un-even or crooked text, andor text that runs off the edges of the paper. Your printer may be printing fuzzy, blurry, andor other faint text because of dirty print heads. All modern printers have some type of printer cleaning, self-test, andor diagnose mode that can be performed to check and clean the printers print heads and other internal equipment used to print.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "MySpace password expiration",
+    "Resolution": "Please reset the passowrd using self service Portal http:ssp.abc.com, Please write back to us if you face any issue.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Need Ethernet access",
+    "Resolution": "Please connect the LAN cable to the red port on your workstation. Please write back to IT if you are unable to get the IP addresss",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "No connection to the internet possible",
+    "Resolution": "Go to network tab from bottom right corner, choose inn001 network, click on connect",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Nothing appears on the monitor?",
+    "Resolution": " Make sure both the computer and monitor are on. Make sure the monitor is securely plugged into the computer. Make sure the power cable is firmly plugged into the monitor. Some computers have multiple display ports, so make sure you have plugged the monitor into the correct one. Try each one in turn, switching the monitor off then on in between moves. Most monitors have a status window displayed when you turn it on. Check if you can see this status window when you press the power button on the monitor. You can also try this with the menu button on the monitor, which should bring up an options menu on the screen. This shows the screen is working ok, so it may be an issue with the video cable from the monitor or the machine itself. Check the brightness & contrast levels of the monitor via the menu button, to make sure it has not been set too dark. Move the mouse and press any key on the keyboard to make sure the screensaver hasn't activated or that the computer hasn't gone into standbyhibernation mode.  ",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Password expired.",
+    "Resolution": "Go to URL : password.reset.com, Enter you login id, enter password received, reset the password",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Replace the battery for my Macbook laptop",
+    "Resolution": "Please run Battery Helath test and send us the results IT team will do the needful accordingly. Please follow the steps to cehck the battery Helath https:ticket.abc.comkbfaq.phpardware issue-Battery issue",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Request that the system be configured to share between users",
+    "Resolution": "They won't be able to access other profiles if they login with their account. Please ask users to reach out to IT if they have any issues.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Requires permission wifi access to the laptop",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System behaves strangely, blue screen appears in the middle",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "System showing a blue screen at startup",
+    "Resolution": "1. Hold the power button until system gets shut down, then hit the power button to boot the machine. If still blue screen appears contact IT team and surrender the laptop.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The account was blocked due to 3 wrong password attempts. Could you please reset the password?",
+    "Resolution": "Unlocked the account and new password is sent to your email id.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The computer will not turn on",
+    "Resolution": "Contact IT support.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The desktop is not working",
+    "Resolution": "Please check the Power cables are properly plugged , Please write back to us if the Problem still persists.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The system hangs at startup with a blue screen",
+    "Resolution": "Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "The wheel on my mouse is not working properly, what am I doing?",
+    "Resolution": " If you're running any version of Microsoft Windows and are encountering issues with the mouse wheel, first attempt to adjust the mouse settings through the Mouse Properties window. This window can be accessed by opening the Control Panel and double-clicking the Mouse icon.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There are black borders on my screen, what am I doing?",
+    "Resolution": " If the resolution was recently changed it is possible for the monitor to not auto adjust or shift to the correct size. If this occurs, the resolution can be changed back to the original setting or you can manually adjust the monitor. If a black border exists on the monitor it can generally be resolved by manually adjusting the horizontal or vertical width. Because each monitor is different, the method of adjusting this setting will vary; consult your monitor documentation.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "There is no display on the monitor, what am I doing now?",
+    "Resolution": " Make sure the monitor is on. If no power light (green or orange light) is seen on the monitor display try pressing the power button until it comes on. If your computer monitor was on and you stepped away from the computer and upon returning it was black, it's likely that the computer is asleep. Try moving your mouse, clicking the mouse buttons, andor pressing any key (space bar) on the keyboard to wake it up. Make sure that the monitor is connected properly to the back of the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if my computer crashes?",
+    "Resolution": " There are many reasons why a computer may just stop working or freeze. Most of the time there isn't much we can do about it, it is a fact of life that computer programs have become so complex that occasionally users will experience problems even when performing common tasks. When your computer no longer responds to keyboard commands your best bet is to restart the computer.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if my hard drive does not work?",
+    "Resolution": " As with most computer errors, your first step is to shut down your computer and restart it. This will help you determine whether or not you actually have a hard disk problem. If the disk is severely damaged then your computer will probably fail to restart properly. If this is the case then contact MCWare IT Solutions, this is a job for the professionals.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What do I do if the image on the screen is distorted or distorted?",
+    "Resolution": " You may receive a distorted image when the cable is loose or defective. Disconnect the video cable going from the back of the computer and verify that no pins are bent, burnt or broken. Once verified re-connect the monitor cable. If the refresh rate is not properly set the monitor may have a wavy or an appearance that lines are going down or across the monitor slowly or fast, this may also cause a flickering affect. A distorted image can be caused by magnetic or other types of interference. Verify no speakers, fans or other magnetic devices are close to the monitor.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "What is a computer virus?",
+    "Resolution": " A computer virus is a software program that has been intentionally created to cause a user grief, spread to other computers, or destroy data on an individual's computer. To help prevent a computer from becoming infected by a virus, software developers have developed anti virus programs that stay active on the computer helping to protect it. It is important to realize that many computers do not come pre-loaded with these already installed and that if computers do come with these programs, the programs may expire within 90 days.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Why does my mouse behave unpredictably?",
+    "Resolution": " Users who have an optical mechanical mouse (most common mouse for desktop computers) are likely experiencing erratic behaviour because the mouse is not clean or is dirty. If you've cleaned the mouse and continue to encounter issues and this mouse has worked in the past fine unfortunately your mouse is likely defective. One additional test that can be done to help determine if this is the case or not is to connect the mouse to another computer. Otherwise we suggest replacing the mouse.",
+    "FIELD3": "",
+    "FIELD4": ""
+  },
+  {
+    "Title": "Wi-Fi access required.",
+    "Resolution": "First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access",
+    "FIELD3": "",
+    "FIELD4": ""
+  }
+ ]
