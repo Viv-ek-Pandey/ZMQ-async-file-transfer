@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+	"os"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/ssh"
 )
@@ -16,25 +19,25 @@ type machine struct {
 }
 
 func readJSON(input string) (*[]machine, error) {
-	machineList := []machine{}
+	machineList := &[]machine{}
 
 	// un-comment this once
-	// err := json.Unmarshal([]byte(input), machineList)
-	// if err != nil {
-	// 	log.Println("error loading json: ", err)
-	// 	return nil, err
-	// }
+	err := json.Unmarshal([]byte(input), machineList)
+	if err != nil {
+		log.Println("error loading json: ", err)
+		return nil, err
+	}
 
 	// comment this and un-comment the above code
-	m := &machine{
-		Name:     "svann-org-mattermost-ubuntu18-04",
-		IP:       "35.209.155.83",
-		Username: "ubuntu",
-		Password: "Datamotive@123",
-	}
-	machineList = append(machineList, *m)
+	// m := &machine{
+	// 	Name:     "svann-org-mattermost-ubuntu18-04",
+	// 	IP:       "35.209.155.83",
+	// 	Username: "ubuntu",
+	// 	Password: "Datamotive@123",
+	// }
+	// machineList = append(machineList, *m)
 
-	return &machineList, nil
+	return machineList, nil
 }
 
 func getVMIP(machineList []machine, name string) string {
@@ -55,21 +58,13 @@ func runRemoteLinuxCommand(ip string, username string, pasword string, dbIP stri
 		return err
 	}
 
-	commandList := []string{
-		`sudo sed -i 's/192.168.1.124/192.168.2.151/g' /opt/mattermost/config/config.json`,
-		`service mattermost restart`,
-	}
-
-	for _, cmd := range commandList {
-		out, err := session.CombinedOutput(cmd)
-		if err != nil {
-			log.Println("output: ", string(out), err)
-			return err
-		}
-		log.Println("output: ", string(out))
+	cmd := "sudo sed -i 's/192.168.1.6/13.59.84.0/g' /opt/mattermost/config/config.json && sudo systemctl enable mattermost.service && sudo service mattermost restart"
+	out, err := session.CombinedOutput(cmd)
+	if err != nil {
+		log.Println("output for command: ", cmd, string(out), err)
+		return err
 	}
 	client.Close()
-
 	return nil
 }
 
@@ -95,12 +90,13 @@ func connecToLinuxMachine(ip string, username string, pasword string) (*ssh.Clie
 }
 
 func main() {
-	machineList, err := readJSON("")
+	time.Sleep(time.Second * 60)
+	machineList, err := readJSON(os.Args[1])
 	if err != nil {
 		return
 	}
 	for _, machine := range *machineList {
-		if strings.Contains(machine.Name, "svann-org-mattermost-ubuntu18-04") {
+		if strings.Contains(machine.Name, "svann-org-messaging-app") {
 			dbIP := "192.168.2.135" // getVMIP(*machineList, "ad")
 			err = runRemoteLinuxCommand(machine.IP, machine.Username, machine.Password, dbIP)
 			if err != nil {
