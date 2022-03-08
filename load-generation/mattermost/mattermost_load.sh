@@ -173,13 +173,10 @@ post_messages_on_channel()
     server_port=$3
     channel_id=$4
     local cnt=$5
-    #echo "Posting message on channel: ${channel}"
-    # Get team id by name
-    #team_id=$(curl -H "Authorization: Bearer ${TOKEN}" http://${server}:${server_port}/api/v4/teams/name/${team} | jq -r '.id')
-    #echo "Fetched team id: ${team_id}"
+
     # Get channel id by name
-    #channel_id=$(curl -H "Authorization: Bearer ${TOKEN}" http://${server}:${server_port}/api/v4/teams/${team_id}/channels/name/${channel} | jq -r '.id')
-    #echo "Fetched channel id: ${channel_id}"
+    channel_name=$(curl -H "Authorization: Bearer ${TOKEN}" http://${server}:${server_port}/api/v4/channels/${channel} | jq -r '.name')
+    #echo "Fetched channel name: ${channel_name}"
 
     # post messages using the channel id
     declare -a arr_msgs=(
@@ -194,7 +191,7 @@ post_messages_on_channel()
         "Salary credits may be delayed this month due to bank holidays"
         "New deals signed with Fusion Inc..."
         )
-    echo "Posting ${cnt} Messages on Channel: "$channel_id
+    echo "Posting ${cnt} Messages on Channel: "$channel_name
     while [ $cnt -gt 0 ] 
     do
         #echo "Message# ${count}"
