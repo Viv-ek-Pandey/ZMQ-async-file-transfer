@@ -17,6 +17,21 @@ init() {
     sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email akanksh@datamotive.io --username akanksh --password Datamotive@123 --firstname Akanksh --lastname Khochikar
     sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email amit@datamotive.io --username amit --password Datamotive@123 --firstname Amit --lastname Mane
 
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-1@sample.mattermost.com --username sheldon.cooper --password Datamotive@123 --firstname Sheldon --lastname Cooper
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-2@sample.mattermost.com --username samuel.tucker --password Datamotive@123 --firstname Samuel --lastname Tucker
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-3@sample.mattermost.com --username jack.wheeler --password Datamotive@123 --firstname Jack --lastname Wheeler
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-4@sample.mattermost.com --username anne.stone --password Datamotive@123 --firstname Anne --lastname Stone
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-5@sample.mattermost.com --username aaron.medina --password Datamotive@123 --firstname Aaron --lastname Medina
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-6@sample.mattermost.com --username christina.wilson --password Datamotive@123 --firstname Christina --lastname Wilson
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-7@sample.mattermost.com --username aaron.peterson --password Datamotive@123 --firstname Aaron --lastname Peterson
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-8@sample.mattermost.com --username diana.wells --password Datamotive@123 --firstname Diana --lastname Wells
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-9@sample.mattermost.com --username karen.austin --password Datamotive@123 --firstname Karen --lastname Austin
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-10@sample.mattermost.com --username robert.ward --password Datamotive@123 --firstname Robert --lastname Ward
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-11@sample.mattermost.com --username craig.reid --password Datamotive@123 --firstname Craig --lastname Reed
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-12@sample.mattermost.com --username ashley.berry --password Datamotive@123 --firstname Ashley --lastname Berry
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-13@sample.mattermost.com --username samuel.palmer --password Datamotive@123 --firstname Samuel --lastname Palmer
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-14@sample.mattermost.com --username emily.meyer --password Datamotive@123 --firstname Emily --lastname Meyer
+
     # TEAMS
     # List teams
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team list
@@ -175,7 +190,7 @@ post_messages_on_channel()
     local cnt=$5
 
     # Get channel id by name
-    channel_name=$(curl -H "Authorization: Bearer ${TOKEN}" http://${server}:${server_port}/api/v4/channels/${channel} | jq -r '.name')
+    channel_name=$(curl -s -H "Authorization: Bearer ${TOKEN}" http://${server}:${server_port}/api/v4/channels/${channel} | jq -r '.name')
     #echo "Fetched channel name: ${channel_name}"
 
     # post messages using the channel id
@@ -203,15 +218,15 @@ post_messages_on_channel()
     done
 }
 
-post_messages() {
-    # Login
+login()
+{
+       # Login
     server=$1
     server_port=$2
     uname=$3
     pwd=$4
     msg_cnt=$5
-    echo "Logging in to server: ${server}"
-    login_resp=$(curl -si -H "Content-Type: application/json" --request POST -d '{ "login_id": "'${uname}'", "password": "'${pwd}'" }' http://${server}:${server_port}/api/v4/users/login)
+    login_resp=$(curl -si -H "Content-Type: application/json" -- connect-timeout 10 --request POST -d '{ "login_id": "'${uname}'", "password": "'${pwd}'" }' http://${server}:${server_port}/api/v4/users/login)
     head=true
     while read -r line; do
        if $head; then
@@ -230,18 +245,40 @@ post_messages() {
         value=${value##+([[:space:]])}; value=${value%%+([[:space:]])}
 
         case "$key" in
-            Token) TOKEN="$value"
+            Token) L_TOKEN="$value"
                     ;;
             HTTP*) read PROTO STATUS MSG <<< "$key{$value:+:$value}"
                     ;;
         esac
     done < <(echo "$login_resp")
-    TOKEN="$(echo -e "${TOKEN}" | tr -d '[:space:]')"
-    echo "User ID: ${user_id}"
-    echo "Login status: ${STATUS}"
-    echo "Login token: ${TOKEN}"
+    local LOGIN_TOKEN="$(echo -e "${L_TOKEN}" | tr -d '[:space:]')"
+    echo $LOGIN_TOKEN 
+}
+
+post_messages() {
+    server=$1
+    server_port=$2
+    uname=$3
+    pwd=$4   
+    recovery_server=$5
+    msg=$6
+    echo "\n\nLogging in to server ${server}"
+    TOKEN=$(login $server $server_port $uname $pwd)
+    if [[ ! -z "$TOKEN" ]]; then
+        echo "Logged in to Server ${server} with token: ${TOKEN}"
+    else 
+        echo "Failed to login to server ${server}"
+        server=$recovery_server
+        echo "Trying recovery site server ${server}"
+        TOKEN=$(login $server $server_port $uname $pwd)
+        if [[ ! -z "$TOKEN" ]]; then
+            echo "Failed to login to recovery server ${server}"
+            return 1
+        fi
+    fi
 
     # Get channels
+    echo "Fetching channels in system"
     arr=$(get_channels $TOKEN $server $server_port)
     eval "channels=( $arr )"
     echo "Fetched all channels in system: ${#channels[@]}"
@@ -253,7 +290,7 @@ post_messages() {
     done
 
     # Logout
-    echo "Logging out"
+    echo "Logging out of server ${server}"
     logout_resp=$(curl -si -H "Authorization: Bearer ${TOKEN}" -H "content-type: application/json" --request POST -d '{}' http://${server}:${server_port}/api/v4/users/logout)
 }
 
@@ -261,7 +298,7 @@ recursive_post_messages()
 {
     while true; 
     do
-        post_messages $1 $2 $3 $4 $5
+        post_messages $1 $2 $3 $4 $5 $6
         echo "Sleeping for 5 secs"
         sleep 5
     done
@@ -306,21 +343,23 @@ main()
             -server_port) server_port=${val};;
             -server_uname) uname=${val};;
             -server_pwd) pwd=${val};;
+            -rec_server) rec_server=${val};;
             -messages) msg_cnt=${val};;
         esac
     done
     echo "Generating load with following options: "
-    echo "Mode: $mode";
-    echo "Server: $server";
-    echo "Server Port: $server_port";
-    echo "Server Username: $uname";
-    echo "Server Pwd: $pwd";
-    echo "Messages: $msg_cnt\n";
+    echo "Mode: $mode"
+    echo "Server: $server"
+    echo "Server Port: $server_port"
+    echo "Server Username: $uname"
+    echo "Server Pwd: ****"
+    echo "Recovery Server: $rec_server"
+    echo "Messages: $msg_cnt"
     
     # Valdiate inputs
-    if [[ $server == "" || $uname == "" || $pwd == "" || $msg_cnt == "" || $msg_cnt == 0 ]];
+    if [[ $server == "" || $uname == "" || $pwd == "" || $rec_server == "" || $msg_cnt == 0 ]];
     then
-        echo "Invalid parameters... Parameters server, server_uname, server_pwd & messages can't be empty"
+        echo "Invalid parameters... Parameters server, server_uname, server_pwd, rec_server & messages can't be empty"
         help
     fi
     # Set default port
@@ -334,9 +373,9 @@ main()
         init_1 $server $server_port $uname $pwd
     elif [[ $mode = "always" ]];
     then
-        recursive_post_messages $server $server_port $uname $pwd $msg_cnt
+        #Create messages
+        recursive_post_messages $server $server_port $uname $pwd $rec_server $msg_cnt
     fi
-    #Create messages
-    post_messages $server $server_port $uname $pwd $msg_cnt
+    #post_messages $server $server_port $uname $pwd $msg_cnt
 }
 main $@
