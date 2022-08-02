@@ -1,10 +1,14 @@
+#!/usr/bin/env python3
+
 import boto3
+import sys
+import json
 
 class ElbConfigurator:
     # Parameters
     src_lb_arn="arn:aws:elasticloadbalancing:us-west-2:116356930974:loadbalancer/app/App-LB1/177da756cf0214c9"
     src_region="us-west-2"
-    target_region="us-east-2"
+    target_region="us-east-1"
     src_elb_client=None
     target_elb_client=None
     target_ec2_client=None
@@ -60,17 +64,17 @@ class ElbConfigurator:
 
     # Add Instances to ELB & create listener rules for them
     def add_elb_targets(self, target_instances, target_elb, source_elb):
-        print("Adding targets to ELB")
+        print("Adding recovered instances to target ELB")
         # Fetch source target group for reading it's properties & create new TG on target site
         src_tg=self.get_target_group(source_elb["LoadBalancerArn"], self.src_elb_client)
         dest_tg=self.create_target_group(src_tg, target_elb["VpcId"])
-        print("Created target group on recovery site")
+        print("Created target group on target ELB")
         
         # Register targets to Target Group. Targets have to be in running state for this operation
         resp=self.add_targets_to_target_group(target_instances, dest_tg, self.target_elb_client)
         print("Added recovery instances to newly created target group")
 
-        # TODO: Create Listener create_listener()
+        # Create Listener create_listener()
         src_listener=self.get_listeners(source_elb["LoadBalancerArn"], self.src_elb_client)
         trg_listener=None
         if src_listener:
@@ -170,7 +174,7 @@ class ElbConfigurator:
     # Fetch targets within a target group
     def get_targets(self, elb_arn, elb_client):
         if elb_arn:
-            target_group=self.get_target_groups(elb_arn)
+            target_group=self.get_target_group(elb_arn, elb_client)
             if target_group:
                 filter={}
                 filter["TargetGroupArn"]=target_group["TargetGroupArn"]
@@ -256,15 +260,80 @@ class ElbConfigurator:
         recovery_sg = list(set(recovery_sg))
         return recovery_sg
 
+def main():
+    print("Executing elb configuration script")
+    #Initialize connection
+    config = ElbConfigurator()
+    config.initialize()
+    
+    protected_entity_map = json.loads(sys.argv[1])
+    elb_name = sys.argv[2]
+    src_elb_name = sys.argv[2]
+    trg_elb_name = src_elb_name
+    print("Source ELB Name: ", src_elb_name)
+    print("Target ELB Name: ", trg_elb_name)
+    print("Protected Entity Map: ", protected_entity_map)
+    if not src_elb_name or not trg_elb_name or not protected_entity_map:
+        print("Invalid inputs. Exiting from the script.")
+        return
+
+    #Fetch ELB
+    src_lb=config.get_load_balancers(src_elb_name, config.src_elb_client)
+    src_lb_arn=src_lb['LoadBalancerArn']
+    trg_lb=config.get_load_balancers(trg_elb_name, config.target_elb_client)
+    trg_lb_arn=trg_lb['LoadBalancerArn']
+    print("Source ELB ARN: ", src_lb_arn)
+    print("Target ELB ARN: ", trg_lb_arn)
+    if not src_lb_arn or not trg_lb_arn:
+        print("Failed to fetch ELB ARNs. Please check if ELBs exist on source and target sites with name: ", src_elb_name)
+        return
+    
+    #Fetch soure ELB Targets
+    targets=config.get_targets(src_lb_arn, config.src_elb_client)
+    print("Fetched source elb targets", targets)
+    if not targets:
+        print("Failed to fetch Targets from source ELB. Please check if the given ELB name is correct")
+        return
+
+    # Comparing targets & protected instance ids, compute recovery instance ids to be mapped to target elb
+    recovered_instances=[]
+    for target in targets:
+        target_id = target['Target']['Id']
+        print("Finding recovery entity for Target ID:", target_id)
+        vms = protected_entity_map["vms"]
+        for protected_entity in vms:
+            if protected_entity["sourceID"] == target_id:
+                recovered_instances.append(protected_entity["targetID"])
+                break
+    
+    # Map recovered instances to target elb
+    print("Adding recovered entities to target elb: ", recovered_instances)
+    if not recovered_instances:
+        print("No recovery entities found to attach to target ELB. Please check if the protected entities are attached to source ELBs")
+        return
+
+    target_instances=config.get_instances(recovered_instances, config.target_ec2_client)
+    if not recovered_instances:
+        print("Failed to fetch target EC2 instances from AWS.")
+        return
+    
+    target_elb_vpc=trg_lb['VpcId']
+    print("Attaching recovered entities to target ELB")
+    resp=config.add_elb_targets(target_instances, trg_lb, src_lb)
+    print("Target addition response: ", resp)
+
+if __name__ == "__main__":
+    main()
+
 #Initialize connection
-config = ElbConfigurator()
-config.initialize()
+#config = ElbConfigurator()
+#config.initialize()
 
 #Fetch ELB
-src_lb=config.get_load_balancers("App-LB1", config.src_elb_client)
-src_lb_arn=src_lb['LoadBalancerArn']
-trg_lb=config.get_load_balancers("DM-Recovered-App-LB1", config.target_elb_client)
-trg_lb_arn=trg_lb['LoadBalancerArn']
+#src_lb=config.get_load_balancers("App-LB1", config.src_elb_client)
+#src_lb_arn=src_lb['LoadBalancerArn']
+#trg_lb=config.get_load_balancers("DM-Recovered-App-LB1", config.target_elb_client)
+#trg_lb_arn=trg_lb['LoadBalancerArn']
 
 #print("Fetched LB: ", src_lb)
 
@@ -273,7 +342,7 @@ trg_lb_arn=trg_lb['LoadBalancerArn']
 #print('Fetched Target Group: ', target_group)
 
 #Fetch Targets
-#targets=config.get_targets(lb_arn)
+#targets=config.get_targets(src_lb_arn)
 #print("Fetched targets")
 #for target in targets:
 #    print("Target ID:", target['Target']['Id'])
@@ -297,8 +366,8 @@ trg_lb_arn=trg_lb['LoadBalancerArn']
 #config.add_elb_targets([],target_elb=config.get_load_balancers("DM-Recovered-App-LB1", config.target_elb_client), 
 #source_elb=config.get_load_balancers("App-LB1", config.src_elb_client))
 
-target_instances=config.get_instances(["i-07b17a4951c4f0766", "i-046459727fa133821", "i-008ecc3dfef39a501"], config.target_ec2_client)
+#target_instances=config.get_instances(["i-07b17a4951c4f0766", "i-046459727fa133821", "i-008ecc3dfef39a501"], config.target_ec2_client)
 #target_group=config.create_target_group(config.get_target_group(lb_arn, config.src_elb_client), "vpc-1be26170")
 #resp=config.add_targets_to_target_group(target_instances, target_group, config.target_elb_client)
-resp=config.add_elb_targets(target_instances, trg_lb, src_lb)
-print("Target addition response: ", resp)
+#resp=config.add_elb_targets(target_instances, trg_lb, src_lb)
+#print("Target addition response: ", resp)

@@ -6,16 +6,16 @@ init() {
     sudo -u mattermost /opt/mattermost/bin/mmctl --local user list
 
     # Create users
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email yogesh@datamotive.io --username yogesh --password Datamotive@123 --firstname Yogesh --lastname Anyapanawar
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email sameerz@datamotive.io --username sameer --password Datamotive@123 --firstname Sameer --lastname Zaveri
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email sourav@datamotive.io --username sourav --password Datamotive@123 --firstname Sourav --lastname Patjoshi
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email rishabh@datamotive.io --username rishabh --password Datamotive@123 --firstname Rishabh --lastname Kemni
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email vaibhav@datamotive.io --username vaibhav --password Datamotive@123 --firstname Vaibhav --lastname Tekade
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email prateek@datamotive.io --username prateek --password Datamotive@123 --firstname Prateek --lastname Shetty
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email tushar@datamotive.io --username tushar --password Datamotive@123 --firstname Tushar --lastname Tarkas
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email vaibhavc@datamotive.io --username vaibhavc --password Datamotive@123 --firstname Vaibhav --lastname Chopade
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email akanksh@datamotive.io --username akanksh --password Datamotive@123 --firstname Akanksh --lastname Khochikar
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email amit@datamotive.io --username amit --password Datamotive@123 --firstname Amit --lastname Mane
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email ya@sample.mattermost.com --username yogesh --password Datamotive@123 --firstname Yogesh --lastname Anyapanawar
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email sz@sample.mattermost.com --username sameer --password Datamotive@123 --firstname Sameer --lastname Zaveri
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email sp@sample.mattermost.com --username sourav --password Datamotive@123 --firstname Sourav --lastname Patjoshi
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email rk@sample.mattermost.com --username rishabh --password Datamotive@123 --firstname Rishabh --lastname Kemni
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email vt@sample.mattermost.com --username vaibhav --password Datamotive@123 --firstname Vaibhav --lastname Tekade
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email ps@sample.mattermost.com --username prateek --password Datamotive@123 --firstname Prateek --lastname Shetty
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email tt@sample.mattermost.com --username tushar --password Datamotive@123 --firstname Tushar --lastname Tarkas
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email vc@sample.mattermost.com --username vaibhavc --password Datamotive@123 --firstname Vaibhav --lastname Chopade
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email ak@sample.mattermost.com --username akanksh --password Datamotive@123 --firstname Akanksh --lastname Khochikar
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email am@sample.mattermost.com --username amit --password Datamotive@123 --firstname Amit --lastname Mane
 
     sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-1@sample.mattermost.com --username sheldon.cooper --password Datamotive@123 --firstname Sheldon --lastname Cooper
     sudo -u mattermost /opt/mattermost/bin/mmctl --local user create --email user-2@sample.mattermost.com --username samuel.tucker --password Datamotive@123 --firstname Samuel --lastname Tucker
@@ -41,10 +41,11 @@ init() {
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team create --name hr --display-name "HR team"
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team create --name marketing --display-name "Marketing team"
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team create --name svann-all --display-name "Svann org"
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team create --name engg --display-name "Engineering team"
 
     # Add users to teams
     # finance
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add finance yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add finance ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add finance user-5@sample.mattermost.com aaron.medina
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add finance user-7@sample.mattermost.com aaron.peterson
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add finance user-4@sample.mattermost.com anne.stone
@@ -52,7 +53,7 @@ init() {
 
     # hr
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-6@sample.mattermost.com christina.wilson
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-11@sample.mattermost.com craig.reed
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-11@sample.mattermost.com craig.reid
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-8@sample.mattermost.com diana.wells
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-14@sample.mattermost.com emily.meyer
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-3@sample.mattermost.com jack.wheeler
@@ -61,45 +62,45 @@ init() {
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add hr user-13@sample.mattermost.com samuel.palmer
 
     # marketing
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing sameerz@datamotive.io sameer
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing akanksh@datamotive.io akanksh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing amit@datamotive.io amit
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing sz@sample.mattermost.com sameer
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing ak@sample.mattermost.com akanksh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing am@sample.mattermost.com amit
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add marketing user-2@sample.mattermost.com samuel.tucker
 
     # engg
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg tushar@datamotive.io tushar
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg sourav@datamotive.io sourav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg rishabh@datamotive.io rishabh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg prateek@datamotive.io prateek
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg vaibhav@datamotive.io vaibhav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg vaibhavc@datamotive.io vaibhavc
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg tt@sample.mattermost.com tushar
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg sp@sample.mattermost.com sourav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg rk@sample.mattermost.com rishabh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg ps@sample.mattermost.com prateek
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg vt@sample.mattermost.com vaibhav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add engg vc@sample.mattermost.com vaibhavc
 
     # svann-all
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-5@sample.mattermost.com aaron.medina
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-7@sample.mattermost.com aaron.peterson
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-4@sample.mattermost.com anne.stone
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-12@sample.mattermost.com ashley.berry
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-6@sample.mattermost.com christina.wilson
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-11@sample.mattermost.com craig.reed
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-11@sample.mattermost.com craig.reid
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-8@sample.mattermost.com diana.wells
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-14@sample.mattermost.com emily.meyer
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-3@sample.mattermost.com jack.wheeler
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-9@sample.mattermost.com karen.austin
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-10@sample.mattermost.com robert.ward
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-13@sample.mattermost.com samuel.palmer
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all sameerz@datamotive.io sameer
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all akanksh@datamotive.io akanksh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all amit@datamotive.io amit
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all sz@sample.mattermost.com sameer
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all ak@sample.mattermost.com akanksh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all am@sample.mattermost.com amit
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all user-2@sample.mattermost.com samuel.tucker
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all tushar@datamotive.io tushar
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all sourav@datamotive.io sourav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all rishabh@datamotive.io rishabh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all prateek@datamotive.io prateek
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all vaibhav@datamotive.io vaibhav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all vaibhavc@datamotive.io vaibhavc
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all tt@sample.mattermost.com tushar
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all sp@sample.mattermost.com sourav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all rk@sample.mattermost.com rishabh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all ps@sample.mattermost.com prateek
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all vt@sample.mattermost.com vaibhav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local team users add svann-all vc@sample.mattermost.com vaibhavc
 
     # CHANNELS
     # List channels
@@ -114,7 +115,7 @@ init() {
 
     # Add users to channels
     #finance
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add finance:finance_channel yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add finance:finance_channel ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add finance:finance_channel user-5@sample.mattermost.com aaron.medina
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add finance:finance_channel user-7@sample.mattermost.com aaron.peterson
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add finance:finance_channel user-4@sample.mattermost.com anne.stone
@@ -122,7 +123,7 @@ init() {
 
     #hr
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-6@sample.mattermost.com christina.wilson
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-11@sample.mattermost.com craig.reed
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-11@sample.mattermost.com craig.reid
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-8@sample.mattermost.com diana.wells
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-14@sample.mattermost.com emily.meyer
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-3@sample.mattermost.com jack.wheeler
@@ -131,45 +132,45 @@ init() {
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add hr:hr_channel user-13@sample.mattermost.com samuel.palmer
 
     #marketing
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel sameerz@datamotive.io sameer
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel akanksh@datamotive.io akanksh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel amit@datamotive.io amit
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel sz@sample.mattermost.com sameer
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel ak@sample.mattermost.com akanksh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel am@sample.mattermost.com amit
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add marketing:marketing_channel user-2@sample.mattermost.com samuel.tucker
 
     #engg
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel tushar@datamotive.io tushar
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel sourav@datamotive.io sourav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel rishabh@datamotive.io rishabh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel prateek@datamotive.io prateek
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel vaibhav@datamotive.io vaibhav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel vaibhavc@datamotive.io vaibhavc
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel tt@sample.mattermost.com tushar
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel sp@sample.mattermost.com sourav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel rk@sample.mattermost.com rishabh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel ps@sample.mattermost.com prateek
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel vt@sample.mattermost.com vaibhav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add engg:engg_channel vc@sample.mattermost.com vaibhavc
 
     #all
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-5@sample.mattermost.com aaron.medina
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-7@sample.mattermost.com aaron.peterson
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-4@sample.mattermost.com anne.stone
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-12@sample.mattermost.com ashley.berry
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-6@sample.mattermost.com christina.wilson
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-11@sample.mattermost.com craig.reed
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-11@sample.mattermost.com craig.reid
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-8@sample.mattermost.com diana.wells
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-14@sample.mattermost.com emily.meyer
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-3@sample.mattermost.com jack.wheeler
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-9@sample.mattermost.com karen.austin
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-10@sample.mattermost.com robert.ward
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-13@sample.mattermost.com samuel.palmer
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel sameerz@datamotive.io sameer
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel akanksh@datamotive.io akanksh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel amit@datamotive.io amit
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel yogesh@datamotive.io yogesh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel sz@sample.mattermost.com sameer
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel ak@sample.mattermost.com akanksh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel am@sample.mattermost.com amit
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel ya@sample.mattermost.com yogesh
     sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel user-2@sample.mattermost.com samuel.tucker
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel tushar@datamotive.io tushar
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel sourav@datamotive.io sourav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel rishabh@datamotive.io rishabh
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel prateek@datamotive.io prateek
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel vaibhav@datamotive.io vaibhav
-    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel vaibhavc@datamotive.io vaibhavc
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel tt@sample.mattermost.com tushar
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel sp@sample.mattermost.com sourav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel rk@sample.mattermost.com rishabh
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel ps@sample.mattermost.com prateek
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel vt@sample.mattermost.com vaibhav
+    sudo -u mattermost /opt/mattermost/bin/mmctl --local channel users add svann-all:svann-all_channel vc@sample.mattermost.com vaibhavc
 }
 
 get_channels() 
@@ -370,7 +371,7 @@ main()
     # Check if init is required
     if [[ $mode = "init" ]];
     then
-        init_1 $server $server_port $uname $pwd
+        init $server $server_port $uname $pwd
     elif [[ $mode = "always" ]];
     then
         #Create messages
