@@ -11,6 +11,7 @@ import (
 )
 
 var appVMPort = "22"
+var retryCount = 4 // default script timeout is 300 seconds
 
 type VMScriptInputDetails struct {
 	Name        string                `gorm:"type:text;" json:"name"`
@@ -49,9 +50,12 @@ func readJSON(input string) (PplanScriptInputDetails, error) {
 	return sinput, nil
 }
 
-func runRemoteLinuxCommand(ip string, username string, pasword string, dbIP string) error {
-
-	client, session, err := connecToLinuxMachine(ip, username, pasword)
+func runRemoteLinuxCommand(ip string, username string, password string, dbIP string) error {
+	if dbIP == "" || ip == "" || username == "" || password == "" {
+		log.Println("Failed fetching all the required values from script input")
+		os.Exit(1)
+	}
+	client, session, err := connectToLinuxMachine(ip, username, password)
 	if err != nil {
 		return err
 	}
@@ -67,38 +71,55 @@ func runRemoteLinuxCommand(ip string, username string, pasword string, dbIP stri
 	return nil
 }
 
-func connecToLinuxMachine(ip string, username string, pasword string) (*ssh.Client, *ssh.Session, error) {
+func connectToLinuxMachine(ip string, username string, password string) (*ssh.Client, *ssh.Session, error) {
 	sshConfig := &ssh.ClientConfig{
 		User: username,
-		Auth: []ssh.AuthMethod{ssh.Password(pasword)},
+		Auth: []ssh.AuthMethod{ssh.Password(password)},
 	}
 	sshConfig.HostKeyCallback = ssh.InsecureIgnoreHostKey()
-
-	client, err := ssh.Dial("tcp", ip+":"+appVMPort, sshConfig)
-	if err != nil {
-		log.Println("Connection failed: ", err)
-		return nil, nil, err
+	var client *ssh.Client
+	var err error
+	for i := 0; i <= retryCount; i++ {
+		time.Sleep(time.Second * 60)
+		client, err = ssh.Dial("tcp", ip+":"+appVMPort, sshConfig)
+		if err != nil {
+			if i == retryCount {
+				log.Println("SSH connection failed: ", err)
+				return nil, nil, err
+			}
+			log.Println("Connection failed, retrying: ", err)
+			continue
+		}
 	}
 
 	session, err := client.NewSession()
 	if err != nil {
-		log.Println("Connection failed: ", err)
+		log.Println("Creating session failed: ", err)
 		return nil, nil, err
 	}
 	return client, session, err
 }
 
 func main() {
-	time.Sleep(time.Second * 60)
+	/*
+		We identify the VMs by its name
+		Script works only if the DB vm name has 'db' in it and app VM name has 'app' in it
+	*/
 	log.Println("Input json: ", os.Args[1])
 	scriptInput, err := readJSON(os.Args[1])
 	if err != nil {
-		return
+		os.Exit(1)
 	}
 	var dbIP, appIP, username, password string
 	for _, machine := range scriptInput.VMs {
 		if strings.Contains(machine.Name, "db") {
-			dbIP = machine.NetworkInfo[0].PrivateIP
+			if machine.NetworkInfo[0].PrivateIP == "" &&
+				machine.NetworkInfo[0].PublicIP != "" {
+				// In case of VMware only public IP field is populated
+				dbIP = machine.NetworkInfo[0].PublicIP
+			} else {
+				dbIP = machine.NetworkInfo[0].PrivateIP
+			}
 		}
 		if strings.Contains(machine.Name, "app") {
 			appIP = machine.NetworkInfo[0].PublicIP
@@ -108,7 +129,6 @@ func main() {
 	}
 	err = runRemoteLinuxCommand(appIP, username, password, dbIP)
 	if err != nil {
-		return
+		os.Exit(1)
 	}
 }
-
