@@ -1,0 +1,38 @@
+{
+  "test_site_add": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "name": "AWS_Site",
+        "description": "Protection site",
+        "siteType": "Protection",
+        "platformType": "AWS",
+        "node": "mgmt-automation ()",
+        "region": "",
+        "zone": "",
+        "accessKey": "",
+        "secretKey": "",
+        "assert": true
+      },
+      {
+        "name": "VMware_Site",
+        "description": "Recovery site",
+        "siteType": "Recover",
+        "platformType": "VMware",
+        "node": "vmware_node ()",
+        "Username": "",
+        "vCenterServer": "",
+        "password": "",
+        "assert": true
+      }
+    ]
+  },
+  "test_site_delete": {
+    "executeTestCase": false,
+    "data": [
+         "Aws_Site",
+         "VMware_Site",
+         "protection"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+    "test_script": {
+      "executeTestCase": true,
+      "data": [
+        {
+          "description": "VMware_site",
+          "password":"Datamotive@123",
+          "scriptFilePath": "C:\\Users\\Shikha Tiwari\\Downloads\\pre-script",
+          "scriptType":"pre"
+        },{
+          "description": "VMware",
+          "password":"Datamotive@123",
+          "scriptFilePath": "C:\\Users\\Shikha Tiwari\\Downloads\\pre-script",
+          "scriptType":"post"
+        },{
+          "description": "VMwa_site",
+          "password":"Datamotive@123",
+          "scriptFilePath": "C:\\Users\\Shikha Tiwari\\Downloads\\pre-script",
+          "scriptType":"pre"
+        }
+      ]
+    },
+    "test_site_delete": {
+      "executeTestCase": false,
+      "data": [
+           "Aws_Site",
+           "VMware_Site",
+           "protection"
+      ]
+    }
+  }

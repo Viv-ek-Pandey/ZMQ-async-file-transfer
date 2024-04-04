@@ -1,0 +1,15 @@
+{
+    "vm_rename_alert": {
+        "executeTestCase": true,
+        "data": [
+            {
+                "alertTitle": "Virtual machine st-centos1 properties have changed",
+                "ackMsg": "ack"
+            }
+        ]
+    },
+    "vm_properties_changed": {
+        "executeTestCase": true,
+        "data": []
+    }
+}

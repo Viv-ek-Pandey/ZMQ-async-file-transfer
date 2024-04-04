@@ -1,0 +1,23 @@
+{
+  "test_node_edit": true,
+  "test_node_add": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "name": "",
+        "hostname": "",
+        "username": "",
+        "password": "",
+        "platformType": "",
+        "nodeType": "",
+        "assert": true
+      }
+    ]
+  },
+  "test_node_delete": {
+    "executeTestCase": false,
+    "data": [
+     "vmware_node"
+    ]
+  }
+}

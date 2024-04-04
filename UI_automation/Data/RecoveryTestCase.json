@@ -1,0 +1,25 @@
+{
+    "test_test_recovery":{
+        "executeTestCase":true,
+        "data":[
+            {
+                "protection_plan":"Plan_PR-rhel-1",
+                "virtual_machine":[
+                   "PR-rhel-1"
+                ]
+            }
+        ]
+    },
+    "test_recovery":{
+        "executeTestCase":true,
+        "data":[
+            {
+                "protection_plan":"Plan_PR-rhel-1",
+                "virtual_machine":[
+                   "PR-rhel-1"
+
+                ]
+            }
+        ]
+    }
+}

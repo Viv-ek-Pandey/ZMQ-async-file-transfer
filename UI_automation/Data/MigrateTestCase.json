@@ -1,0 +1,13 @@
+{
+  "test_migrate": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "protection_plan": "",
+        "virtual_machine": [
+          ""
+        ]
+      }
+    ]
+  }
+}

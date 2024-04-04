@@ -1,0 +1,79 @@
+[
+  {
+    "setupDetails": {
+      "id": 1,
+      "sourceurl": "",
+      "targeturl": "",
+      "username": "",
+      "password": "",
+      "infra": {}
+    },
+    "suites": [
+      {
+        "suitename": "Node",
+        "datafilename": "Data\\NodeTestCase.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "Site",
+        "datafilename": "Data\\SiteTestCases.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "Protection_Plan",
+        "datafilename": "Data\\PplanTestCases.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "TechSupport1",
+        "datafilename": "Data\\TechSupport.json",
+        "executeTestSuite": false
+      },
+      {
+        "suitename": "Replication",
+        "datafilename": "Data\\Replication.json",
+        "executeTestSuite": false
+      },
+      {
+        "suitename": "TechSupport",
+        "datafilename": "Data\\TechSupportTestCase.json",
+        "executeTestSuite": false
+      },
+      {
+        "suitename": "ReplicationJobs",
+        "datafilename": "Data\\MonitorReplicationTestCase.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "Cleanup",
+        "datafilename": "Data\\CleanupTestRecoveryTestCase.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "Recovery",
+        "datafilename": "Data\\RecoveryTestCase.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "Migrate",
+        "datafilename": "Data\\MigrateTestCase.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "Reverse",
+        "datafilename": "Data\\ReverseTestCases.json",
+        "executeTestSuite": true
+      },
+      {
+        "suitename": "UploadScript",
+        "datafilename": "Data\\Script.json",
+        "executeTestSuite": false
+      },
+      {
+        "suitename": "Alert",
+        "datafilename": "Data\\Alerts.json",
+        "executeTestSuite": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "test_cleanup": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "protection_plan": "",
+        "virtual_machine": [
+          ""
+        ]
+      }
+    ]
+  }
+}

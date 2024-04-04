@@ -1,0 +1,56 @@
+{
+  "test_pplan_edit": true,
+  "test_pplan_add": {
+    "data": [
+      {
+        "pplanName": "",
+        "protection": "AWS_Site",
+        "recovery": "VMware_Site",
+        "bootdelay": "1",
+        "recoveryConfigs": [
+          {
+            "general": {
+              "name": "",
+              "folderPath": "dev-dc",
+              "compute": "51.89.153.96",
+              "storage": "datastore-96",
+              "cpu": "2",
+              "memory": "2"
+            },
+            "network": [
+              {
+                "network": "VM Network",
+                "adapterType": "E1000e"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "pplanName": "",
+        "protection": "AWS_Site",
+        "recovery": "VMware_Site",
+        "bootdelay": "1",
+        "recoveryConfigs": [
+          {
+            "general": {
+              "name": "",
+              "folderPath": "dev-dc",
+              "compute": "51.89.153.96",
+              "storage": "datastore-96",
+              "cpu": "2",
+              "memory": "2"
+            },
+            "network": [
+              {
+                "network": "VM Network",
+                "adapterType": "E1000e"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "expected": "2"
+  }
+}
