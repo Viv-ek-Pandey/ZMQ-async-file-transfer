@@ -1,0 +1,30 @@
+{
+    "testEmail": {
+      "executeTestCase": true,
+      "data":
+      [
+        {
+          "id": "EC-001",
+          "emailAddress": "",
+          "emailPassword": "",
+          "smtpHost": "",
+          "smtpPort": "",
+          "recipientEmail": ""
+        }
+      ]
+    },
+    "testRecipientEmail": {
+      "executeTestCase": true,
+      "data":
+      [
+        {
+          "id": "EC-002",
+          "emailAddress": "",
+          "subscribedEvents": [
+            ""
+          ]
+        }
+      ]
+    }
+  }
+  

@@ -1,12 +1,14 @@
 {
-  "test_migrate": {
+  "testMigrate": {
     "executeTestCase": true,
     "data": [
       {
-        "protection_plan": "",
-        "virtual_machine": [
-          ""
-        ]
+        "id":"MIG-004",
+        "protectionPlan": " ",
+          "virtualMachine": 
+          [
+            " "
+          ]
       }
     ]
   }

@@ -1,23 +1,57 @@
 {
-  "test_node_edit": true,
-  "test_node_add": {
+  "testNodeAdd": {
     "executeTestCase": true,
     "data": [
       {
-        "name": "",
-        "hostname": "",
-        "username": "",
-        "password": "",
-        "platformType": "",
-        "nodeType": "",
+        "id": "Node - 001",
+        "name": " ",
+        "hostname": " ",
+        "username": " ",
+        "password": " ",
+        "platformType": " ",
+        "nodeType": " ",
         "assert": true
       }
     ]
   },
-  "test_node_delete": {
-    "executeTestCase": false,
+  "testNodeEdit": {
+    "executeTestCase": true,
     "data": [
-     "vmware_node"
+      {
+        "id": "Node - 002",
+        "name": "",
+        "hostname": "",
+        "username": "",
+        "password": ""
+      }
+      
+    ]
+  },
+  "testnNodeOffline": {
+    "executeTestCase": true,
+    "data": [
+        {
+          "id": "Node - 004",
+          "name": ""
+        }
+    ]
+  },
+  "testNodeOnline": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "id": "Node - 003",
+        "name": ""
+      }
+    ]
+  },
+  "testNodeDelete": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "id": "Node - 006",
+        "name": ""
+      }
     ]
   }
 }

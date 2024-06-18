@@ -1,23 +1,26 @@
 {
-    "test_reverse":{
+    "testReverse":{
         "executeTestCase":true,
         "data":[
             {
-                "pplanName":"",
-                "virtualMachines":[
-                   ""
+                "id": "REV-003",
+                "protectionPlan":" ",
+                "protection": " ",
+                "recovery": " ",
+                "virtualMachine":[
+                    " "
                 ],
                 "reverseSuffix":"rev",
                 "recoveryConfigs": [
                     {
                         "general": {
-                        "instanceType": "t2.small",
+                        "instanceType": "",
                         "encryptionKMSKey": ""
                     },
                 "network": [
                     {
-                        "VPC": "172.31.0.0/16",
-                        "Subnet": "172.31.48.0/20 - subnet-a5887e94"
+                        "VPC": "",
+                        "Subnet": ""
               }
             ]
           }

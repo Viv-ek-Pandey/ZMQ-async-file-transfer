@@ -1,0 +1,62 @@
+{
+    "testInfraCreation": {
+      "executeTestCase": true,
+      "data":
+      [
+        {
+        "id": "IF-001",
+        "platform": "",
+        "awsAccessKey": "",
+        "awsSecretKey": "",
+        "regionName": "",
+        "imageId": "",
+        "instanceType": "",
+        "keyName": "",
+        "minCount": 1,    
+        "maxCount": 1,
+        "instanceNames": [
+        ""
+        ],
+        "securityGroupIds": [
+        ""
+        ]
+        },
+        {
+        "id": "IF-001",
+        "platform": "",
+        "vCenterServer": "",
+        "userName": "",
+        "password": "",
+        "dataCenterName": "",
+        "templateName": "",
+        "numberOfVirtualMachines": 2,
+        "name": "",
+        "clusterName": "",
+        "dataStore": ""
+        }
+      ]
+    },
+    "testInfraDelete": {
+        "executeTestCase": true,
+        "data":
+        [
+          {
+            "id": "IF-002",
+            "platform": "",
+            "awsAccessKey": "",
+            "awsSecretKey": "",
+            "regionName": ""
+          },
+          {
+            "id": "IF-002",
+            "platform": "",
+            "vCenterServer": "",
+            "userName": "",
+            "password": "",
+            "name":[
+                ""
+            ]
+          }
+        ]
+      }
+  }

@@ -12,6 +12,9 @@ from TestSuites.MigrateTestSuite import MigrateTestSuite
 from Constants.Constants import Constants
 from TestSuites.UploadSriptTestSuite import UploadScriptTestSuite
 from TestSuites.AlertTestSuite import AlertTestSuite
+from TestSuites.EmailTestSuite import EmailTestSuite
+from TestSuites.TechSupportTestSuite import TechSupportTestSuite
+from TestSuites.InfraCreationTestSuite import InfraCreationTestSuite
 from Utilities.Parameterized import ParametrizedTestCase
 from Utilities.utils import createReportFile, getLogger
 
@@ -54,7 +57,16 @@ def addTestSuites(TestSuiteName, unitTestSuite, suite, setup,logger, reportFileN
         case Constants.ALERTS:
             unitTestSuite.addTest(ParametrizedTestCase.parametrize(
                 AlertTestSuite, param=param))
-
+        case Constants.EMAIL:
+            unitTestSuite.addTest(ParametrizedTestCase.parametrize(
+                EmailTestSuite, param=param))
+        case Constants.TECH_SUPPORT:
+            unitTestSuite.addTest(ParametrizedTestCase.parametrize(
+                TechSupportTestSuite, param=param))
+        case Constants.INFRA_CREATION:
+            unitTestSuite.addTest(ParametrizedTestCase.parametrize(
+                InfraCreationTestSuite, param=param))
+        
 
 def runTestSuites(logger):
     reportFileName = createReportFile()

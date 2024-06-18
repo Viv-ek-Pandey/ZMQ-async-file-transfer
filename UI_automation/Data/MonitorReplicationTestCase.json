@@ -1,8 +1,26 @@
 {
-  "test_protection_plan_monitor_replication": {
+  "testMonitorProtectionPlanReplicationOfVirtualMachineJobs": {
   "executeTestCase": true,
   "data": [
-   ""
+    {
+      "id": "REP-005",
+      "protectionPlan": " ",
+      "virtualMachine": [
+        " "
+      ]
+    }
+  ]
+},
+"testMonitorProtectionPlanReplicationOfDisksJobs": {
+  "executeTestCase": true,
+  "data": [
+    {
+      "id": "REP-005",
+      "protectionPlan": " ",
+      "virtualMachine": [
+        " "
+      ]
+    }
   ]
 }
 }

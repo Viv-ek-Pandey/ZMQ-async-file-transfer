@@ -1,25 +1,26 @@
 {
-    "test_test_recovery":{
+    "testTestRecovery":{
         "executeTestCase":true,
         "data":[
-            {
-                "protection_plan":"Plan_PR-rhel-1",
-                "virtual_machine":[
-                   "PR-rhel-1"
+              {
+                "id": "TREC-001",
+                "protectionPlan": " ",
+                "virtualMachine": [
+                  " "
                 ]
-            }
+              }
         ]
     },
-    "test_recovery":{
+    "testRecovery":{
         "executeTestCase":true,
         "data":[
-            {
-                "protection_plan":"Plan_PR-rhel-1",
-                "virtual_machine":[
-                   "PR-rhel-1"
-
+              {   
+                "id": "REC-006",
+                "protectionPlan": " ",
+                "virtualMachine": [
+                  " "
                 ]
-            }
+              }
         ]
     }
 }

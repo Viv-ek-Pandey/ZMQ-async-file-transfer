@@ -1,11 +1,12 @@
 {
-  "test_cleanup": {
+  "testCleanup": {
     "executeTestCase": true,
     "data": [
       {
-        "protection_plan": "",
-        "virtual_machine": [
-          ""
+      "id": "TREC-008",
+      "protectionPlan": " ",
+      "virtualMachine": [
+        " "
         ]
       }
     ]

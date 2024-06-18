@@ -2,70 +2,106 @@ import json
 import unittest
 from Constants.Constants import Constants
 from Actions.RecoveryActions import RecoveryActions
-from Utilities.utils import getLogger
 from Utilities.XLUtils import suiteReportHeader
 from Utilities.Parameterized import ParametrizedTestCase
-from Utilities.XLUtils import getOrCreateSheet
+from Utilities.XLUtils import getOrCreateSheet, createSummarySheet, summaryHeader, addTestResultToReportSheet
 from Utilities.conftest import setupBrowser
 from Utilities.utils import loadFilePath, login
+import os
 
 
 class RecoveryTestSuite(ParametrizedTestCase):
-    """This function will call only once at starting of the suite to set up browser"""
+
 
     @classmethod
     def setUpClass(cls):
+        '''This function will call only once at starting of the suite to set up browser
+        '''
         setupBrowser(cls)
         cls.RecoveryActions = RecoveryActions(cls.driver)
-        cls.logger = getLogger()
 
-    '''This function will call at the starting before calling each method, it will login to setup and will create 
-    report file as well'''
 
     def setUp(self):
-        filePath = loadFilePath(self.param["datafilename"])
-        with open(filePath) as f:
-            self.TestCases = json.load(f)
+        '''
+        This function will call at the starting before calling each method, it will login to setup and will create 
+        report file as well
+        '''
         self.logger = self.param["logger"]
-        self.reportFileName = self.param["reportFileName"]
+        filePath = loadFilePath(self.param[Constants.DATAFILENAME])
+        if os.path.exists(filePath):
+            with open(filePath) as f:
+                self.TestCases = json.load(f)
+        else:
+            self.logger.info(Constants.JSON_FILE_NOT_FOUND)
+        self.reportFileName = self.param[Constants.REPORT_FILENAME]
         self.reportFilePath = loadFilePath(f'{Constants.REPORT_DIR}\\{self.reportFileName}')
+        summary = createSummarySheet(self.reportFilePath)
+        if summary:
+            getOrCreateSheet(self.reportFilePath, Constants.SUMMARY)
+            header = summaryHeader(self.reportFilePath)
+            if header:
+                suiteReportHeader(self.reportFilePath, Constants.SUMMARY,
+                                Constants.SUMMARY_HEADER, Constants.SUMMARY_TEST_SHEET_NAME)
         createSheet = getOrCreateSheet(self.reportFilePath, Constants.TEST_RECOVERY)
         if not createSheet:
-            self.logger.warning("Report File Not found")
-        login(self, self.param["setup"], self.RecoveryActions, goToPage="protection/plans", key="targeturl")
+            self.logger.warning(Constants.REPORT_FILE_NOT_FOUND)
+        login(self, self.param["setup"], self.RecoveryActions, goToPage=Constants.PROTECTION_PLAN_ACTION, key="targeturl")
 
-    '''This function will call method executeTestRecovery from RecoveryAction'''
 
-    def test_test_recovery(self):
-        if self.TestCases.get("test_test_recovery") is not None:
-            executeTestCase = self.TestCases["test_test_recovery"]["executeTestCase"]
-            Test_Case_Name = list(self.TestCases.keys())[0]
+    def testTestRecovery(self):
+        '''
+        This function will call method executeTestRecovery from RecoveryAction
+        '''
+        if self.TestCases.get("testTestRecovery") is not None:
+            executeTestCase = self.TestCases["testTestRecovery"]["executeTestCase"]
             if executeTestCase:
                 suiteReportHeader(self.reportFilePath, Constants.TEST_RECOVERY,
-                                  Constants.TEST_RECOVERY_HEADER, Constants.RECOVERY_TEST_SHEET_NAME)
-                for data in self.TestCases.get("test_test_recovery")["data"]:
-                    self.RecoveryActions.executeTestRecovery(data, self.reportFilePath, Test_Case_Name, self.logger)
+                                  Constants.HEADER, Constants.RECOVERY_TEST_SHEET_NAME)
+                result = []
+                for data in self.TestCases.get("testTestRecovery")["data"]:
+                    testCaseName = list(self.TestCases.keys())[0]
+                    testCaseStatus= self.RecoveryActions.executeTestRecovery(data, self.reportFilePath, self.logger, testCaseName)
+                    result.append(testCaseStatus)
+                if Constants.FAILED not in result:
+                    addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.PASSED)
+                else:
+                    addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.FAILED)
             else:
                 self.logger.warning("Skipped Test Recovery ")
         else:
             self.logger.warning("Skipped test recovery ")
 
-    '''This function will call method executeRecovery from RecoveryAction'''
 
-    def test_virtual_machine_recovery(self):
-        if self.TestCases.get("test_recovery") is not None:
-            executeTestCase = self.TestCases["test_recovery"]["executeTestCase"]
-            Test_Case_Name = list(self.TestCases.keys())[1]
+    def testVirtualMachineRecovery(self):
+        '''
+        This function will call method executeRecovery from RecoveryAction
+        '''
+        if self.TestCases.get("testRecovery") is not None:
+            executeTestCase = self.TestCases["testRecovery"]["executeTestCase"]
+            testCaseName = list(self.TestCases.keys())[1]
             if executeTestCase:
-                self.RecoveryActions.executeRecovery(self.TestCases.get("test_recovery")["data"], self.reportFilePath,
-                                                     Test_Case_Name)
+                suiteReportHeader(self.reportFilePath, Constants.TEST_RECOVERY,
+                                  Constants.HEADER, Constants.RECOVERY_SHEET_NAME)
+                result = []
+                for data in self.TestCases.get("testRecovery")["data"]:
+                    testCaseStatus = self.RecoveryActions.executeRecovery(data, self.reportFilePath,
+                                                         testCaseName, self.logger)
+                    result.append(testCaseStatus)
+                if Constants.FAILED not in result:
+                    addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.PASSED)
+                else:
+                    addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.FAILED)
             else:
                 self.logger.warning("Skipped Recovery")
         else:
             self.logger.warning("Skipped recovery")
 
+
     @classmethod
     def tearDownClass(cls):
+        '''
+        This function always will get called at the end to close the browser
+        '''
         cls.driver.quit()
 
 

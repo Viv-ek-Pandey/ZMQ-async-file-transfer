@@ -1,37 +1,48 @@
 import openpyxl
 from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
+from Constants.Constants import Constants
 
 
 def createWorkBook(path):
-    """Creates workbook on the provided path"""
+    '''
+    Creates workbook on the provided path
+    '''
     wb = openpyxl.Workbook()
     wb.save(filename=path)
 
 
 def getRowCount(filepath, sheetname):
-    """get row count from Excel file"""
+    '''
+    get row count from Excel file
+    '''
     workbook = openpyxl.load_workbook(filepath)
     sheet = workbook[sheetname]
     return sheet.max_row
 
 
 def getColCount(filename, sheetname):
-    """get column count from Excel file"""
+    '''
+    get column count from Excel file
+    '''
     workbook = openpyxl.load_workbook(filename)
     sheet = workbook[sheetname]
     return sheet.max_column
 
 
 def readata(filename, sheetname, rowNum, colNum):
-    """read excel cell data (filename=excel filename, sheet=sheetname,rowNum,column)"""
+    '''
+    read excel cell data (filename=excel filename, sheet=sheetname,rowNum,column)
+    '''
     workbook = openpyxl.load_workbook(filename)
     sheet = workbook[sheetname]
     return sheet.cell(row=rowNum, column=colNum).value
 
 
 def writeData(filename, sheetname, rowNum, colNum, data):
-    """write data in Excel cell"""
+    '''
+    write data in Excel cell
+    '''
     workbook = openpyxl.load_workbook(filename)
     if sheetname not in workbook.sheetnames:
         sheet = workbook.create_sheet(sheetname)
@@ -43,7 +54,9 @@ def writeData(filename, sheetname, rowNum, colNum, data):
 
 
 def getOrCreateSheet(filename, sheetname=None):
-    """create a sheet in Excel file"""
+    '''
+    create a sheet in Excel file
+    '''
     workbook = openpyxl.load_workbook(filename)
     if sheetname not in workbook.sheetnames:
         sheet = workbook.create_sheet(sheetname)
@@ -64,9 +77,10 @@ def suiteReportHeader(filepath, ws, suiteHeader, testCaseName):
 
 
 def adjustColWidthBasedOntextLen(filename, sheetname):
-    """adjust column width in Excel report based on column value  length
-        this should be used  after all the data has been fed to excel"""
-
+    '''
+    adjust column width in Excel report based on column value  length
+        this should be used  after all the data has been fed to excel
+    '''
     workbook = openpyxl.load_workbook(filename)
     if sheetname not in workbook.sheetnames:
         sheet = workbook.create_sheet(sheetname)
@@ -89,7 +103,9 @@ def adjustColWidthBasedOntextLen(filename, sheetname):
 
 
 def mergeCol(filename, sheetname, rs, re, cs, ce):
-    """merge column and rows in Excel file"""
+    '''
+    merge column and rows in Excel file
+    '''
     workbook = openpyxl.load_workbook(filename)
     if sheetname not in workbook.sheetnames:
         sheet = workbook.create_sheet(sheetname)
@@ -99,8 +115,9 @@ def mergeCol(filename, sheetname, rs, re, cs, ce):
 
 
 def addTestResultToReportSheet(filepath, worksheet, header, data, status):
-    """For adding test case header in test suite work sheet"""
-
+    '''
+    For adding test case header in test suite work sheet
+    '''
     rowCound = getRowCount(filepath, worksheet)
     for ind, title in enumerate(header):
         if ind == len(header) - 1:
@@ -115,3 +132,22 @@ def addTestResultToReportSheet(filepath, worksheet, header, data, status):
                 titleVal = data
             writeData(filepath, worksheet, rowCound + 1, ind + 1, titleVal)
     adjustColWidthBasedOntextLen(filepath, worksheet)
+
+
+def createSummarySheet(reportFilePath):
+    workbook = openpyxl.load_workbook(reportFilePath, read_only=False)
+    sheetNames = workbook.sheetnames
+    for sheet in sheetNames:
+        if sheet != Constants.SUMMARY:
+            return True
+
+
+def summaryHeader(reportFilePath):
+    workbook = openpyxl.load_workbook(reportFilePath, read_only=False)
+    sheet = workbook.worksheets[1]
+    values = []
+    for row in sheet:
+        value = row[0].value
+        values.append(value)
+    if not "Summary" in values:
+        return True

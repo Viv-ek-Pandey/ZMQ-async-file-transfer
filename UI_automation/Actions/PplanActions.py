@@ -1,314 +1,262 @@
-from time import sleep
-from Constants.ApiConstants import ApiConstants
 from Constants.Constants import Constants
 from Constants.XpathConstants import XpathConstants
 from Utilities.CommonWebPageActions import CommonWebPageActions
 from selenium.webdriver.common.by import By
-from Utilities.utils import getApiResponse, getLogger, getResponseFromResponseArray
+from Utilities.utils import validateIfGivenSiteIsPresent, configureProtectionPlan, checkJobStatusOfVirtualMachine
 from Utilities.XLUtils import addTestResultToReportSheet
+import traceback
 
 
 class PplanActions(CommonWebPageActions):
-
+    
     def __init__(self, driver):
         super().__init__(driver)
         self.driver = driver
-        self.logger = getLogger()
 
-    def test_pplan_add(self, data, filepath, logger):
-        """To find the protection plan table"""
-        self.findElement((By.XPATH, XpathConstants.TABLE_XPATH))
-        validateGivenSitesPresent = self.validateGivenSitesPresent(data)
-        if not validateGivenSitesPresent:
-            self.logger.warning("Site Not Present")
-            return False
-        ''' click on Add protection Plan button'''
-        self.onClick((By.XPATH, XpathConstants.ADD_BUTTON_XPATH))
-
-        '''Get site response from browser and set protection plan wizard first step i.e. general step'''
-        sites = getApiResponse(self, 'api/v1/sites')
-        resObj = self.setGeneralInfoPage(sites, data)
-        if not resObj:
-            self.logger.error(f"Protection plan with name {data['pplanName']} not created")
-            return False
-        else:
-            '''Get all the site data which is required to make api calls from general step'''
-
-            vmwareFolderDataurl = resObj["vmwareFolderDataurl"]
-            recoverySiteName = resObj["recoverySiteName"]
-            networkUrl = resObj["networkUrl"]
-            protectionSiteName = resObj["protectionSiteName"]
-            recoverySiteId = resObj["recoverySiteId"]
-            vmListResp = resObj["vmListResp"]
-            result = Constants.PROTECTION_PLAN_CREATED
-
-            '''select virtual machine from the protected infra'''
-            updatedJsonVmData = self.setVMFromVMList(data, vmListResp, protectionSiteName)
-            network = getResponseFromResponseArray(self, networkUrl)
-            if network is not None:
-                ''' set recovery configuration of virtual machine'''
-                if isinstance(updatedJsonVmData, list):
-                    self.setRecoveryConfigs(updatedJsonVmData, recoverySiteName, recoverySiteId, vmwareFolderDataurl)
-                else:
-                    self.logger.warning("Recovery configuration of virtual machine could not be set ")
-                    return False
-
-                '''enter boot delay'''
-                self.clearInputFields((By.XPATH, XpathConstants.BOOT_DELAY_XPATH))
-                self.sendInputKeys((By.XPATH, XpathConstants.BOOT_DELAY_XPATH), data["bootdelay"])
-                self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-
-                '''enter replication interval, check encryptiononwire checkbox'''
-                self.singleSelectFromDropdown((By.XPATH, XpathConstants.REPLICATION_MINUTE_INTERVAL_XPATH), "10 Minutes")
-                self.onAnimationClick((By.XPATH, XpathConstants.ENCRYPTION_ON_WIRE_CHECKBOX_XPATH))
-                self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-                self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-                self.onClick((By.XPATH, XpathConstants.FINISH_BUTTON_XPATH))
-                self.onClick((By.XPATH, XpathConstants.SUCCESS_MESSAGE_POPUP_XPATH))
-                sleep(10)
-                self.onClick((By.XPATH, XpathConstants.CONFIGURE_SECTION_XPATH))
+    
+    def addProtectionPlan(self, data, filepath, logger):
+        try:
+            '''
+            Add Protection Plan
+            data: json data received from json file
+            filepath: absolute file path where reports willbe created
+            logger: logger object
+            '''
+            logger.info(Constants.PROTECTION_PLAN_CREATION_INITIATED_SUCCESSFULLY)
+            # To find the protection plan table
+            self.findElement((By.XPATH, XpathConstants.TABLE_XPATH))
+            validateGivenSiteIsPresent = validateIfGivenSiteIsPresent(self, data, logger)
+            if not validateGivenSiteIsPresent:
                 addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST,
-                                           Constants.PROTECTION_PLAN_HEADER, data, result)
+                                       Constants.PROTECTION_PLAN_HEADER, data, Constants.SITE_NOT_PRESENT)
+                logger.error(Constants.SITE_NOT_PRESENT)
+                return Constants.FAILED
+            else:
+                logger.info(Constants.SITE_PRESENT)
+                # Click on Configure
+                self.onClick((By.XPATH, XpathConstants.CONFIGURE_SECTION_XPATH))
+                # Click on Protection Plan
+                self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_SECTION_XPATH))
+                # click on Add protection Plan button
+                self.onClick((By.XPATH, XpathConstants.ADD_BUTTON_XPATH))
+                # call configureProtectionPlan function from utils
+                status = configureProtectionPlan(self, data, filepath, logger)
+                addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_CREATED)
                 logger.info(Constants.PROTECTION_PLAN_CREATED)
-                return True
+                return status
+
+        except Exception:
+            logger.error(traceback.format_exc())
+
+    
+    def editProtectionPlan(self, data, filepath, logger):
+        try:
+            '''
+            Edit Protection Plan
+            data: json data received from json file
+            filepath: absolute file path where reports will be created
+            logger: logger object
+            '''
+            logger.info(Constants.PROTECTION_PLAN_EDIT_INITIATED_SUCCESSFULLY)
+            planName = data["protectionPlanName"]
+            # Click on Configure
+            self.onClick((By.XPATH, XpathConstants.CONFIGURE_SECTION_XPATH))
+            # Click on Protection Plan
+            self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_SECTION_XPATH))
+            checkIfPlanIsPresent = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(planName)))
+            if not checkIfPlanIsPresent:
+                addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST,
+                                       Constants.PROTECTION_PLAN_HEADER, planName, Constants.PROTECTION_PLAN_NOT_FOUND)
+                logger.error(Constants.PROTECTION_PLAN_NOT_FOUND)
+                return Constants.FAILED
             else:
-                self.logger.warning("pplan not reacted : network issue")
-                return False
+                logger.info(Constants.PROTECTION_PLAN_PRESENT)
+                # Click on Particular Plan
+                self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(planName)))
+                # Click Actions
+                self.onClick((By.XPATH, XpathConstants.ACTIONS_BUTTON_XPATH))
+                # Click Edit
+                self.onClick((By.XPATH, XpathConstants.EDIT_BUTTON_XPATH))
+                # call configureProtectionPlan function from utils
+                status = configureProtectionPlan(self, data, filepath, logger)
+                addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_EDIT)
+                logger.info(Constants.PROTECTION_PLAN_EDIT)
+                return status
 
-    def setGeneralInfoPage(self, sites, jsonTestData):
-
-        """set general page data in plan wizard it takes two parameters sites (got from browser api response) and
-        data (got from json)"""
-        if sites is not None:
-            recoverySiteId = ''
-            protectionSiteId = ''
-            recoverySiteName = ''
-            protectionSiteName = ''
-            networkUrl = ''
-            pplanName = jsonTestData.get("pplanName")
-            protectionName = jsonTestData.get("protection")
-            recoveryName = jsonTestData.get("recovery")
-
-            for site in sites:
-                if site["name"] == jsonTestData["recovery"]:
-                    recoverySiteId = site["id"]
-                    recoverySiteName = site["platformDetails"]["platformType"]
-                elif site["name"] == jsonTestData["protection"]:
-                    protectionSiteId = site["id"]
-                    protectionSiteName = site["platformDetails"]["platformType"]
-
-            if recoverySiteId != '':
-                networkUrl = ApiConstants.GET_NETWORK.replace(
-                    "recoverySiteId", f'{recoverySiteId}')
-                vmwareFolderDataurl = ApiConstants.GET_VMWARE_DATACENTER.replace(
-                    "recoverySiteId", f'{recoverySiteId}')
+        except Exception:
+            logger.error(traceback.format_exc())
+    
+    
+    def stopProtectionPlan(self, data, filepath, logger):
+        try:
+            '''
+            Stop Protection Plan
+            data: json data received from json file
+            filepath: absolute file path where reports will be created
+            logger: logger object
+            '''
+            protectionPlan = data["pplanName"]
+            logger.info(Constants.PROTECTION_PLAN_STOP_INITIATED_SUCCESSFULLY)
+            checkIfPlanIsPresent = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(protectionPlan)))
+            if not checkIfPlanIsPresent:
+                addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_NOT_FOUND)
+                logger.error(Constants.PROTECTION_PLAN_NOT_FOUND)
             else:
-                self.logger.error("protection plan not got created site id not found")
-                return False
-            '''Set Plan name, recovery site ,protection site fields'''
-            self.sendInputKeys((By.XPATH, XpathConstants.PROTECTION_PLAN_NAME_TEXTBOX_XPATH), pplanName)
-            vmListUrl = ApiConstants.GET_PPLAN_VM_LIST.replace("protectionId", f'{protectionSiteId}')
-            self.singleSelectFromDropdown((By.XPATH, XpathConstants.PROTECTION_SITE_NAME_XPATH), protectionName)
-            sleep(5)
-            self.singleSelectFromDropdown((By.XPATH, XpathConstants.RECOVERY_SITE_NAME), recoveryName)
-            vmListResp = getApiResponse(self, vmListUrl)
-            sleep(5)
-            self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-            return {"protectionSiteId": protectionSiteId, "recoverySiteName": recoverySiteName,
-                    "protectionSiteName": protectionSiteName, "networkUrl": networkUrl,
-                    "vmwareFolderDataurl": vmwareFolderDataurl, "recoverySiteId": recoverySiteId,
-                    "vmListResp": vmListResp}
-        else:
-            self.logger.error(f'In {jsonTestData["pplanName"]} pplan, site data not found')
-            return False
-
-    def setVMFromVMList(self, jsontestData, vmListResp, protectionSiteName):
-
-        """This function will set vm from protection it takes jsontestData (data got from json), vmListUrl (url for
-        fetching vm list) and protectionSiteName"""
-
-        updatedJsonVmData = []
-        jsonTestVMsInfo = jsontestData["recoveryConfigs"]
-        '''This function will get all the vm list from protected infrastructure'''
-        for jsonVm in jsonTestVMsInfo:
-            '''loop through response data array and check if json vm name is same as one of response vm data 
-            if so update founded vm moref in json data for further operation'''
-            for vml in vmListResp:
-                general = jsonVm["general"]
-                if vml["name"] == general["name"]:
-                    moref = vml["moref"]
-                    self.clearInputFields((By.XPATH, XpathConstants.SEARCH_BOX_XPATH))
-                    '''Search in vm list page '''
-                    self.sendInputKeys((By.XPATH, XpathConstants.SEARCH_BOX_XPATH), general["name"])
-                    sleep(2)
-                    self.onEnter((By.XPATH, XpathConstants.SEARCH_BOX_XPATH))
-
-                    '''For selecting vm vmware, azure has tree view and other platform has normal grid view'''
-
-                    if protectionSiteName == Constants.VMware:
-                        '''check on searched vm '''
-                        self.onAnimationClick((By.XPATH, XpathConstants.VMWARE_VM_CHECKBOX_XPATH.format(moref)))
-                        self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-                        self.onClick((By.XPATH, XpathConstants.BACK_BUTTON_XPATH))
+                logger.info(Constants.PROTECTION_PLAN_PRESENT)
+                    # Click on Particular Plan
+                self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(protectionPlan)))
+                protectionPlanRunning = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_RUNNING_XPATH))
+                if protectionPlanRunning:
+                    # Click Actions
+                    self.onClick((By.XPATH, XpathConstants.ACTIONS_BUTTON_XPATH))
+                    # Click Stop
+                    self.onClick((By.XPATH, XpathConstants.STOP_BUTTON_XPATH))
+                    messagePopup = self.findElement((By.XPATH, XpathConstants.MESSAGE_POPUP_XPATH))
+                    messagePopup = messagePopup.text
+                    self.onClick((By.XPATH, XpathConstants.CLOSE_MESSAGE_POPUP_XPATH))
+                    self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_ELEMENT_XPATH))
+                    addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, messagePopup)
+                    logger.info(messagePopup)
+                    if Constants.PROTECTION_PLAN_STOP in messagePopup:
+                        return Constants.PASSED
                     else:
-                        '''check on searched vm '''
-                        self.onAnimationClick((By.XPATH, XpathConstants.AWS_VM_CHECKBOX_XPATH))
-                        self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-                        self.onClick((By.XPATH, XpathConstants.BACK_BUTTON_XPATH))
-
-                    '''Json data does not contain vm moref as it comes from infra and we will require it for further operation
-                    thus need to update it in json data and pass'''
-
-                    general["moref"] = vml["moref"]
-                    updatedJsonVmData.append(jsonVm)
-                    break
-
-        '''click on next page'''
-        sleep(3)
-        self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-
-        '''return json data with moref of vm updated in it'''
-        return updatedJsonVmData
-
-    '''To set recovery configuration of selected virtual machine'''
-
-    def setRecoveryConfigs(self, jsonVmArray, recoverySiteName, recoverySiteId, folderDataUrl):
-        """First vm recovery configuration by default is opened thus below code first close it
-        and then if we go in platform specific configuration it will start from opening recovery configuration"""
-
-        element = self.findElement(
-            (By.XPATH, XpathConstants.ARROW_BUTTON_XPATH))
-        if element is not None:
-            self.onClick((By.XPATH, XpathConstants.ARROW_BUTTON_XPATH))
-
-        '''different target platform has different fields to fill '''
-        match recoverySiteName:
-            case Constants.VMware:
-                self.setVMwareRecoveryConfiguration(
-                    recoverySiteId, jsonVmArray, folderDataUrl)
-
-    '''This will set recovery configuration of virtual machine for VMware platform '''
-
-    def setVMwareRecoveryConfiguration(self, recoverySiteId, jsonVmArray, folderDataUrl):
-
-        for data in jsonVmArray:
-
-            '''extracting all the json data '''
-            general = data["general"]
-            networks = data["network"]
-            name = general['name']
-            vmMoref = general["moref"]
-            compute = general["compute"]
-            storage = general["storage"]
-            cpu = general["cpu"]
-            memory = general["memory"]
-            datacenterId = ''
-            folderPath = general['folderPath'].split('/')
-
-            '''For vmware to fetch folder data we need to datacenter ID and it come from below api response and 
-            from that first data will be datacenter ID'''
-            folderData = getResponseFromResponseArray(self, folderDataUrl)
-            for fold in folderData:
-                if fold['name'] == folderPath[0]:
-                    datacenterId = fold["id"]
-
-            '''scroll until it find the element with mentioned xpath '''
-
-            self.scrollToFindElement(
-                (By.XPATH, XpathConstants.VIRTUAL_MACHINE_NAME_XPATH.format(vmMoref)))
-            ''' click on vm's name and open vm configuration, click on general title to fill general data '''
-
-            self.onClick((By.XPATH, XpathConstants.VIRTUAL_MACHINE_NAME_XPATH.format(vmMoref)))
-            self.onClick((By.XPATH, XpathConstants.GENERAL_TAB_XPATH.format(vmMoref)))
-            self.onClick((By.XPATH, XpathConstants.LOCATION_FOLDER_PATH_XAPTH.format(vmMoref)))
-            for i, name in enumerate(folderPath):
-                if i == (len(folderPath) - 1):
-                    self.goToVmwareFolderPath(
-                        folderData, name, recoverySiteId, vmMoref, True, datacenterId)
+                        return Constants.FAILED
                 else:
-                    folderData = self.goToVmwareFolderPath(
-                        folderData, name, recoverySiteId, vmMoref, False)
+                    protectionPlanStop = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_STOP_XPATH))
+                    self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_ELEMENT_XPATH))
+                    if protectionPlanStop:
+                        addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_ALREADY_STOP)
+                        logger.warning(Constants.PROTECTION_PLAN_ALREADY_STOP)
+                        return Constants.PASSED
 
-            self.singleSelectFromDropdown(
-                (By.XPATH, XpathConstants.GUEST_OS_XPATH.format(vmMoref)), "Rhel")
-            self.searchSelectFromDropdown((By.XPATH, XpathConstants.FIRMAWARE_TYPE_XPATH.format(vmMoref)),
-                                          'BIOS')
-            self.searchSelectFromDropdown(
-                (By.XPATH, XpathConstants.COMPUTE_XPATH.format(vmMoref)), compute)
-            self.searchSelectFromDropdown(
-                (By.XPATH, XpathConstants.STORAGE_XPATH.format(vmMoref)), storage)
-            self.clearInputFields(
-                (By.XPATH, XpathConstants.CPU_XPATH.format(vmMoref)))
-            self.sendInputKeys(
-                (By.XPATH, XpathConstants.CPU_XPATH.format(vmMoref)), 4)
-            self.onClick((By.XPATH, XpathConstants.NETWORK_TAB_XPATH.format(vmMoref)))
-
-            '''set vm networks'''
-            self.setNetworks(networks, vmMoref)
-
-        self.onClick((By.XPATH, XpathConstants.NEXT_BUTTON_XPATH))
-
-    def goToVmwareFolderPath(self, folderData, name, recoverySiteId, moref, select, datacenterId=None):
-        """for vmware as target to select target folder"""
-        res = []
-        for i, fol in enumerate(folderData):
-            folId = fol["id"]
-            folName = fol["name"]
-            if folName == name:
-                if select:
-                    sleep(3)
-                    self.findElement((By.XPATH, XpathConstants.LOCATION_FOLDER_PATH_CHECKBOX_XPATH.format(moref, folId)))
-                    sleep(3)
-                    self.onAnimationClick(
-                        (By.XPATH, XpathConstants.LOCATION_FOLDER_PATH_CHECKBOX_XPATH.format(moref, folId)))
-                    computUrl = ApiConstants.GET_VMWARE_COMPUTE.replace(
-                        "siteId", f"{recoverySiteId}")
-                    computUrl = computUrl.replace("dataCenter", datacenterId)
-                    self.onClick(
-                        (By.XPATH, XpathConstants.OK_BUTTON_XPATH))
-                    sleep(5)
-                    getResponseFromResponseArray(self, computUrl)
+        except Exception:
+            logger.error(traceback.format_exc())
+    
+    
+    def startProtectionPlan(self, data, filepath, logger):
+        try:
+            '''
+            Start Protection Plan
+            data: json data received from json file
+            filepath: absolute file path where reports will be created
+            logger: logger object
+            '''
+            protectionPlan = data["pplanName"]
+            logger.info(Constants.PROTECTION_PLAN_START_INITIATED_SUCCESSFULLY)
+            checkIfPlanIsPresent = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(protectionPlan)))
+            if not checkIfPlanIsPresent:
+                addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_NOT_FOUND)
+                logger.error(Constants.PROTECTION_PLAN_NOT_FOUND)
+            else:
+                logger.info(Constants.PROTECTION_PLAN_PRESENT)
+                # Click on Particular Plan
+                self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(protectionPlan)))
+                protectionPlanStop = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_STOP_XPATH))
+                if protectionPlanStop:
+                    # Click Actions
+                    self.onClick((By.XPATH, XpathConstants.ACTIONS_BUTTON_XPATH))
+                    # Click Start
+                    self.onClick((By.XPATH, XpathConstants.START_BUTTON_XPATH))
+                    messagePopup = self.findElement((By.XPATH, XpathConstants.MESSAGE_POPUP_XPATH))
+                    messagePopup = messagePopup.text
+                    self.onClick((By.XPATH, XpathConstants.CLOSE_MESSAGE_POPUP_XPATH))
+                    # click protection plan
+                    self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_ELEMENT_XPATH))
+                    addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, messagePopup)
+                    logger.info(messagePopup)
+                    if Constants.PROTECTION_PLAN_START in messagePopup:
+                        return Constants.PASSED
+                    else:
+                        return Constants.FAILED
                 else:
-                    getVmwareFolURL = ApiConstants.GET_VMWARE_FOLDER_LIST.replace(
-                        "recoverySiteId", f"{recoverySiteId}")
-                    getVmwareFolURL = getVmwareFolURL.replace("id", fol["id"])
-                    self.onClick((By.XPATH, XpathConstants.DATACENTER_ARROW_BUTTON))
-                    sleep(5)
-                    res = getResponseFromResponseArray(self, getVmwareFolURL)
-                    break
-        return res
+                    protectionPlanRunning = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_RUNNING_XPATH))
+                    # click protection plan
+                    self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_ELEMENT_XPATH))
+                    if protectionPlanRunning:
+                        addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_ALREADY_STARTED)
+                        logger.warning(Constants.PROTECTION_PLAN_ALREADY_STARTED)
+                        return Constants.PASSED
+        
+        except Exception:
+            logger.error(traceback.format_exc())
 
-    def setNetworks(self, networks, vmMoref):
-        """fill network configuration by looping through"""
-        for ind, net in enumerate(networks):
-            network = net["network"]
-            adapterType = net["adapterType"]
-            self.onClick(
-                (By.XPATH, XpathConstants.CONFIG_XPATH.format(vmMoref, ind)))
-            self.searchSelectFromDropdown(
-                (By.XPATH, XpathConstants.NETWORK_TEXTBOX_XPATH.format(vmMoref, ind)), network)
-            self.singleSelectFromDropdown(
-                (By.XPATH, XpathConstants.ADAPTER_TYPE_TEXTBOX_XPATH.format(vmMoref, ind)), adapterType)
-            self.onClick(
-                (By.XPATH, XpathConstants.SAVE_BUTTON_XPATH))
-
-    def validateGivenSitesPresent(self, data):
-
-        """Validated if the site data given in plan data file is present on the UI"""
-        self.onClick((By.XPATH, XpathConstants.CONFIGURE_SECTION_XPATH))
-        self.onClick((By.XPATH, XpathConstants.SITE_SECTION_XPATH))
-        self.findElement((By.XPATH, XpathConstants.SITE_TABLE_XPATH))
-        protectionSite = data["protection"]
-        recoverySite = data["recovery"]
-        isProtectionSitePresent = self.findElement((By.XPATH, XpathConstants.SITE_XPATH.format(protectionSite)))
-        isRecoverySitePresent = self.findElement((By.XPATH, XpathConstants.SITE_XPATH.format(recoverySite)))
-        if isProtectionSitePresent is None:
-            isProtectionSitePresent = self.findElement((By.XPATH, XpathConstants.SITE_URL_XPATH.format(protectionSite)))
-        if isRecoverySitePresent is None:
-            isRecoverySitePresent = self.findElement((By.XPATH, XpathConstants.SITE_URL_XPATH.format(recoverySite)))
-        self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_SECTION_XPATH))
-        self.findElement((By.XPATH, XpathConstants.TABLE_XPATH))
-        if isProtectionSitePresent is None and isRecoverySitePresent is None:
-            self.logger.warning("Site Not Present")
-            return False
-        return True
+    
+    def deleteProtectionPlan(self, data, filepath, logger):
+        try:
+            '''
+            Delete Protection Plan
+            data: json data received from json file
+            filepath: absolute file path where reports will be created
+            logger: logger object
+            '''
+            protectionPlan = data["pplanName"]
+            virtualMachine = data["virtualMachine"]
+            logger.info(Constants.PROTECTION_PLAN_DELETE_INITIATED_SUCCESSFULLY)
+            checkIfPlanIsPresent = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(protectionPlan)))
+            if not checkIfPlanIsPresent:
+                addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, Constants.PROTECTION_PLAN_NOT_FOUND)
+                logger.error(Constants.PROTECTION_PLAN_NOT_FOUND)
+            else:
+                logger.info(Constants.PROTECTION_PLAN_PRESENT)
+                # Click on Particular protection Plan'''
+                self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_XPATH.format(protectionPlan)))
+                protectionPlanRunning = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_RUNNING_XPATH))
+                if protectionPlanRunning:
+                    # Scroll to find replication jobs
+                    self.scrollToFindElement((By.XPATH, XpathConstants.REPLICATION_JOBS_XPATH))
+                    virtualMachineIcon = self.findElement((By.XPATH, XpathConstants.VIRTUAL_MACHINE_ICON_XPATH))
+                    if not virtualMachineIcon:
+                        self.onClick((By.XPATH, XpathConstants.REPLICATION_JOBS_XPATH))
+                    # To find and click on virtual machine icon"
+                    self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_DATA_XPATH))
+                    self.findElement((By.XPATH, XpathConstants.VIRTUAL_MACHINE_ICON_XPATH))
+                    self.onAnimationClick((By.XPATH, XpathConstants.VIRTUAL_MACHINE_ICON_XPATH))
+                    # To find virtual machine table
+                    self.findElement((By.XPATH, XpathConstants.VM_LIST_TABLE_XPATH))
+                    # To find and click Configure section
+                    self.onClick((By.XPATH, XpathConstants.CONFIGURE_SECTION_XPATH))
+                    for machine in virtualMachine:
+                        checkJobStatusOfVirtualMachine(self, machine, filepath, logger)
+                    self.scrollTopToFindElement()
+                    # Click Actions
+                    self.onClick((By.XPATH, XpathConstants.ACTIONS_BUTTON_XPATH))
+                    # Click Stop
+                    self.onClick((By.XPATH, XpathConstants.STOP_BUTTON_XPATH))
+                    # Click Actions
+                    self.onClick((By.XPATH, XpathConstants.ACTIONS_BUTTON_XPATH))
+                    # Click Remove
+                    self.onClick((By.XPATH, XpathConstants.REMOVE_XPATH))
+                    # click confirm button
+                    self.onClick((By.XPATH, XpathConstants.CONFIRM_BUTTON_XPATH))
+                    messagePopup = self.findElement((By.XPATH, XpathConstants.MESSAGE_POPUP_XPATH))
+                    messagePopup = messagePopup.text
+                    # click protection plan
+                    self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_ELEMENT_XPATH))
+                    addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, messagePopup)
+                    logger.info(messagePopup)
+                    if Constants.PROTECTION_PLAN_DELETE in messagePopup:
+                        return Constants.PASSED
+                    else:
+                        return Constants.FAILED
+                else:
+                    protectionPlanStop = self.findElement((By.XPATH, XpathConstants.PROTECTION_PLAN_STOP_XPATH))
+                    if protectionPlanStop:
+                        # Click Actions
+                        self.onClick((By.XPATH, XpathConstants.ACTIONS_BUTTON_XPATH))
+                        # Click Remove
+                        self.onClick((By.XPATH, XpathConstants.REMOVE_XPATH))
+                        # click confirm 
+                        self.onClick((By.XPATH, XpathConstants.CONFIRM_BUTTON_XPATH))
+                        messagePopup = self.findElement((By.XPATH, XpathConstants.MESSAGE_POPUP_XPATH))
+                        messagePopup = messagePopup.text
+                        # click protection plan
+                        self.onClick((By.XPATH, XpathConstants.PROTECTION_PLAN_ELEMENT_XPATH))
+                        addTestResultToReportSheet(filepath, Constants.PROTECTION_PLAN_TEST, Constants.PROTECTION_PLAN_HEADER, data, messagePopup)
+                        logger.info(messagePopup)
+                        if Constants.PROTECTION_PLAN_DELETE in messagePopup:
+                            return Constants.PASSED
+                        else:
+                            return Constants.FAILED
+        
+        except Exception:
+            logger.error(traceback.format_exc())

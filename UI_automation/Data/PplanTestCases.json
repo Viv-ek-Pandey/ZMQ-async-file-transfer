@@ -1,53 +1,99 @@
 {
-  "test_pplan_edit": true,
-  "test_pplan_add": {
+  "testProtectionPlanAdd": {
+    "executeTestCase": true,
     "data": [
       {
-        "pplanName": "",
-        "protection": "AWS_Site",
-        "recovery": "VMware_Site",
-        "bootdelay": "1",
+        "id": "PP-001",
+        "pplanName": " ",
+        "protection":" ",
+        "recovery": " ",
+        "bootdelay": " ",
         "recoveryConfigs": [
           {
             "general": {
-              "name": "",
-              "folderPath": "dev-dc",
-              "compute": "51.89.153.96",
-              "storage": "datastore-96",
-              "cpu": "2",
-              "memory": "2"
+              "name": " ",
+              "folderPath": " ",
+              "compute": " ",
+              "storage": " ",
+              "guestOs": " ",
+              "firmwareType": " ",
+              "instanceType": " ",
+              "volumeType": " "
             },
             "network": [
               {
-                "network": "VM Network",
-                "adapterType": "E1000e"
+                "vpc": " ",
+                "subnet": " ",
+                "securityGroups": " "
               }
             ]
           }
         ]
-      },
+      }
+    ],
+    "expected": "2"
+  },
+  "testProtectionPlanEdit": {
+    "executeTestCase": true,
+    "data": [
       {
+        "id": "PP-004",
+        "protectionPlanName": "",
         "pplanName": "",
-        "protection": "AWS_Site",
-        "recovery": "VMware_Site",
-        "bootdelay": "1",
+        "protection":"",
+        "recovery": "",
+        "bootdelay": "",
         "recoveryConfigs": [
           {
             "general": {
               "name": "",
-              "folderPath": "dev-dc",
-              "compute": "51.89.153.96",
-              "storage": "datastore-96",
-              "cpu": "2",
-              "memory": "2"
+              "guestOs": "",
+              "firmwareType": "",
+              "instanceType": "",
+              "volumeType": ""
             },
             "network": [
               {
-                "network": "VM Network",
-                "adapterType": "E1000e"
+                "vpc": "",
+                "subnet": "",
+                "securityGroups": ""
               }
             ]
           }
+        ]
+      }
+    ],
+    "expected": "2"
+  },
+  "testProtectionPlanStop": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "id": "PP-002",
+        "pplanName": ""
+      }
+    ],
+    "expected": "2"
+  },
+  "testProtectionPlanStart": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "id": "PP-003",
+        "pplanName": ""
+      }
+    ],
+    "expected": "2"
+  },
+  "testProtectionPlanDelete": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "id": "PP-005",
+        "pplanName": "",
+        "virtualMachine":
+        [
+          ""
         ]
       }
     ],

@@ -1,13 +1,45 @@
 {
-  "test_site_add": {
+  "testSiteAdd": {
     "executeTestCase": true,
     "data": [
       {
-        "name": "AWS_Site",
-        "description": "Protection site",
-        "siteType": "Protection",
-        "platformType": "AWS",
-        "node": "mgmt-automation ()",
+        "id": "Site - 001",
+        "name": " ",
+        "description": " ",
+        "siteType": " ",
+        "platformType": " ",
+        "node": " ",
+        "region": " ",
+        "zone": " ",
+        "accessKey": " ",
+        "secretKey": " ",
+        "assert": true
+        },
+        {
+        "id": "Site - 001",
+        "name": " ",
+        "description": " ",
+        "siteType": " ",
+        "platformType": " ",
+        "node": " ",
+        "region": " ",
+        "zone": " ",
+        "accessKey": " ",
+        "secretKey": " ",
+        "assert": true
+        }
+    ]
+  },
+  "testSiteEdit": {
+    "executeTestCase": true,
+    "data": [
+      {
+        "id": "Site - 002",
+        "name": "",
+        "description": "",
+        "siteType": "",
+        "platformType": "",
+        "node": "",
         "region": "",
         "zone": "",
         "accessKey": "",
@@ -15,11 +47,12 @@
         "assert": true
       },
       {
-        "name": "VMware_Site",
-        "description": "Recovery site",
-        "siteType": "Recover",
-        "platformType": "VMware",
-        "node": "vmware_node ()",
+        "id": "Site - 002",
+        "name": "",
+        "description": "",
+        "siteType": "",
+        "platformType": "",
+        "node": "",
         "Username": "",
         "vCenterServer": "",
         "password": "",
@@ -27,12 +60,13 @@
       }
     ]
   },
-  "test_site_delete": {
-    "executeTestCase": false,
+  "testSiteDelete": {
+    "executeTestCase": true,
     "data": [
-         "Aws_Site",
-         "VMware_Site",
-         "protection"
+        {
+          "id": "Site - 005",
+          "name": ""
+        }
     ]
   }
 }

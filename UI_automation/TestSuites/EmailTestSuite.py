@@ -1,16 +1,16 @@
 import json
-import unittest
-from Constants.Constants import Constants
-from Actions.MigrateActions import MigrateActions
+from Actions.EmailActions import EmailActions
 from Utilities.XLUtils import suiteReportHeader
 from Utilities.Parameterized import ParametrizedTestCase
 from Utilities.XLUtils import getOrCreateSheet, createSummarySheet, summaryHeader, addTestResultToReportSheet
 from Utilities.conftest import setupBrowser
 from Utilities.utils import loadFilePath, login
+from Constants.Constants import Constants
+import unittest
 import os
 
 
-class MigrateTestSuite(ParametrizedTestCase):
+class EmailTestSuite(ParametrizedTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -18,7 +18,7 @@ class MigrateTestSuite(ParametrizedTestCase):
         This function will call only once at starting of the suite to set up browser
         '''
         setupBrowser(cls)
-        cls.MigrateActions = MigrateActions(cls.driver)
+        cls.EmailActions = EmailActions(cls.driver)
 
 
     def setUp(self):
@@ -42,33 +42,56 @@ class MigrateTestSuite(ParametrizedTestCase):
             if header:
                 suiteReportHeader(self.reportFilePath, Constants.SUMMARY,
                                 Constants.SUMMARY_HEADER, Constants.SUMMARY_TEST_SHEET_NAME)
-        createSheet = getOrCreateSheet(self.reportFilePath, Constants.MIGRATE_TEST)
+        createSheet = getOrCreateSheet(self.reportFilePath, Constants.EMAIL_TEST)
         if not createSheet:
             self.logger.warning(Constants.REPORT_FILE_NOT_FOUND)
-        login(self, self.param["setup"], self.MigrateActions, goToPage=Constants.PROTECTION_PLAN_ACTION, key="targeturl")
+        login(self, self.param["setup"], self.EmailActions, goToPage=Constants.SETTINGS)
+    
 
-
-    def testMigrate(self):
+    def testEmail(self):
         '''
-        This function will call method migrate from MigrateActions
+        This function will call method email from EmailActions
         '''
-        if self.TestCases.get("testMigrate") is not None:
-            executeTestCase = self.TestCases["testMigrate"]["executeTestCase"]
+        if self.TestCases.get("testEmail") is not None:
+            executeTestCase = self.TestCases["testEmail"]["executeTestCase"]
             if executeTestCase:
-                suiteReportHeader(self.reportFilePath, Constants.MIGRATE_TEST,
-                                  Constants.HEADER, Constants.MIGRATE_TEST_SHEET_NAME)
+                suiteReportHeader(self.reportFilePath, Constants.EMAIL_TEST,
+                                  Constants.EMAIL_HEADER, Constants.EMAIL_TEST_SHEET_NAME)
                 result = []
-                for data in self.TestCases.get("testMigrate")["data"]:
-                    testCaseStatus = self.MigrateActions.migrate(data, self.reportFilePath, self.logger)
+                for data in self.TestCases.get("testEmail")["data"]:
+                    testCaseStatus = self.EmailActions.email(data, self.reportFilePath, self.logger)
                     result.append(testCaseStatus)
                 if Constants.FAILED not in result:
                     addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.PASSED)
                 else:
                     addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.FAILED)
             else:
-                self.logger.warning("Skippped Auto Migrate")
+                self.logger.warning("Skipped Email")
         else:
-            self.logger.warning("Skippped auto migrate")
+            self.logger.warning("Email Test Case not added")
+    
+
+    def testRecipientEmail(self):
+        '''
+        This function will call method emailRecipients from EmailActions
+        '''
+        if self.TestCases.get("testRecipientEmail") is not None:
+            executeTestCase = self.TestCases["testRecipientEmail"]["executeTestCase"]
+            if executeTestCase:
+                suiteReportHeader(self.reportFilePath, Constants.EMAIL_TEST,
+                                  Constants.EMAIL_RECIPIENT_HEADER, Constants.EMAIL_RECIPIENT_TEST_SHEET_NAME)
+                result = []
+                for data in self.TestCases.get("testRecipientEmail")["data"]:
+                    testCaseStatus = self.EmailActions.emailRecipients(data, self.reportFilePath, self.logger)
+                    result.append(testCaseStatus)
+                if Constants.FAILED not in result:
+                    addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.PASSED)
+                else:
+                    addTestResultToReportSheet(self.reportFilePath, Constants.SUMMARY, Constants.SUMMARY_HEADER, data, Constants.FAILED)
+            else:
+                self.logger.warning("Skipped Recipient Email")
+        else:
+            self.logger.warning("Email Recipient Test Case not added")
 
 
     @classmethod
@@ -81,3 +104,4 @@ class MigrateTestSuite(ParametrizedTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
