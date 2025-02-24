@@ -102,9 +102,17 @@ run_script_on_vm() {
     Import-Module VMware.PowerCLI
     Connect-VIServer -Server $VCENTER_SERVER -User $VCENTER_USER -Password '$VCENTER_PASSWORD' -Protocol https -Port 443 -Force
     \$vm = Get-VM -Name "$VM_NAME*" | Where-Object { \$_.PowerState -eq 'PoweredOn' } | Select-Object -First 1
+    \$startTime = Get-Date
     while (\$vm.PowerState -ne 'PoweredOn' -or \$vm.ExtensionData.Guest.ToolsRunningStatus -ne 'guestToolsRunning') {
-		Write-Output "Guest Tools not found in running state for VM $VM_NAME"
-        Start-Sleep -Seconds 10
+        \$elapsedTime = (New-TimeSpan -Start \$startTime -End (Get-Date)).TotalSeconds
+        if (\$elapsedTime -ge 90) {
+            Write-Output "Timeout reached. Exiting loop."
+            Write-Output "The guest operations agent could not be contacted"
+            Disconnect-VIServer -Server $VCENTER_SERVER -Force -Confirm:\$false
+            Exit 1
+        }
+        Write-Output "Guest Tools not found in running state for VM $VM_NAME"
+        Start-Sleep -Seconds 5
         \$vm = Get-VM -Name "$VM_NAME*" | Where-Object { \$_.PowerState -eq 'PoweredOn' } | Select-Object -First 1
     }
     \$filePath = "$SCRIPT_PATH"
@@ -256,8 +264,8 @@ main() {
       exit 1
     fi
 	log "Rejoined VM to AD"
-	# waiting for 10 seconds for system to go into reboot
-    sleep 10
+	# waiting for 180 seconds for system to go into reboot and the AD policies to be applied
+    sleep 180
     run_script_on_vm "$VM_NAME" $username $password "C:\\scripts_test\\IISConfigurator_DR.ps1"
     if [ $? -ne 0 ]; then
       log "Exiting, error occurred while executing script"
