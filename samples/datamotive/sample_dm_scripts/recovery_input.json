@@ -1,0 +1,41 @@
+Plan Level
+{
+  "vms": [
+    {
+      "name": "<PROTECTED_VM_NAME>",
+      "sourceID": "<VM_ID>",
+      "targetID": "",
+      "ips": [
+        {
+          "publicIP": "",
+          "privateIP": ""
+        },
+        {
+          "publicIP": "<PUBLIC_IP>",
+          "privateIP": "<PRIVATE_IP>"
+        }
+      ],
+      "credentials": {
+        "username": "",
+        "password": ""
+      }
+    }
+  ]
+}
+
+   VM Level
+   {
+  "name": "<PROTECTED_VM_NAME>",
+  "sourceID": "<SOURCE_VM_ID>",
+  "targetID": "<RECOVERED_VM_ID>",
+  "ips": [
+    {
+      "publicIP": "",
+      "privateIP": ""
+    }
+  ],
+  "credentials": {
+    "username": "",
+    "password": ""
+  }
+}

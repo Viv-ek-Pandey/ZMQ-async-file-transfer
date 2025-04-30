@@ -1,0 +1,27 @@
+PLAN LEVEL
+ {
+  "vms": [
+    {
+      "name": "<PROTECTED_VM_NAME>",
+      "sourceID": "<VM_ID>",
+      "ips": [
+        {
+          "publicIP": "<VM_IP>",
+          "privateIP": ""
+        }
+      ]
+    }
+  ]
+}
+
+VM-Level
+{
+  "name": "<PROTECTED_VM_NAME>",
+  "sourceID": "<VM_ID>",
+  "ips": [
+    {
+      "publicIP": "<VM_IP>",
+      "privateIP": ""
+    }
+  ]
+}
