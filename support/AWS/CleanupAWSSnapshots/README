@@ -1,0 +1,4 @@
+- Shell script to clean up AWS snapshots for the provided instance names. 
+- Uses AWS CLI
+- Script to be updates with the instance names. Instance names are hardcoded currently.
+- Parameters: None

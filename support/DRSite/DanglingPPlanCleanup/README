@@ -1,0 +1,7 @@
+Shell script to delete a dangling protection plan from DR site
+
+- In situations where the DC site pplan is deleted and the DR site pplan is left dangling use this utility
+- Cleans up the volume infos and recovery entity info along with the plan details forcefully from the DB
+- Any infra cleanup required needs to be manually handled
+- Parameter: Protection plan name
+- Sample: ./planCleanup.sh <pplan name>

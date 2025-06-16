@@ -1,0 +1,5 @@
+Run this utility on the management node to remove all the AWS inbuilt tag associations from the system
+
+- It makes connection to the Datamotive Database and removes the tag entries from the tags table starting with "aws:" 
+- This can be extended to delete any other tag or cleanup instance_tags
+- Parameters: none

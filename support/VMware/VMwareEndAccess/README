@@ -1,0 +1,7 @@
+During active replicatons Datamotive disables vMotion of the VM by invoking prepare access. In case of emergency when the vMotion needs to be invoked even during active replication then this utility can be used.
+
+- If the snapshot removal is in progress then running this utility will have no impact as vSphere internally blocks vMotion when snapshot operation is in progress
+- In case of storage vMotion while replication is in progress then stale VMDK files are left behind.
+
+Usage: ./initUnlock.sh <vcenter> <username> <password> <vm_moref>
+Sample: ./initUnlock.sh '54.38.146.215' 'administrator@vsphere.local' 'Ht1abc123$F%^' 'vm-508'

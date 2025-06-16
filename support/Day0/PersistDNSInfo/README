@@ -1,0 +1,6 @@
+Shell script to persist the DNS information on the Datamotive nodes
+
+- Useful when the hostnames are not explicitly resolved
+- Installs resolvconf and sets DNS entries so the values are persisted across reboots
+- Parameters: DNS IPs
+- Sample: ./persistDNS.sh <DNS IP 1> <DNS IP 2>

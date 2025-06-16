@@ -1,0 +1,7 @@
+Utility can be used to reset the recovery status of a recovered VM
+
+- Useful in cases where one of the VM of a pplan has fully recovered and other has failed causing a failed DR Drill
+- Replications can be restarted for the VM after running the utility
+- Parameeters: VM name and protection plan ID
+
+Usage: ./resetVMRecoveryStatus -vm '<VM name>' -plan <plan id> 

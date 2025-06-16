@@ -1,0 +1,22 @@
+Utility to generate a stale file report for the mentioned VMs. Output is a CSV file.
+
+- As a good practice this utility should be run in the vCenter infra to identify any stale vmdk files found in Datastore
+- It compares the snapshot backing disks and active backing disks with the disk files in datastore to identify the stale fils
+
+Utility Help Text
+./GenVMwReport
+All flags are required: -vcenter -user -pass -vm-file
+Usage of ./GenVMwReport:
+  -out string
+      Output CSV file (default "vm_report.csv")
+  -pass string
+      vCenter password
+  -user string
+      vCenter username
+  -vcenter string
+      vCenter URL
+  -vm-file string
+      Path to file containing VM names (one per line)
+
+Utility Sample Run Command:
+./GenVMwReport -pass 'password@123' -user 'administrator@vsphere.local' -vcenter '10.10.1.200' -vm-file 'vmList.txt'

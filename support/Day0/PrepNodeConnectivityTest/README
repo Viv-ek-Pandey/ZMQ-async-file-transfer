@@ -1,0 +1,6 @@
+Utility to verify the connectivity and WinRM command invocation
+
+- Connects to Prep node and runs 'dir' command using WinRM
+- Uses 5985 port by default
+- Parameter: Prep Node IP
+- Sample: ./prepNodeTest <prepNodeIP> 
