@@ -1,0 +1,13 @@
+# config.yaml
+
+common:
+  send_buffer_size: 0  # 1MB // tcp buffer size - overwrite kernel default 
+  receive_buffer_size: 0 # 1MB // tcp buf.....................
+  no_ack: false       # If true, disable ack client and server (full speed send!), false = ack after every chunk(data) msg
+
+client:
+  broker_tcp_address: "tcp://localhost:5559"
+  chunk_size:  8    # chunk size in bytes   #1048576 1mb
+  number_of_workers: 1
+  file_path: "New.txt"
+  high_water_mark: 0 # block send if {number} message in que

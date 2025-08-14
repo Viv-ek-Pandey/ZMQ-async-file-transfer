@@ -1,0 +1,14 @@
+# Ignore PEM files
+*.pem
+
+# Ignore logs folders
+client/log
+server/log
+
+# Ignore all .txt files in client and server
+client/*.txt
+server/*.txt
+
+# Ignore Go binaries
+client/dm-client
+server/dm-server

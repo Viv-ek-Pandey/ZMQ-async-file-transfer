@@ -1,0 +1,15 @@
+# config.yaml
+
+common:
+  send_buffer_size: 0  # // tcp buffer size - overwrite kernel default 
+  receive_buffer_size: 0 #  // tcp buf.....................
+  no_ack: false        # If true, disable ack client and server (full speed send!), false = ack after every chunk(data) msg
+  ack_after: 10      #to be used with no_ack = false ,  server will send ack after {number} and client will wait for ack
+
+server:
+    frontend_tcp_address: "tcp://*:5559"
+    backend_inproc_address: "inproc://backend"
+    number_of_workers: 1
+    generated_file_name_prefix: "Test"
+    high_water_mark: 0 # drop msg if {number} message in que
+    no_write: false #true = dont write to files / consume msg full speed! (no write lag)
