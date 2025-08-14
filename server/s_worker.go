@@ -189,7 +189,7 @@ func ServerWorker(done chan<- string, workerID string, outputFilename string) {
 			receivedChunks++
 			// log.Printf("[Worker %s]: Wrote chunk %s for Client %s. Received: %d/%d", workerID, chunkNumberStr, clientZMQID, receivedChunks, totalExpectedChunks)
 
-			if !config.AppConfig.Common.NoAck && receivedChunks%10 == 0 {
+			if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && receivedChunks%config.AppConfig.Common.AckAfter == 0 {
 				ackChunkNum := chunkNumberStr
 				if _, err := responder.SendMessage("", "ACK", ackChunkNum, workerID); err != nil {
 					// log.Printf("[Worker %s]: Error sending ACK for chunk %s to client %s: %v", workerID, ackChunkNum, clientZMQID, err)

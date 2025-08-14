@@ -3,7 +3,6 @@ package main
 import (
 	"client/config"
 	"client/utils"
-	"encoding/csv"
 	"fmt"
 	"io"
 	"log"
@@ -84,9 +83,9 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 			chunkBuf := make([]byte, chunkSize)
 			chunkNumber := 1
 			// Use per-worker file for client logs; workerID will be known after first ACK
-			var csvWriter *csv.Writer
-			var logFile *os.File
-			ackAfter := 0
+			// var csvWriter *csv.Writer
+			// var logFile *os.File
+
 			for {
 				bytesRead, err := file.Read(chunkBuf)
 				if err != nil && err != io.EOF {
@@ -104,12 +103,10 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 					log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
 				}
 				log.Printf("\n[Client]: %s - Sent chunk :%d", clientID, chunkNumber)
-				ackAfter++
 
-				if !config.AppConfig.Common.NoAck && ackAfter >= 10 {
+				if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && chunkNumber%config.AppConfig.Common.AckAfter == 0 {
 					// wait for ACK before sending the next chunk
 					ackFrames, err := socket.RecvMessage(0)
-					ackAt := time.Now().UnixMilli()
 					if err != nil {
 						log.Printf("\nerror waiting for ACK for chunk %d: %v", chunkNumber, err)
 						break
@@ -119,39 +116,26 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 						log.Printf("\ninvalid ACK message: %v", ackFrames)
 						break
 					}
-					//verify ACK chunk number matches (if provided)
-					if len(ackFrames) >= 2 {
-						if ackChunkNum, err := strconv.Atoi(ackFrames[2]); err == nil {
-							if ackChunkNum != chunkNumber {
-								log.Printf("\nACK chunk mismatch: expected %d got %d", chunkNumber, ackChunkNum)
-							}
-						}
-					}
-					// On first ACK, we know workerID; init file per worker (broker sends [clientID, workerID, ...])
-					workerIDForLog := ""
-					if len(ackFrames) >= 4 {
-						workerIDForLog = ackFrames[3] // ackFrames[2] should be workerID
-					}
-					if csvWriter == nil {
-						csvWriter, logFile, err = utils.InitClientTimingCSV(clientID, workerIDForLog)
-						if err != nil {
-							log.Println("Error initializing client timing CSV:", err)
-						}
-						if logFile != nil {
-							defer logFile.Close()
-						}
-					}
-					if csvWriter != nil {
-						rtt := sentAt - ackAt
-						csvWriter.Write([]string{
-							strconv.Itoa(chunkNumber),
-							strconv.FormatInt(rtt, 10),
-						})
-						csvWriter.Flush()
-					}
-					ackAfter = 0
-				}
 
+					// if csvWriter == nil {
+					// 	csvWriter, logFile, err = utils.InitClientTimingCSV(clientID)
+					// 	if err != nil {
+					// 		log.Println("Error initializing client timing CSV:", err)
+					// 	}
+					// 	if logFile != nil {
+					// 		defer logFile.Close()
+					// 	}
+					// }
+					// if csvWriter != nil {
+					// 	rtt := sentAt - ackAt
+					// 	csvWriter.Write([]string{
+					// 		strconv.Itoa(chunkNumber),
+					// 		strconv.FormatInt(rtt, 10),
+					// 	})
+					// 	csvWriter.Flush()
+					// }
+
+				}
 				chunkNumber++
 			}
 			log.Println("**********Client waiting for DONE FROM SERVER :", clientID)
