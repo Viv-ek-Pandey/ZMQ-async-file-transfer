@@ -26,10 +26,14 @@ func InitBroker(pipe chan<- string) {
 		frontend.SetSndbuf(config.AppConfig.Common.SendBufSize)
 	}
 	defer frontend.Close()
-	// if err = frontend.SetRcvhwm(config.AppConfig.Server.HighWaterMark); err != nil {
-	// 	log.Printf("\n[Broker-ERROR]: Setting HighWaterMark %v\n", config.AppConfig.Server.HighWaterMark)
-	// 	return
-	// }
+	if config.AppConfig.Server.HighWaterMark > 0 {
+		err = frontend.SetRcvhwm(config.AppConfig.Server.HighWaterMark)
+		if err != nil {
+			log.Println("[Broker] : Error setting High Water Mark | err :", err)
+			return
+		}
+		log.Printf("\n[Broker-Socket-Frontend]: Setting HighWaterMark %v\n", config.AppConfig.Server.HighWaterMark)
+	}
 	// log.Printf("\n[Broker]: Setting HighWaterMark %v\n", config.AppConfig.Server.HighWaterMark)
 	frontend.Bind(config.AppConfig.Server.FrontendTCPAddress)
 	log.Println("[Broker]: Frontend ROUTER bound to", config.AppConfig.Server.FrontendTCPAddress)
@@ -92,13 +96,13 @@ func InitBroker(pipe chan<- string) {
 	log.Println("[Broker]: Poller initialized.")
 
 	for { // Main broker event loop
-		sockets, err := poller.Poll(-1)
-		log.Println("[Broker]: Polling ****************")
-		if err != nil {
-			log.Printf("[Broker]: Error polling sockets: %v", err)
-			time.Sleep(100 * time.Millisecond) // Small pause
-			continue
-		}
+		sockets, _ := poller.Poll(-1)
+		// log.Println("[Broker]: Polling ****************")
+		// if err != nil {
+		// 	log.Printf("[Broker]: Error polling sockets: %v", err)
+		// 	time.Sleep(100 * time.Millisecond) // Small pause
+		// 	continue
+		// }
 
 		// Iterate through all sockets that have events
 		for _, socket := range sockets {
@@ -256,10 +260,10 @@ func InitBroker(pipe chan<- string) {
 
 				default: // This case handles actual chunk data, as msgType will be the chunk number (e.g., "1", "2")
 					// Client sends: [clientZMQID, "", ChunkNum, ChunkData, clientSentMicros]
-					// Broker forwards to worker: [workerID, clientZMQID, "", ChunkNum, ChunkData, clientSentMicros, brokerSentMicros]
+					// Broker forwards to worker: [workerID, clientZMQID, "", ChunkNum, ChunkData,hash ,clientSentMicros ,brokerSentMicros]
 					messageForWorker := []string{workerID}
 					messageForWorker = append(messageForWorker, frames[1:]...) // Add client's original frames
-					brkRecvAt := strconv.FormatInt(msgWaitStart, 10)
+					brkRecvAt := strconv.FormatInt(msgRecv, 10)
 					brkSendAt := strconv.FormatInt(time.Now().UnixMilli(), 10)
 					messageForWorker = append(messageForWorker, brkRecvAt, brkSendAt) // Append broker's timestamp
 

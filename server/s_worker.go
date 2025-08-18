@@ -173,18 +173,28 @@ func ServerWorker(done chan<- string, workerID string, outputFilename string) {
 		// Expected frames: [ "", "CHUNK", chunkNumberStr, chunkData, clientSentAtStr, brkRecv,brokerSentAtStr]
 		if len(msg) >= 6 && msg[1] == "CHUNK" {
 			chunkNumberStr := msg[2]
-
-			// chunknumber , clientsent , brkRecv, brokersent , worker rec,  worker loop-recv rtt
+			clientSent, _ := (strconv.Atoi(msg[5]))
+			brokerRecv, _ := (strconv.Atoi(msg[6]))
+			clientToBrokerRtt := brokerRecv - clientSent
+			brokerSent, _ := strconv.Atoi(msg[7])
+			brokerToWorkerRtt := int(chunkMessageRecv) - brokerSent
+			// chunknumber , clientsent , brkRecv,client(send)-broker(recv), brokersent  ,worker rec,broker(send)-worker(recv),  worker loop-recv rtt
 			rtt := strconv.FormatInt(chunkMessageRecv-chunkWaitStart, 10)
-			workerLogChan <- []string{chunkNumberStr, msg[4], msg[5], msg[6], strconv.Itoa(int(chunkMessageRecv)), rtt}
+			workerLogChan <- []string{chunkNumberStr, getTimeStringFromUnixMilliString(msg[5]),
+				getTimeStringFromUnixMilliString(msg[5]), strconv.Itoa(clientToBrokerRtt), getTimeStringFromUnixMilliString(msg[6]), getTimeStringFromUnixMilliString(strconv.Itoa(int(chunkMessageRecv))), strconv.Itoa(brokerToWorkerRtt), rtt}
 			if !config.AppConfig.Server.NoWrite {
+				hashFromClient := msg[4]
+				hash := sha256.Sum256([]byte(msg[3]))
+				if hashFromClient != string(hash[:]) {
+					log.Printf("[Worker %s] : Chunk HASH MISSMATCH ", workerID)
+					return
+				}
 				_, err := file.Write([]byte(msg[3])) // Write the byte slice directly
 				if err != nil {
 					log.Printf("[Worker %s]: Error writing chunk %s to file '%s': %v", workerID, chunkNumberStr, outputFilename, err)
 					return
 				}
 			}
-			stimulateDelay()
 
 			receivedChunks++
 			// log.Printf("[Worker %s]: Wrote chunk %s for Client %s. Received: %d/%d", workerID, chunkNumberStr, clientZMQID, receivedChunks, totalExpectedChunks)
@@ -253,7 +263,9 @@ func truncateFile(fileName string, wId string) {
 // func newZmqSocket(workerID string) (responder *zmq.Socket, err error) {
 
 // }
+func getTimeStringFromUnixMilliString(str string) string {
+	ms, _ := strconv.ParseInt(str, 10, 64)
+	t := time.UnixMilli(ms)
 
-func stimulateDelay() {
-	time.Sleep(time.Millisecond * 200)
+	return t.Format("15:04:05.000")
 }

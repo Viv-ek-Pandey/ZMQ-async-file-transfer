@@ -15,6 +15,7 @@ type Config struct {
 		SendBufSize int  `yaml:"send_buffer_size"`    //overwrite os/kernel tcp buffer
 		RecvBufSize int  `yaml:"receive_buffer_size"` // overwrite os/kernel tcp buffer
 		AckAfter    int  `yaml:"ack_after"`           // send ack after number of messages
+		Repeat      int  `yaml:"repeat"`              //send the same file again  {number of times}
 	} `yaml:"common"`
 
 	Server struct {

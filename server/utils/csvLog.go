@@ -22,11 +22,13 @@ func InitChunkTimingCSV(workerID string) (*csv.Writer, *os.File, error) {
 	// ChunkNo,ClientID,WorkerID,ClientSentMicros,BrokerRecvMicros,WorkerRecvMicros,ClientToBrokerMicros,BrokerToWorkerMicros,ClientToWorkerMicros
 	if err := writer.Write([]string{
 		"ChunkNo",
-		"ClientSentMicros",
-		"BrokerRecvAt(socket(case:)start-time)",
-		"BrokerSentMicros",
-		"WokerRecvMicros",
-		"WokerMSGDelay(msgWait(loop) -> message recv)",
+		"ClientSent",
+		"BrokerRecvAt",
+		"Client(sent)-Broker(recv)",
+		"BrokerSent",
+		"WokerRecv",
+		"Broker(sent)-Worker(recv)",
+		"WokerMSGDelay(time between msg)",
 	}); err != nil {
 		return nil, nil, fmt.Errorf("failed to write CSV header: %v", err)
 	}

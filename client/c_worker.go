@@ -2,7 +2,7 @@ package main
 
 import (
 	"client/config"
-	"client/utils"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"log"
@@ -18,7 +18,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 		log.Printf("\nerror in creating new socket [%v]\n", err)
 		return
 	}
-	socket.SetLinger(-1)
+	// socket.SetLinger(-1)
 
 	defer func() {
 		log.Printf("[Client %s]: Closing socket and marking WaitGroup Done. Waiting for all messages to be sent...", clientID)
@@ -54,8 +54,14 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 		if err != nil {
 			return
 		}
+
+		// if config.AppConfig.Common.Repeat > 0 {
+		// 	totalChunks = totalChunks * int64(config.AppConfig.Common.Repeat)
+		// }
+
 		msg := []string{"", "METADATA", fmt.Sprintf("%d", totalChunks)}
 		log.Printf("[Client %s]: Sending metadata message: %v", clientID, msg)
+
 		_, err = socket.SendMessage(msg) // Use ... to send each string as a separate frame
 		if err != nil {
 			fmt.Printf("\nerror in sending {msg-MetaData} for client %s, err :[%v]\n", clientID, err)
@@ -70,7 +76,10 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 			return
 		}
 		log.Printf("[Client %s]: Got reply after METADATA: %v", clientID, replyFrames)
+		// doneCount := 0
+		// for config.AppConfig.Common.Repeat > 0 && doneCount >= config.AppConfig.Common.Repeat {
 
+		// }
 		if len(replyFrames) >= 1 && replyFrames[1] == "SENDDATA" {
 			log.Printf("[Client %s]: Received SENDDATA signal, starting file transfer.", clientID)
 			file, err := os.Open(filePath)
@@ -82,9 +91,6 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 
 			chunkBuf := make([]byte, chunkSize)
 			chunkNumber := 1
-			// Use per-worker file for client logs; workerID will be known after first ACK
-			// var csvWriter *csv.Writer
-			// var logFile *os.File
 
 			for {
 				bytesRead, err := file.Read(chunkBuf)
@@ -97,7 +103,9 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				}
 				sentAt := time.Now().UnixMilli()
 				// Include client-sent timestamp as a frame after data
-				dataMsg := []string{"", "CHUNK", strconv.Itoa(chunkNumber), string(chunkBuf[:bytesRead]), strconv.FormatInt(sentAt, 10)}
+				dataToSend := chunkBuf[:bytesRead]
+				hash := sha256.Sum256(dataToSend)
+				dataMsg := []string{"", "CHUNK", strconv.Itoa(chunkNumber), string(dataToSend), string(hash[:]), strconv.FormatInt(sentAt, 10)}
 				_, err = socket.SendMessage(dataMsg)
 				if err != nil {
 					log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
@@ -145,6 +153,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				fmt.Printf("\nerror in recv reply after chunks for client %s: [%v]\n", clientID, err)
 				return
 			}
+			// doneCount++
 			log.Printf("[Client %s]: Got reply after CHUNKS: %v", clientID, replyFrames)
 			if len(replyFrames) >= 1 && replyFrames[1] == "DONE" {
 				_, err = socket.SendMessage("", "Done")
@@ -153,12 +162,12 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				}
 			}
 
-			checksum, err := utils.ComputeSHA256(filePath)
-			if err != nil {
-				log.Println("Checksum error:", err)
-				return
-			}
-			log.Println(" checksum is:", checksum)
+			// checksum, err := utils.ComputeSHA256(filePath)
+			// if err != nil {
+			// 	log.Println("Checksum error:", err)
+			// 	return
+			// }
+			// log.Println(" checksum is:", checksum)
 		}
 
 	} else {

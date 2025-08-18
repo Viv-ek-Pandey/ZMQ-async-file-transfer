@@ -25,8 +25,10 @@ func NewZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 		socket.SetSndbuf(config.AppConfig.Common.SendBufSize)
 	}
 
-	// socket.SetSndhwm(config.AppConfig.Client.HighWaterMark)
-	// log.Printf("\n[Client]: Setting High Water Mark %v\n", config.AppConfig.Client.HighWaterMark)
+	if config.AppConfig.Client.HighWaterMark > 0 {
+		socket.SetSndhwm(config.AppConfig.Client.HighWaterMark)
+		log.Printf("\n[Client]: Setting High Water Mark %v\n", config.AppConfig.Client.HighWaterMark)
+	}
 	socket.SetIdentity(id)
 
 	// socket.SetIdentity(id)

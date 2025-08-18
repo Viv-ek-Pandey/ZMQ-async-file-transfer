@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"server/config"
 	"time"
 )
 
@@ -11,8 +12,8 @@ var RunLogDir string
 
 func init() {
 	RunLogDir = fmt.Sprintf("log/run-%s-", time.Now().Format("20060102-1504"))
-	// if config.AppConfig.Client.FilePath != "" {
-	// 	RunLogDir += config.AppConfig.Client.FilePath
-	// }
+	if config.AppConfig.Server.NoWrite {
+		RunLogDir += "no-write"
+	}
 	_ = os.MkdirAll(RunLogDir, 0o755)
 }
