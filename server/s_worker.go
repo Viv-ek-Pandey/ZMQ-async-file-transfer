@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -15,7 +16,7 @@ import (
 )
 
 // ServerWorker represents a worker handling file chunks.
-func ServerWorker(done chan<- string, workerID string, outputFilename string) {
+func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 	if !config.AppConfig.Server.NoWrite {
 		// Create/truncate the output file.
 		truncateFile(outputFilename, workerID)
@@ -153,6 +154,7 @@ func ServerWorker(done chan<- string, workerID string, outputFilename string) {
 
 	//for total time to get all data
 	transferStartTime := time.Now().UnixMilli()
+	lastAck := transferStartTime
 
 	// Main loop for receiving and writing chunks
 	for receivedChunks < totalExpectedChunks {
@@ -199,12 +201,16 @@ func ServerWorker(done chan<- string, workerID string, outputFilename string) {
 			receivedChunks++
 			// log.Printf("[Worker %s]: Wrote chunk %s for Client %s. Received: %d/%d", workerID, chunkNumberStr, clientZMQID, receivedChunks, totalExpectedChunks)
 
-			if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && receivedChunks%config.AppConfig.Common.AckAfter == 0 {
-				ackChunkNum := chunkNumberStr
-				if _, err := responder.SendMessage("", "ACK", ackChunkNum, workerID); err != nil {
+			if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && (chunkNumberStr == strconv.FormatInt(int64(totalExpectedChunks), 10) || receivedChunks%config.AppConfig.Common.AckAfter == 0) {
+				if _, err := responder.SendMessage("", "ACK", chunkNumberStr, workerID); err != nil {
 					// log.Printf("[Worker %s]: Error sending ACK for chunk %s to client %s: %v", workerID, ackChunkNum, clientZMQID, err)
 				}
+				ackTime := time.Now().UnixMilli()
+				ackDelta := ackTime - lastAck
+				lastAck = ackTime
+				workerLogChan <- []string{fmt.Sprintf("Delta From Start/Prev Ack  Time Millisecond :  %d", ackDelta)}
 				// log.Printf("[Worker %s]: Sent ACK for chunk %s to client %s.", workerID, ackChunkNum, clientZMQID)
+
 			}
 			// --- 6. Send ACK for this chunk back to Broker (which forwards to Client) ---
 			// Worker sends: ["", "ACK", chunkNum, worker_ZMQ_identity]
@@ -214,8 +220,9 @@ func ServerWorker(done chan<- string, workerID string, outputFilename string) {
 		}
 	}
 	transferEndTime := time.Now().UnixMilli()
+
 	totalTransferTime := transferEndTime - transferStartTime
-	workerLogChan <- []string{"TOTAL TIME", strconv.FormatInt(totalTransferTime, 10)}
+	workerLogChan <- []string{fmt.Sprintf("TOTAL Time in MilliSec. : %d", totalTransferTime)}
 
 	log.Printf("[Worker %s]: All expected chunks (%d) received(%d) and written to file successfully.", workerID, totalExpectedChunks, receivedChunks)
 
@@ -247,7 +254,7 @@ func ServerWorker(done chan<- string, workerID string, outputFilename string) {
 
 	}
 
-	done <- workerID
+	pipe <- workerID
 	log.Printf("[Worker %s]: Done. Signaled completion.", workerID)
 }
 

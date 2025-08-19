@@ -3,13 +3,13 @@
 common:
   send_buffer_size: 0  # 1MB // tcp buffer size - overwrite kernel default 
   receive_buffer_size: 0 # 1MB // tcp buf.....................
-  no_ack: true       # If true, disable ack client and server (full speed send!), false = ack after every chunk(data) msg
+  no_ack: false       # If true, disable ack client and server (full speed send!), false = ack after {number} chunk(data) msg
   ack_after: 10      #to be used with no_ack = false ,  server will send ack after {number} and client will wait for ack
-  repeat : 10 
+  tcp_full_clear: false #to be used with ack , waits for ack from all server worker . i.e fully drain the tcp socket 
 
 client:
-  broker_tcp_address: "tcp://localhost:5559"
-  chunk_size:  8    # chunk size in bytes   #1048576 1mb
-  number_of_workers: 5
+  broker_tcp_address: "tcp://localhost:5559" #"tcp://13.201.191.160:5559" 
+  chunk_size:  12    # chunk size in bytes   #1048576 1mb
+  number_of_workers: 10
   file_path: "New.txt"
   high_water_mark: 0 # block send if {number} message in que

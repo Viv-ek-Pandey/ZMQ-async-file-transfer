@@ -242,18 +242,7 @@ func InitBroker(pipe chan<- string) {
 					}
 
 				case "Done":
-					// Client sends: [clientZMQID, "", "Done"]
-					// Broker forwards to worker: [workerID, clientZMQID, "", "Done", brokerSentMicros]
-					// messageForWorker := []string{workerID}
-					// messageForWorker = append(messageForWorker, frames...) // Add client's original frames
-					// brkSendAt := strconv.FormatInt(time.Now().UnixMicro(), 10)
-					// messageForWorker = append(messageForWorker, brkSendAt)
 
-					// log.Printf("[Broker]: Forwarding DONE from client %s to worker %s: %v", clientZMQID, workerID, messageForWorker)
-					// _, err := backend.SendMessage(messageForWorker)
-					// if err != nil {
-					// 	log.Printf("[Broker]: WARN: Failed to forward DONE to worker %s for client %s: %v", workerID, clientZMQID, err)
-					// }
 					// Important: Release the worker when the client is done
 					wmap.Store(workerID, "") // Set worker's mapping back to "" (available)
 					log.Printf("[Broker]: Worker %s is now available after client %s finished.", workerID, clientZMQID)

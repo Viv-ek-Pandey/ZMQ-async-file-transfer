@@ -19,6 +19,7 @@ func NewZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if config.AppConfig.Common.RecvBufSize != 0 && config.AppConfig.Common.SendBufSize != 0 {
 		log.Println("[Client]: Overwriting kernel default TCP buffer size")
 		socket.SetRcvbuf(config.AppConfig.Common.RecvBufSize)

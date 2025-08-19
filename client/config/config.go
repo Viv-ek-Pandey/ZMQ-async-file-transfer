@@ -11,11 +11,11 @@ import (
 // Config holds all application configuration settings.
 type Config struct {
 	Common struct {
-		NoAck       bool `yaml:"no_ack"`              // If true, disables ACK messages and enables full-speed send
-		SendBufSize int  `yaml:"send_buffer_size"`    // to overwrite os/kernel tcp buffer
-		RecvBufSize int  `yaml:"receive_buffer_size"` // overwirte os/kernel tcp buffer
-		AckAfter    int  `yaml:"ack_after"`           // send ack after number of messages
-		Repeat      int  `yaml:"repeat"`              //send the same file again  {number of times}
+		NoAck        bool `yaml:"no_ack"`              // If true, disables ACK messages and enables full-speed send
+		SendBufSize  int  `yaml:"send_buffer_size"`    // to overwrite os/kernel tcp buffer
+		RecvBufSize  int  `yaml:"receive_buffer_size"` // overwirte os/kernel tcp buffer
+		AckAfter     int  `yaml:"ack_after"`           // send ack after number of messages
+		TcpFullClear bool `yaml:"tcp_full_clear"`
 	} `yaml:"common"`
 
 	Client struct {

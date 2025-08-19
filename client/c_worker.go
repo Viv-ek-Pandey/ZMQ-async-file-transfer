@@ -12,13 +12,13 @@ import (
 	"time"
 )
 
-func ClientWorker(clientID string, wg *sync.WaitGroup) {
+func ClientWorker(clientID string, wg *sync.WaitGroup,
+	batchDoneChan chan string, batchStartChan chan struct{}, fullClear bool) {
 	socket, err := NewZmqSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
 	if err != nil {
 		log.Printf("\nerror in creating new socket [%v]\n", err)
 		return
 	}
-	// socket.SetLinger(-1)
 
 	defer func() {
 		log.Printf("[Client %s]: Closing socket and marking WaitGroup Done. Waiting for all messages to be sent...", clientID)
@@ -112,11 +112,11 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				}
 				log.Printf("\n[Client]: %s - Sent chunk :%d", clientID, chunkNumber)
 
-				if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && chunkNumber%config.AppConfig.Common.AckAfter == 0 {
+				if (!config.AppConfig.Common.NoAck) && (config.AppConfig.Common.AckAfter > 0) && (chunkNumber%config.AppConfig.Common.AckAfter == 0 || chunkNumber == int(totalChunks)) {
 					// wait for ACK before sending the next chunk
 					ackFrames, err := socket.RecvMessage(0)
 					if err != nil {
-						log.Printf("\nerror waiting for ACK for chunk %d: %v", chunkNumber, err)
+						log.Printf("\nerror recving  ACK for chunk %d: %v", chunkNumber, err)
 						break
 					}
 					// Expected shape: [workerID, clientID, "ACK", chunkNum]
@@ -124,24 +124,14 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 						log.Printf("\ninvalid ACK message: %v", ackFrames)
 						break
 					}
-
-					// if csvWriter == nil {
-					// 	csvWriter, logFile, err = utils.InitClientTimingCSV(clientID)
-					// 	if err != nil {
-					// 		log.Println("Error initializing client timing CSV:", err)
-					// 	}
-					// 	if logFile != nil {
-					// 		defer logFile.Close()
-					// 	}
-					// }
-					// if csvWriter != nil {
-					// 	rtt := sentAt - ackAt
-					// 	csvWriter.Write([]string{
-					// 		strconv.Itoa(chunkNumber),
-					// 		strconv.FormatInt(rtt, 10),
-					// 	})
-					// 	csvWriter.Flush()
-					// }
+					if fullClear {
+						//===============BATCH PAUSE===============//
+						// NEW: notify main that this worker finished its batch
+						batchDoneChan <- clientID
+						fmt.Println("\n\n waiting start!\n", time.Now())
+						// Wait for main to signal start of next batch
+						<-batchStartChan
+					}
 
 				}
 				chunkNumber++
@@ -153,7 +143,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				fmt.Printf("\nerror in recv reply after chunks for client %s: [%v]\n", clientID, err)
 				return
 			}
-			// doneCount++
+
 			log.Printf("[Client %s]: Got reply after CHUNKS: %v", clientID, replyFrames)
 			if len(replyFrames) >= 1 && replyFrames[1] == "DONE" {
 				_, err = socket.SendMessage("", "Done")
