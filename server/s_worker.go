@@ -183,7 +183,7 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 			// chunknumber , clientsent , brkRecv,client(send)-broker(recv), brokersent  ,worker rec,broker(send)-worker(recv),  worker loop-recv rtt
 			rtt := strconv.FormatInt(chunkMessageRecv-chunkWaitStart, 10)
 			workerLogChan <- []string{chunkNumberStr, getTimeStringFromUnixMilliString(msg[5]),
-				getTimeStringFromUnixMilliString(msg[5]), strconv.Itoa(clientToBrokerRtt), getTimeStringFromUnixMilliString(msg[6]), getTimeStringFromUnixMilliString(strconv.Itoa(int(chunkMessageRecv))), strconv.Itoa(brokerToWorkerRtt), rtt}
+				getTimeStringFromUnixMilliString(msg[6]), strconv.Itoa(clientToBrokerRtt), getTimeStringFromUnixMilliString(msg[6]), getTimeStringFromUnixMilliString(strconv.Itoa(int(chunkMessageRecv))), strconv.Itoa(brokerToWorkerRtt), rtt}
 			if !config.AppConfig.Server.NoWrite {
 				hashFromClient := msg[4]
 				hash := sha256.Sum256([]byte(msg[3]))
