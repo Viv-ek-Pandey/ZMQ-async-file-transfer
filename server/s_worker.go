@@ -2,9 +2,7 @@ package main
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"server/config"
@@ -84,6 +82,36 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 		log.Printf("[Worker %s]: Received invalid METADATA message format: %v", workerID, frames)
 		return
 	}
+
+	//============TEST CONNECTION =========/////////
+
+	// //send "START-CONN-TEST" signal
+	// _, err = responder.SendMessage("", "START-CONN-TEST")
+	// if err != nil {
+	// 	log.Printf("[Worker %s]: Error sending START-CONN-TEST message: %v", workerID, err)
+	// 	return
+	// }
+	// recvCount := 0
+
+	// //recv 100 msg 1mb each
+	// for recvCount < 100 {
+	// 	msg, err := responder.RecvMessage(0)
+	// 	if err != nil {
+	// 		log.Printf("[Worker %s]: Error receiving chunk message: %v", workerID, err)
+	// 		return
+	// 	}
+	// 	log.Printf("[Worker %s]: Received message from broker TYPE : %s, len frames : %d", workerID, msg[1], len(msg))
+	// 	recvCount++
+	// }
+	// log.Printf("[Worker %s]: CONNECTION TEST COMPLETE \n", workerID)
+
+	// _, err = responder.SendMessage("", "CONN TEST DONE")
+	// if err != nil {
+	// 	log.Printf("[Worker %s]: Error sending CONN TEST DONE message: %v", workerID, err)
+	// 	return
+	// }
+	// //============TEST CONNECTION =========/////////
+
 	// --- CSV Logging
 	workerWriter, workerFile, _ := utils.InitChunkTimingCSV(workerID)
 	defer func() {
@@ -132,7 +160,7 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 	// Worker replies to the client (via broker).
 	// Worker sends: ["", "SENDDATA"]
 	// log.Printf("[Worker %s]: Sending SENDDATA signal for Client %s.", workerID, clientZMQID)
-	_, err = responder.SendMessage("", "SENDDATA") // Corrected: Must include clientZMQID and empty delimiter
+	_, err = responder.SendMessage("", "SENDDATA")
 	if err != nil {
 		log.Printf("[Worker %s]: Error sending SENDDATA message: %v", workerID, err)
 		return
@@ -227,32 +255,32 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 	log.Printf("[Worker %s]: All expected chunks (%d) received(%d) and written to file successfully.", workerID, totalExpectedChunks, receivedChunks)
 
 	//send done after all expected chunk recvd
-	_, err = responder.SendMessage("", "DONE") // Corrected: Must include clientZMQID and empty delimiter
+	_, err = responder.SendMessage("", "DONE")
 	if err != nil {
 		log.Printf("[Worker %s]: Error sending DONE message: %v", workerID, err)
 		return
 	}
 
-	if !config.AppConfig.Server.NoWrite {
-		// Compute checksum of the received file
-		finalFile, err := os.Open(outputFilename)
-		if err != nil {
-			log.Printf("[Worker %s]: Error opening file '%s' for checksum: %v", workerID, outputFilename, err)
-			return
-		}
-		defer finalFile.Close()
+	// if !config.AppConfig.Server.NoWrite {
+	// 	// Compute checksum of the received file
+	// 	finalFile, err := os.Open(outputFilename)
+	// 	if err != nil {
+	// 		log.Printf("[Worker %s]: Error opening file '%s' for checksum: %v", workerID, outputFilename, err)
+	// 		return
+	// 	}
+	// 	defer finalFile.Close()
 
-		hash := sha256.New()
-		_, err = io.Copy(hash, finalFile)
-		if err != nil {
-			log.Printf("[Worker %s]: Error computing checksum for '%s': %v", workerID, outputFilename, err)
-			return
-		}
+	// 	hash := sha256.New()
+	// 	_, err = io.Copy(hash, finalFile)
+	// 	if err != nil {
+	// 		log.Printf("[Worker %s]: Error computing checksum for '%s': %v", workerID, outputFilename, err)
+	// 		return
+	// 	}
 
-		checksum := hex.EncodeToString(hash.Sum(nil))
-		log.Printf("[Worker %s]: SHA256 Checksum of received file '%s': %s", workerID, outputFilename, checksum)
+	// 	checksum := hex.EncodeToString(hash.Sum(nil))
+	// 	log.Printf("[Worker %s]: SHA256 Checksum of received file '%s': %s", workerID, outputFilename, checksum)
 
-	}
+	// }
 
 	pipe <- workerID
 	log.Printf("[Worker %s]: Done. Signaled completion.", workerID)

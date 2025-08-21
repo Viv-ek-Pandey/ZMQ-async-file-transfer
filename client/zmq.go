@@ -40,7 +40,7 @@ func NewZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 		log.Panicln("[Client]: failed to connect tcpAddr :", tcpAddr)
 		return nil, err
 	}
-	log.Println("[Client]: connect to tcpAddr:", tcpAddr)
+	log.Println("[Client]: connected to tcpAddr:", tcpAddr)
 
 	return socket, err
 

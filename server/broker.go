@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"server/config"
 	"server/utils"
@@ -15,6 +16,7 @@ import (
 var wmap sync.Map
 
 func InitBroker(pipe chan<- string) {
+
 	log.Printf("\n [Broker] - Starting new socket with config %+v \n", config.AppConfig.Server)
 	frontend, err := zmq.NewSocket(zmq.ROUTER)
 	if err != nil {
@@ -111,7 +113,7 @@ func InitBroker(pipe chan<- string) {
 			switch s := socket.Socket; s {
 			case backend: // Messages FROM workers TO broker (via backend)
 
-				log.Println("[Broker]: Backend socket ready for message.")
+				// log.Println("[Broker]: Backend socket ready for message.")
 
 				// Worker's DEALER sends: [worker_ZMQ_identity, "", "REGISTER"]
 				// OR
@@ -147,6 +149,46 @@ func InitBroker(pipe chan<- string) {
 				clientZMQID := FindClient(frames[0]) // This is now the client's ZMQ ID for routing
 				// frames[1] should be the empty delimiter
 
+				//============TEST CONNECTION =========/////////
+				if len(frames) >= 2 && frames[2] == "START-CONN-TEST" {
+					msgToClient := []string{clientZMQID}
+					fmt.Println("**DEBUG ***", frames)
+					msgToClient = append(msgToClient, frames[1:]...)
+					msgToClient = append(msgToClient, frames[0])
+					log.Printf("[Broker]: Forwarding worker reply to client %s: %v", clientZMQID, msgToClient)
+
+					_, err = frontend.SendMessage(msgToClient)
+					if err != nil {
+						log.Printf("[Broker]: WARN: Failed to forward message from worker to client %s: %v", clientZMQID, err)
+					}
+					continue
+				}
+
+				if len(frames) >= 2 && frames[2] == "CONN TEST DONE" {
+					log.Printf("[Broker]: Forwarding worker reply to client %s: %v", clientZMQID, frames)
+					msgToClient := []string{clientZMQID}
+					msgToClient = append(msgToClient, frames[1:]...)
+					msgToClient = append(msgToClient, frames[0])
+					_, err = frontend.SendMessage(msgToClient)
+					if err != nil {
+						log.Printf("[Broker]: WARN: Failed to forward message from worker to client %s: %v", clientZMQID, err)
+					}
+					continue
+				}
+				//============TEST CONNECTION =========/////////
+
+				if len(frames) == 2 && frames[1] == "SENDDATA" {
+					log.Printf("[Broker]: Forwarding worker reply to client %s: %v", clientZMQID, frames)
+					msgToClient := []string{clientZMQID}
+					msgToClient = append(msgToClient, frames[1:]...)
+					msgToClient = append(msgToClient, frames[0])
+					_, err = frontend.SendMessage(msgToClient)
+					if err != nil {
+						log.Printf("[Broker]: WARN: Failed to forward message from worker to client %s: %v", clientZMQID, err)
+					}
+					continue // Process next socket event
+				}
+
 				//======================== CSV LOGGING=============================
 				rtt := strconv.FormatInt(msgRecv-msgWaitStart, 10)
 				brokerLogChan <- []string{clientZMQID, frames[0], frames[2], rtt}
@@ -165,12 +207,14 @@ func InitBroker(pipe chan<- string) {
 				// No `break` here, allow `for _, socket` loop to continue to next ready socket.
 
 			case frontend: // Messages FROM clients TO broker (via frontend)
-				log.Println("[Broker]: Frontend socket ready for message.")
+				// log.Println("[Broker]: Frontend socket ready for message.")
 
 				// Client's DEALER sends: ["", "CONNECT"]
 				// OR
 				// Client's DEALER sends: ["", "METADATA", totalChunks]
 				// OR
+				//Client's DEALER sends: ["",  "TestConn", ChunkData]
+				//OR
 				// Client's DEALER sends: ["", ChunkNum, ChunkData, clientSentAt]
 				// OR
 				// Client's DEALER sends: ["", "Done"]
@@ -214,6 +258,17 @@ func InitBroker(pipe chan<- string) {
 				//======================== CSV LOGGING=============================
 
 				switch msgType {
+				case "TestConn":
+					// Client sends: [clientZMQID, "", "METADATA", Data]
+					// Broker forwards to worker: [workerID,"", "TestConn", Data,]
+					messageForWorker := []string{workerID}                     // Start with worker ID for backend routing
+					messageForWorker = append(messageForWorker, frames[1:]...) // Add client's original frames
+
+					log.Printf("[Broker]: Forwarding TestConn from client %s to worker %s", clientZMQID, workerID)
+					_, err := backend.SendMessage(messageForWorker)
+					if err != nil {
+						log.Printf("[Broker]: WARN: Failed to forward TestConn to worker %s for client %s: %v", workerID, clientZMQID, err)
+					}
 				case "CONNECT":
 					// Client sends: [clientZMQID, "", "CONNECT", clientSentMicros]
 					// Broker replies to client: [clientZMQID, "", "CONNECTED", workerID, brokerSentMicros]
@@ -256,7 +311,7 @@ func InitBroker(pipe chan<- string) {
 					brkSendAt := strconv.FormatInt(time.Now().UnixMilli(), 10)
 					messageForWorker = append(messageForWorker, brkRecvAt, brkSendAt) // Append broker's timestamp
 
-					log.Printf("[Broker]: Forwarding chunk %s from client %s to worker %s", messageForWorker[3], clientZMQID, workerID)
+					// log.Printf("[Broker]: Forwarding chunk %s from client %s to worker %s", messageForWorker[3], clientZMQID, workerID)
 					_, err := backend.SendMessage(messageForWorker)
 					if err != nil {
 						log.Printf("[Broker]: WARN: Failed to forward chunk to worker %s for client %s: %v", workerID, clientZMQID, err)
@@ -306,7 +361,7 @@ func FindWorker(cID string) string {
 
 // FindClient retrieves the clientID assigned to a specific worker.
 func FindClient(wID string) string {
-	log.Println("[Broker] - Finding client for wId :", wID)
+	// log.Println("[Broker] - Finding client for wId :", wID)
 	val, ok := wmap.Load(wID)
 	if ok {
 		if clientID, isString := val.(string); isString {

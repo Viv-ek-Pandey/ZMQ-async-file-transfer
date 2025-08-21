@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-func ClientWorker(clientID string, wg *sync.WaitGroup,
-	batchDoneChan chan string, batchStartChan chan struct{}, fullClear bool) {
+func ClientWorker(clientID string, wg *sync.WaitGroup) {
 	socket, err := NewZmqSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
 	if err != nil {
 		log.Printf("\nerror in creating new socket [%v]\n", err)
@@ -21,17 +20,14 @@ func ClientWorker(clientID string, wg *sync.WaitGroup,
 	}
 
 	defer func() {
-		log.Printf("[Client %s]: Closing socket and marking WaitGroup Done. Waiting for all messages to be sent...", clientID)
-		socket.Close()                                                            // This will now block until all messages are delivered (or an error occurs)
-		log.Printf("[Client %s]: Socket closed and all messages sent.", clientID) // This log will appear only after messages are flushed
+		socket.Close()
+		log.Printf("[Client %s]: Socket closed .", clientID)
 		wg.Done()
 	}()
 	filePath := config.AppConfig.Client.FilePath
 	chunkSize := config.AppConfig.Client.ChunkSize
 
 	// ------ Initial "CONNECT" message ----------
-	// Client (DEALER) sends only the application command.
-	// The DEALER socket automatically prepends its ZMQ identity and an empty delimiter.
 	_, err = socket.SendMessage([]string{"", "CONNECT"})
 	if err != nil {
 		log.Panicln("error in sending --CONNECT-- msg", err)
@@ -55,31 +51,92 @@ func ClientWorker(clientID string, wg *sync.WaitGroup,
 			return
 		}
 
-		// if config.AppConfig.Common.Repeat > 0 {
-		// 	totalChunks = totalChunks * int64(config.AppConfig.Common.Repeat)
-		// }
-
 		msg := []string{"", "METADATA", fmt.Sprintf("%d", totalChunks)}
-		log.Printf("[Client %s]: Sending metadata message: %v", clientID, msg)
+		// log.Printf("[Client %s]: Sending metadata message: %v", clientID, msg)
 
 		_, err = socket.SendMessage(msg) // Use ... to send each string as a separate frame
 		if err != nil {
 			fmt.Printf("\nerror in sending {msg-MetaData} for client %s, err :[%v]\n", clientID, err)
 			return
 		}
-		log.Printf("[Client %s]: Metadata message sent!", clientID)
-		// --- 4. Receive "SENDDATA" signal ---
-		// Client (DEALER) receives only application frames.
-		replyFrames, err = socket.RecvMessage(0) // RecvMessage here must match the broker's send
+		// log.Printf("[Client %s]: Metadata message sent!", clientID)
+
+		// //===========TEST CONNECTION=================//
+		// // --- 4. Receive "START-CONN-TEST" signal ---
+		// // log.Printf("\n\n ** WAITING FOR START CONN TEST SIGNAL ** \n\n")
+		// replyFrames, err = socket.RecvMessage(0) // RecvMessage here must match the broker's send
+		// if err != nil {
+		// 	fmt.Printf("\nerror in recv reply after METADATA for client %s: [%v]\n", clientID, err)
+		// 	return
+		// }
+		// log.Printf("[Client %s]: Got reply after METADATA: %v", clientID, replyFrames)
+
+		// var workerId string
+
+		// if len(replyFrames) >= 2 && replyFrames[1] == "START-CONN-TEST" {
+		// 	log.Printf("[Client %s]: Received START-CONN-TEST signal, starting conn test.", clientID)
+		// 	file, err := os.Open("100MB.txt")
+		// 	if err != nil {
+		// 		log.Println("[Client]: Error opening file:", err)
+		// 		return
+		// 	}
+		// 	defer file.Close()
+		// 	testMsgNumber := 1
+		// 	chunkBuf := make([]byte, 1048576)
+		// 	workerId = replyFrames[2]
+
+		// 	for {
+		// 		bytesRead, err := file.Read(chunkBuf)
+		// 		if err != nil && err != io.EOF {
+		// 			log.Println("Error reading chunk:", err)
+		// 			break
+		// 		}
+		// 		if bytesRead == 0 {
+		// 			break // done
+		// 		}
+		// 		if testMsgNumber == 10 {
+		// 			// wg.Add(1)
+		// 			// go CheckConn(socket, clientID, workerId, wg)
+		// 		}
+		// 		dataToSend := chunkBuf[:bytesRead]
+		// 		dataMsg := []string{"", "TestConn", string(dataToSend)}
+		// 		_, err = socket.SendMessage(dataMsg)
+		// 		if err != nil {
+		// 			log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
+		// 		}
+		// 		testMsgNumber++
+		// 	}
+		// } else {
+		// 	fmt.Println("**FAILED TO RECV START CONN TEST MSG**")
+		// 	return
+		// }
+		// log.Printf("[Client %s]: Waiting for  reply after TEST CONN: %v", clientID, replyFrames)
+		// replyFrames, err = socket.RecvMessage(0) // RecvMessage here must match the broker's send
+		// if err != nil {
+		// 	fmt.Printf("\nerror in recv reply after Test CONN for client %s: [%v]\n", clientID, err)
+		// 	return
+		// }
+		// log.Printf("[Client %s]: Got reply after TEST CONN: %v", clientID, replyFrames)
+		// if len(replyFrames) >= 1 && replyFrames[1] == "CONN TEST DONE" {
+
+		// } else {
+		// 	log.Println("*****CONN TEST FAILED!!***")
+		// 	return
+		// }
+		// //===========TEST CONNECTION=================//
+		//TO-DO*****
+		// IF BAD CONNECTION SEND RECONNECT MESSAGE TO WORKER
+
+		//============Good connection! procceed!==============//
+
+		//===================SEND DATA===================//
+		replyFrames, err = socket.RecvMessage(0)
 		if err != nil {
-			fmt.Printf("\nerror in recv reply after METADATA for client %s: [%v]\n", clientID, err)
+			fmt.Printf("\nerror in recv reply after TestConn for client %s: [%v]\n", clientID, err)
 			return
 		}
-		log.Printf("[Client %s]: Got reply after METADATA: %v", clientID, replyFrames)
-		// doneCount := 0
-		// for config.AppConfig.Common.Repeat > 0 && doneCount >= config.AppConfig.Common.Repeat {
-
-		// }
+		// log.Printf("[Client %s]: Got reply after CONNECTION TEST: %v", clientID, replyFrames)
+		var workerId string
 		if len(replyFrames) >= 1 && replyFrames[1] == "SENDDATA" {
 			log.Printf("[Client %s]: Received SENDDATA signal, starting file transfer.", clientID)
 			file, err := os.Open(filePath)
@@ -110,10 +167,12 @@ func ClientWorker(clientID string, wg *sync.WaitGroup,
 				if err != nil {
 					log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
 				}
-				log.Printf("\n[Client]: %s - Sent chunk :%d", clientID, chunkNumber)
+				// log.Printf("\n[Client]: %s - Sent chunk :%d", clientID, chunkNumber)
 
 				if (!config.AppConfig.Common.NoAck) && (config.AppConfig.Common.AckAfter > 0) && (chunkNumber%config.AppConfig.Common.AckAfter == 0 || chunkNumber == int(totalChunks)) {
 					// wait for ACK before sending the next chunk
+					wg.Add(1)
+					go CheckConn(socket, clientID, workerId, wg)
 					ackFrames, err := socket.RecvMessage(0)
 					if err != nil {
 						log.Printf("\nerror recving  ACK for chunk %d: %v", chunkNumber, err)
@@ -123,14 +182,6 @@ func ClientWorker(clientID string, wg *sync.WaitGroup,
 					if len(ackFrames) < 2 || ackFrames[1] != "ACK" {
 						log.Printf("\ninvalid ACK message: %v", ackFrames)
 						break
-					}
-					if fullClear {
-						//===============BATCH PAUSE===============//
-						// NEW: notify main that this worker finished its batch
-						batchDoneChan <- clientID
-						fmt.Println("\n\n waiting start!\n", time.Now())
-						// Wait for main to signal start of next batch
-						<-batchStartChan
 					}
 
 				}

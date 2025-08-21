@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"runtime"
 	"server/config"
 	"server/utils"
 	"sync"
@@ -11,6 +12,7 @@ import (
 var wg sync.WaitGroup
 
 func main() {
+	runtime.GOMAXPROCS(2)
 	pipe := make(chan string)
 	go InitBroker(pipe)
 	wg.Add(1)
