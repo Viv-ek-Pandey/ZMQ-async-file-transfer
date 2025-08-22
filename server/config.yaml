@@ -9,7 +9,7 @@ common:
 server:
     frontend_tcp_address: "tcp://*:5559"
     backend_inproc_address: "inproc://backend"
-    number_of_workers: 1
+    number_of_workers: 5
     generated_file_name_prefix: "Test"
     high_water_mark: 0 # drop msg if {number} message in que
     no_write: false #true = dont write to files / consume msg full speed! (no write lag)

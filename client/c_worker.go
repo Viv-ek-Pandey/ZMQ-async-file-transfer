@@ -14,12 +14,13 @@ import (
 	zmq "github.com/pebbe/zmq4"
 )
 
-func ClientWorker(clientID string, wg *sync.WaitGroup) {
+func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 	socket, err := NewZmqSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
 	if err != nil {
 		log.Printf("\nerror in creating new socket [%v]\n", err)
 		return
 	}
+	nxt <- struct{}{}
 
 	defer func() {
 		socket.Close()
@@ -173,15 +174,6 @@ func getTotalChunks(chunkSize int64, filePath string) (int64, error) {
 }
 func logTCPStats(socket *zmq.Socket, clientID, workerId string, csvLogger *CSVLogger) error {
 
-	zmqSocket := ZmqConnMetaData{
-		Conn:     socket,
-		ClientId: clientID,
-		WorkerId: workerId,
-	}
-
-	// Create a slice with just this socket for the matching function
-	zmqSockets := []ZmqConnMetaData{zmqSocket}
-
 	// Extract port from broker address
 	// targetPort, err := extractPortFromAddress(config.AppConfig.Client.BrokerTCPAddress)
 	// if err != nil {
@@ -190,5 +182,5 @@ func logTCPStats(socket *zmq.Socket, clientID, workerId string, csvLogger *CSVLo
 	// }
 
 	// Use the configurable TCP matching and logging function
-	return MatchZMQToTCPByProcess(zmqSockets, csvLogger)
+	return MatchZMQToTCPByProcess(csvLogger, clientID)
 }

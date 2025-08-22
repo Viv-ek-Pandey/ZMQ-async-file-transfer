@@ -14,7 +14,10 @@ import (
 )
 
 // ServerWorker represents a worker handling file chunks.
-func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
+func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) {
+	defer func() {
+		wg.Done()
+	}()
 	if !config.AppConfig.Server.NoWrite {
 		// Create/truncate the output file.
 		truncateFile(outputFilename, workerID)
@@ -82,35 +85,6 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 		log.Printf("[Worker %s]: Received invalid METADATA message format: %v", workerID, frames)
 		return
 	}
-
-	//============TEST CONNECTION =========/////////
-
-	// //send "START-CONN-TEST" signal
-	// _, err = responder.SendMessage("", "START-CONN-TEST")
-	// if err != nil {
-	// 	log.Printf("[Worker %s]: Error sending START-CONN-TEST message: %v", workerID, err)
-	// 	return
-	// }
-	// recvCount := 0
-
-	// //recv 100 msg 1mb each
-	// for recvCount < 100 {
-	// 	msg, err := responder.RecvMessage(0)
-	// 	if err != nil {
-	// 		log.Printf("[Worker %s]: Error receiving chunk message: %v", workerID, err)
-	// 		return
-	// 	}
-	// 	log.Printf("[Worker %s]: Received message from broker TYPE : %s, len frames : %d", workerID, msg[1], len(msg))
-	// 	recvCount++
-	// }
-	// log.Printf("[Worker %s]: CONNECTION TEST COMPLETE \n", workerID)
-
-	// _, err = responder.SendMessage("", "CONN TEST DONE")
-	// if err != nil {
-	// 	log.Printf("[Worker %s]: Error sending CONN TEST DONE message: %v", workerID, err)
-	// 	return
-	// }
-	// //============TEST CONNECTION =========/////////
 
 	// --- CSV Logging
 	workerWriter, workerFile, _ := utils.InitChunkTimingCSV(workerID)
@@ -260,7 +234,7 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 		log.Printf("[Worker %s]: Error sending DONE message: %v", workerID, err)
 		return
 	}
-
+	close(workerLogChan)
 	// if !config.AppConfig.Server.NoWrite {
 	// 	// Compute checksum of the received file
 	// 	finalFile, err := os.Open(outputFilename)
@@ -281,8 +255,7 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 	// 	log.Printf("[Worker %s]: SHA256 Checksum of received file '%s': %s", workerID, outputFilename, checksum)
 
 	// }
-
-	pipe <- workerID
+	pipe <- struct{}{}
 	log.Printf("[Worker %s]: Done. Signaled completion.", workerID)
 }
 

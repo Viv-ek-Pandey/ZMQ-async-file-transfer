@@ -10,11 +10,12 @@ var wg sync.WaitGroup
 
 func main() {
 	numWorkers := config.AppConfig.Client.NumberOfWorkers
-
+	nxt := make(chan struct{})
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		randID := utils.GetRandID()
-		go ClientWorker(randID, &wg)
+		go ClientWorker(randID, &wg, nxt)
+		<-nxt
 	}
 
 	// -------------------------

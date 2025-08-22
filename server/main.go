@@ -12,19 +12,20 @@ import (
 var wg sync.WaitGroup
 
 func main() {
+	numWorkers := config.AppConfig.Server.NumberOfWorkers
 	runtime.GOMAXPROCS(2)
-	pipe := make(chan string)
-	go InitBroker(pipe)
+	pipe := make(chan struct{}, numWorkers)
 	wg.Add(1)
-	for i := 0; i < config.AppConfig.Server.NumberOfWorkers; i++ {
+	go InitBroker(pipe)
+	for i := 0; i < numWorkers; i++ {
 		workerID := utils.GetRandID()
 		filename := fmt.Sprintf("%s%d.txt", config.AppConfig.Server.GeneratedFileNamePrefix, i+1)
 		wg.Add(1)
 		go ServerWorker(pipe, workerID, filename)
 	}
+
 	wg.Wait()
-	<-pipe
-	<-pipe
+
 	log.Println("main completed")
 
 }

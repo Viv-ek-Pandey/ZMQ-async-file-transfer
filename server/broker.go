@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"server/config"
 	"server/utils"
@@ -14,7 +15,11 @@ import (
 // wmap stores the mapping between workerID and assigned clientID.
 var wmap sync.Map
 
-func InitBroker(pipe chan<- string) {
+func InitBroker(pipe chan<- struct{}) {
+	defer func() {
+		fmt.Println("returning broker!")
+		wg.Done()
+	}()
 
 	log.Printf("\n [Broker] - Starting new socket with config %+v \n", config.AppConfig.Server)
 	frontend, err := zmq.NewSocket(zmq.ROUTER)
@@ -96,7 +101,8 @@ func InitBroker(pipe chan<- string) {
 	poller.Add(backend, zmq.POLLIN)
 	log.Println("[Broker]: Poller initialized.")
 
-	for { // Main broker event loop
+	for {
+
 		sockets, _ := poller.Poll(-1)
 		// log.Println("[Broker]: Polling ****************")
 		// if err != nil {
@@ -229,17 +235,7 @@ func InitBroker(pipe chan<- string) {
 				//======================== CSV LOGGING=============================
 
 				switch msgType {
-				case "TestConn":
-					// Client sends: [clientZMQID, "", "METADATA", Data]
-					// Broker forwards to worker: [workerID,"", "TestConn", Data,]
-					messageForWorker := []string{workerID}                     // Start with worker ID for backend routing
-					messageForWorker = append(messageForWorker, frames[1:]...) // Add client's original frames
 
-					log.Printf("[Broker]: Forwarding TestConn from client %s to worker %s", clientZMQID, workerID)
-					_, err := backend.SendMessage(messageForWorker)
-					if err != nil {
-						log.Printf("[Broker]: WARN: Failed to forward TestConn to worker %s for client %s: %v", workerID, clientZMQID, err)
-					}
 				case "CONNECT":
 					// Client sends: [clientZMQID, "", "CONNECT", clientSentMicros]
 					// Broker replies to client: [clientZMQID, "", "CONNECTED", workerID, brokerSentMicros]
@@ -248,12 +244,6 @@ func InitBroker(pipe chan<- string) {
 					if err != nil {
 						log.Printf("[Broker]: [ERROR] sending CONNECTED message to client %s: %v", clientZMQID, err)
 					}
-					// No need to forward CONNECT to worker unless worker needs specific init via this message.
-					// If worker needs it, uncomment and adapt:
-					// messageForWorker := []string{workerID}
-					// messageForWorker = append(messageForWorker, frames...)
-					// _, err = backend.SendMessage(messageForWorker...)
-					// if err != nil { log.Printf("[Broker]: WARN: Failed to forward CONNECT to worker %s: %v", workerID, err) }
 
 				case "METADATA":
 					// Client sends: [clientZMQID, "", "METADATA", totalChunksStr]
@@ -269,9 +259,11 @@ func InitBroker(pipe chan<- string) {
 
 				case "Done":
 
-					// Important: Release the worker when the client is done
-					wmap.Store(workerID, "") // Set worker's mapping back to "" (available)
-					log.Printf("[Broker]: Worker %s is now available after client %s finished.", workerID, clientZMQID)
+					fmt.Println(len(pipe))
+					if len(pipe) == config.AppConfig.Server.NumberOfWorkers {
+						close(brokerLogChan)
+						return
+					}
 
 				default: // This case handles actual chunk data, as msgType will be the chunk number (e.g., "1", "2")
 					// Client sends: [clientZMQID, "", ChunkNum, ChunkData, clientSentMicros]
@@ -291,9 +283,6 @@ func InitBroker(pipe chan<- string) {
 			} // End switch s := socket.Socket
 		} // End for _, socket := range sockets
 	} // End for {} (main poller loop)
-
-	// log.Println("Broker completed")
-	// pipe <- "Done"
 }
 
 // FindWorker assigns a worker to a client or returns an already assigned one.

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"encoding/csv"
 	"fmt"
 	"os"
@@ -45,11 +44,11 @@ type ZMQSocketInfo struct {
 	RemotePort int
 }
 
-type ZmqConnMetaData struct {
-	Conn     *zmq.Socket
-	ClientId string
-	WorkerId string
-}
+// type ZmqConnMetaData struct {
+// 	Conn     *zmq.Socket
+// 	ClientId string
+// 	WorkerId string
+// }
 
 // CSVLogger holds the CSV writer and file handle
 type CSVLogger struct {
@@ -59,16 +58,10 @@ type CSVLogger struct {
 
 // InitializeCSVLogger creates a new CSV file and returns a logger
 func InitializeCSVLogger(cID string, wID string) (*CSVLogger, error) {
-	// Create log directory if it doesn't exist
-	timestamp := time.Now().Format("15-04-05")
-	logDir := fmt.Sprintf("log/%v", timestamp)
-	if err := os.MkdirAll(logDir, 0755); err != nil {
-		return nil, fmt.Errorf("failed to create log directory: %v", err)
-	}
 
 	// Create filename with current timestamp
 	filename := fmt.Sprintf("%s-%s.csv", cID, wID)
-	filepath := filepath.Join(logDir, filename)
+	filepath := filepath.Join(RunLogDir, filename)
 
 	// Create the file
 	file, err := os.Create(filepath)
@@ -85,7 +78,6 @@ func InitializeCSVLogger(cID string, wID string) (*CSVLogger, error) {
 		"local_port",
 		"remote_addr",
 		"remote_port",
-		"state",
 		"send_queue_bytes",
 		"send_queue_mb",
 		"recv_queue_bytes",
@@ -127,7 +119,7 @@ func (logger *CSVLogger) Close() error {
 }
 
 // LogConnectionData writes connection data to CSV
-func (logger *CSVLogger) LogConnectionData(socket ZmqConnMetaData, processConn TCPConnectionInfo, detailedConn *TCPConnectionInfo) error {
+func (logger *CSVLogger) LogConnectionData(processConn TCPConnectionInfo, detailedConn *TCPConnectionInfo) error {
 	timestamp := time.Now().Format("15:04:05")
 
 	// Initialize default values
@@ -181,7 +173,6 @@ func (logger *CSVLogger) LogConnectionData(socket ZmqConnMetaData, processConn T
 		strconv.Itoa(processConn.LocalPort),
 		processConn.RemoteAddr,
 		strconv.Itoa(processConn.RemotePort),
-		processConn.State,
 		strconv.Itoa(processConn.SendQ),
 		fmt.Sprintf("%.2f", sendQueueMB),
 		strconv.Itoa(processConn.RecvQ),
@@ -315,58 +306,6 @@ func parseDetailLine(conn *TCPConnectionInfo, line string) {
 	}
 }
 
-// GetZMQSocketPorts gets connection info by parsing /proc/net/tcp
-func GetZMQSocketPorts(targetRemoteAddr string, targetRemotePort int) ([]int, error) {
-	file, err := os.Open("/proc/net/tcp")
-	if err != nil {
-		return nil, fmt.Errorf("failed to open /proc/net/tcp: %v", err)
-	}
-	defer file.Close()
-
-	var localPorts []int
-	scanner := bufio.NewScanner(file)
-
-	// Skip header
-	scanner.Scan()
-
-	for scanner.Scan() {
-		fields := strings.Fields(scanner.Text())
-		if len(fields) < 3 {
-			continue
-		}
-
-		// Parse remote address (format: ADDR:PORT in hex)
-		remoteAddr := fields[2]
-		parts := strings.Split(remoteAddr, ":")
-		if len(parts) != 2 {
-			continue
-		}
-
-		// Convert hex port to decimal
-		portHex := parts[1]
-		port, err := strconv.ParseInt(portHex, 16, 32)
-		if err != nil {
-			continue
-		}
-
-		// Check if this connection is to our target port
-		if int(port) == targetRemotePort {
-			// Parse local address to get local port
-			localAddr := fields[1]
-			localParts := strings.Split(localAddr, ":")
-			if len(localParts) == 2 {
-				localPortHex := localParts[1]
-				localPort, err := strconv.ParseInt(localPortHex, 16, 32)
-				if err == nil {
-					localPorts = append(localPorts, int(localPort))
-				}
-			}
-		}
-	}
-
-	return localPorts, scanner.Err()
-}
-
 // Alternative: Use netstat to correlate ZMQ sockets
 func GetZMQSocketInfo(socket *zmq.Socket) (*ZMQSocketInfo, error) {
 	// Get ZMQ socket options
@@ -383,68 +322,91 @@ func GetZMQSocketInfo(socket *zmq.Socket) (*ZMQSocketInfo, error) {
 	}, nil
 }
 
-// GetProcessTCPConnections gets TCP connections for current process
-func GetProcessTCPConnections(targetPort int) ([]TCPConnectionInfo, error) {
-	pid := os.Getpid()
+// func GetProcessTCPConnection(targetPort int, t string) (TCPConnectionInfo, error) {
+// 	pid := os.Getpid()
+// 	var connection TCPConnectionInfo
 
-	// Use ss with process filter
-	cmd := exec.Command("ss", "-tup", "dst", fmt.Sprintf(":%d", targetPort))
-	output, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to run ss command: %v", err)
-	}
+// 	// Use shell to execute ss -tupn | grep :targetPort
+// 	cmd := exec.Command("bash", "-c", fmt.Sprintf("ss -tupn | grep :%d", targetPort))
+// 	output, err := cmd.Output()
+// 	if err != nil {
+// 		return connection, fmt.Errorf("failed to run ss command: %v", err)
+// 	}
 
-	var connections []TCPConnectionInfo
-	lines := strings.Split(string(output), "\n")
+// 	lines := strings.Split(string(output), "\n")
 
-	for _, line := range lines {
-		if strings.Contains(line, fmt.Sprintf("pid=%d", pid)) {
-			conn := parseProcessConnectionLine(line)
-			if conn.RemotePort == targetPort {
-				connections = append(connections, conn)
-			}
-		}
-	}
+// 	for _, line := range lines {
+// 		line = strings.TrimSpace(line)
+// 		if line == "" {
+// 			continue
+// 		}
 
-	return connections, nil
-}
+// 		fmt.Println("checking line!", line)
 
-func parseProcessConnectionLine(line string) TCPConnectionInfo {
-	// Parse ss -tup output line
+// 		// Only process lines that belong to our process
+// 		if strings.Contains(line, fmt.Sprintf("pid=%d", pid)) {
+// 			fmt.Println("parsing connection for line!", line)
+// 			conn := parseProcessConnectionLineNew(line)
+// 			if conn.RemotePort == targetPort {
+// 				connection = conn
+// 			}
+// 		}
+// 	}
+
+// 	return connection, nil
+// }
+
+func parseProcessConnectionLineNew(line string) TCPConnectionInfo {
+	// Parse ss -tupn output line
+	// Format: tcp ESTAB 0 3500327 54.38.208.202:49394 13.201.191.160:5559 users:(("your_process",pid=12345,fd=10))
 	fields := strings.Fields(line)
-	if len(fields) < 5 {
+	if len(fields) < 6 {
 		return TCPConnectionInfo{}
 	}
 
-	// Extract local and remote addresses
-	localAddr := fields[4]
-	remoteAddr := fields[5]
+	// Extract state (field 1)
+	state := fields[1]
 
-	// Parse local address:port
+	// Extract recv queue (field 2)
+	recvQ, _ := strconv.Atoi(fields[2])
+
+	// Extract send queue (field 3)
+	sendQ, _ := strconv.Atoi(fields[3])
+
+	// Extract local address:port (field 4)
+	localAddr := fields[4]
 	localParts := strings.Split(localAddr, ":")
 	localPort := 0
+	localIP := ""
 	if len(localParts) == 2 {
+		localIP = localParts[0]
 		localPort, _ = strconv.Atoi(localParts[1])
 	}
+	// fmt.Println(localAddr, localPort, localIP)
 
-	// Parse remote address:port
+	// Extract remote address:port (field 5)
+	remoteAddr := fields[5]
 	remoteParts := strings.Split(remoteAddr, ":")
 	remotePort := 0
+	remoteIP := ""
 	if len(remoteParts) == 2 {
+		remoteIP = remoteParts[0]
 		remotePort, _ = strconv.Atoi(remoteParts[1])
 	}
 
 	return TCPConnectionInfo{
-		State:      fields[0],
-		LocalAddr:  localParts[0],
+		State:      state,
+		RecvQ:      recvQ,
+		SendQ:      sendQ,
+		LocalAddr:  localIP,
 		LocalPort:  localPort,
-		RemoteAddr: remoteParts[0],
+		RemoteAddr: remoteIP,
 		RemotePort: remotePort,
 	}
 }
 
 // MatchZMQToTCPByProcess matches ZMQ sockets using process-based correlation and logs to CSV
-func MatchZMQToTCPByProcess(zmqSockets []ZmqConnMetaData, logger *CSVLogger) error {
+func MatchZMQToTCPByProcess(logger *CSVLogger, cID string) error {
 	// Get detailed TCP info using ss -ti
 	targetPort := 5559
 	tcpConnections, err := ParseSSOutput(targetPort)
@@ -453,30 +415,21 @@ func MatchZMQToTCPByProcess(zmqSockets []ZmqConnMetaData, logger *CSVLogger) err
 	}
 
 	// Get process TCP connections using ss -tup
-	processConnections, err := GetProcessTCPConnections(targetPort)
-	if err != nil {
-		return fmt.Errorf("failed to get process connections: %v", err)
+	tmp, _ := clientPortMap.Load(cID)
+	processConnection := tmp.(TCPConnectionInfo)
+
+	// Find matching detailed connection info
+	var detailedConn *TCPConnectionInfo
+	for j := range tcpConnections {
+		if tcpConnections[j].LocalPort == processConnection.LocalPort {
+			detailedConn = &tcpConnections[j]
+			break
+		}
 	}
 
-	// Correlate ZMQ sockets with TCP connections and log to CSV
-	for i, socket := range zmqSockets {
-		if i < len(processConnections) {
-			processConn := processConnections[i]
-
-			// Find matching detailed connection info
-			var detailedConn *TCPConnectionInfo
-			for j := range tcpConnections {
-				if tcpConnections[j].LocalPort == processConn.LocalPort {
-					detailedConn = &tcpConnections[j]
-					break
-				}
-			}
-
-			// Log the connection data to CSV
-			if err := logger.LogConnectionData(socket, processConn, detailedConn); err != nil {
-				return fmt.Errorf("failed to log connection data: %v", err)
-			}
-		}
+	// Log the connection data to CSV
+	if err := logger.LogConnectionData(processConnection, detailedConn); err != nil {
+		return fmt.Errorf("failed to log connection data: %v", err)
 	}
 
 	return nil
