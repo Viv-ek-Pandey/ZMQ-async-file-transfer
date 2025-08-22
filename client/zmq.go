@@ -86,7 +86,7 @@ func MapClientToTCPPort(targetPort int, cID string) error {
 			// Assign the connection to this client
 			clientPortMap.Store(cID, conn)
 			usedLocalPorts.Store(conn.LocalPort, true)
-			fmt.Printf("Mapped client %s to local port %d\n", cID, conn.LocalPort)
+			// fmt.Printf("Mapped client %s to local port %d\n", cID, conn.LocalPort)
 			break // mapping done
 		}
 	}

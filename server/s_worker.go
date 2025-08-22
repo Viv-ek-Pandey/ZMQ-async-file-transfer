@@ -23,8 +23,6 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 		truncateFile(outputFilename, workerID)
 	}
 
-	log.Printf("\n [Worker] - Starting new socket with config %+v \n", config.AppConfig.Server)
-
 	// 1. Initialize ZMQ DEALER Socket
 	responder, err := zmq.NewSocket(zmq.DEALER)
 	if err != nil {
@@ -45,7 +43,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 		return
 	}
 
-	log.Printf("[Worker %s]: Starting. Connecting to broker backend.", workerID)
+	// log.Printf("[Worker %s]: Starting. Connecting to broker backend.", workerID)
 	responder.Connect(config.AppConfig.Server.BackendInprocAddress)
 
 	// 2. Register the worker with the broker
@@ -54,19 +52,19 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 		log.Printf("[Worker %s]: Error sending REGISTER message: %v", workerID, err)
 		return
 	}
-	log.Printf("[Worker %s]: Sent REGISTER message to broker.", workerID)
+	// log.Printf("[Worker %s]: Sent REGISTER message to broker.", workerID)
 
 	var totalExpectedChunks int // Total chunks as parsed from METADATA
 
 	// --- 3. Receive METADATA message from Broker ---
 	// Broker sends: [ "", "METADATA", totalChunks]
-	log.Printf("[Worker %s]: Waiting for METADATA message from broker...", workerID)
+	// log.Printf("[Worker %s]: Waiting for METADATA message from broker...", workerID)
 	frames, err := responder.RecvMessage(0)
 	if err != nil {
 		log.Printf("[Worker %s]: Error receiving METADATA message: %v", workerID, err)
 		return
 	}
-	log.Printf("[Worker %s]: Received message from broker: %v, len frames : %d", workerID, frames, len(frames))
+	// log.Printf("[Worker %s]: Received message from broker: %v, len frames : %d", workerID, frames, len(frames))
 
 	// Parse the METADATA message
 	// Expected frames: ["", "METADATA", totalChunksStr]
@@ -159,8 +157,9 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 	lastAck := transferStartTime
 
 	// Main loop for receiving and writing chunks
+	log.Printf("[Worker#%s] Recving Chunk", workerID)
 	for receivedChunks < totalExpectedChunks {
-		log.Printf("[Worker %s]: Waiting for chunk %d...", workerID, receivedChunks+1)
+		// log.Printf("[Worker %s]: Waiting for chunk %d...", workerID, receivedChunks+1)
 
 		// --- 5. Receive Chunk Message from Broker ---
 		chunkWaitStart := time.Now().UnixMilli()
@@ -221,12 +220,13 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 			break
 		}
 	}
+	log.Printf("[Worker#%s] Recv Complete", workerID)
 	transferEndTime := time.Now().UnixMilli()
 
 	totalTransferTime := transferEndTime - transferStartTime
 	workerLogChan <- []string{fmt.Sprintf("TOTAL Time in MilliSec. : %d", totalTransferTime)}
 
-	log.Printf("[Worker %s]: All expected chunks (%d) received(%d) and written to file successfully.", workerID, totalExpectedChunks, receivedChunks)
+	// log.Printf("[Worker %s]: All expected chunks (%d) received(%d) and written to file successfully.", workerID, totalExpectedChunks, receivedChunks)
 
 	//send done after all expected chunk recvd
 	_, err = responder.SendMessage("", "DONE")
@@ -256,7 +256,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 
 	// }
 	pipe <- struct{}{}
-	log.Printf("[Worker %s]: Done. Signaled completion.", workerID)
+	// log.Printf("[Worker %s]: Done. Signaled completion.", workerID)
 }
 
 func truncateFile(fileName string, wId string) {

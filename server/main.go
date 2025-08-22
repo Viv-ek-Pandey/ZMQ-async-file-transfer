@@ -13,7 +13,7 @@ var wg sync.WaitGroup
 
 func main() {
 	numWorkers := config.AppConfig.Server.NumberOfWorkers
-	runtime.GOMAXPROCS(2)
+	runtime.GOMAXPROCS(1)
 	pipe := make(chan struct{}, numWorkers)
 	wg.Add(1)
 	go InitBroker(pipe)
@@ -26,6 +26,5 @@ func main() {
 
 	wg.Wait()
 
-	log.Println("main completed")
-
+	log.Println("**DONE**")
 }

@@ -24,7 +24,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 
 	defer func() {
 		socket.Close()
-		log.Printf("[Client %s]: Socket closed .", clientID)
+		// log.Printf("[Client %s]: Socket closed .", clientID)
 		wg.Done()
 	}()
 	filePath := config.AppConfig.Client.FilePath
@@ -35,7 +35,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 	if err != nil {
 		log.Panicln("error in sending --CONNECT-- msg", err)
 	}
-	log.Printf("[Client %s]: Sent CONNECT request.", clientID)
+	// log.Printf("[Client %s]: Sent CONNECT request.", clientID)
 
 	// --- 2. Receive "CONNECTED" reply ---
 
@@ -44,7 +44,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 		log.Println("[Client]: error in recv CONNECT reply: ", err)
 		return
 	}
-	fmt.Println("[Client] - got CONNECT reply", replyFrames)
+	// fmt.Println("[Client] - got CONNECT reply", replyFrames)
 
 	if replyFrames[1] == "CONNECTED" {
 		log.Println("connected cID :", clientID)
@@ -70,10 +70,10 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 			fmt.Printf("\nerror in recv reply after TestConn for client %s: [%v]\n", clientID, err)
 			return
 		}
-		log.Printf("[Client %s]: Got reply AFTER METADATA: %v, len: %d", clientID, replyFrames, len(replyFrames))
+		// log.Printf("[Client %s]: Got reply AFTER METADATA: %v, len: %d", clientID, replyFrames, len(replyFrames))
 		var workerId string
 		if len(replyFrames) >= 1 && replyFrames[0] == "SENDDATA" {
-			log.Printf("[Client %s]: Received SENDDATA signal, starting file transfer.", clientID)
+			// log.Printf("[Client %s]: Received SENDDATA signal, starting file transfer.", clientID)
 			file, err := os.Open(filePath)
 			if err != nil {
 				log.Println("[Client]: Error opening file:", err)
@@ -91,7 +91,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 
 			chunkBuf := make([]byte, chunkSize)
 			chunkNumber := 1
-
+			log.Printf("[Client#%s] Sending Data", clientID)
 			for {
 				bytesRead, err := file.Read(chunkBuf)
 				if err != nil && err != io.EOF {
@@ -132,7 +132,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 				}
 				chunkNumber++
 			}
-			log.Println("**********Client waiting for DONE FROM SERVER :", clientID)
+			// log.Println("**********Client waiting for DONE FROM SERVER :", clientID)
 			// wait for done from server after sending all chunk
 			replyFrames, err = socket.RecvMessage(0)
 			if err != nil {
@@ -140,7 +140,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 				return
 			}
 
-			log.Printf("[Client %s]: Got reply after CHUNKS: %v", clientID, replyFrames)
+			// log.Printf("[Client %s]: Got reply after CHUNKS: %v", clientID, replyFrames)
 			if len(replyFrames) >= 1 && replyFrames[1] == "DONE" {
 				_, err = socket.SendMessage("", "Done")
 				if err != nil {
@@ -159,6 +159,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 	} else {
 		log.Printf("[Client %s]: Initial connection failed. Expected 'CONNECTED', got: %v", clientID, replyFrames)
 	}
+	log.Printf("[Client#%s] Done", clientID)
 }
 
 func getTotalChunks(chunkSize int64, filePath string) (int64, error) {

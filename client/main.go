@@ -3,12 +3,17 @@ package main
 import (
 	"client/config"
 	"client/utils"
+	"fmt"
+	"runtime"
 	"sync"
 )
 
 var wg sync.WaitGroup
 
 func main() {
+	runtime.GOMAXPROCS(1)
+
+	//make done
 	numWorkers := config.AppConfig.Client.NumberOfWorkers
 	nxt := make(chan struct{})
 	for i := 0; i < numWorkers; i++ {
@@ -20,6 +25,7 @@ func main() {
 
 	// -------------------------
 	wg.Wait()
+	fmt.Println("** DONE **")
 }
 
 // func CheckConn(socket *zmq.Socket, wg *sync.WaitGroup) {
