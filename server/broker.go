@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"server/config"
 	"server/utils"
@@ -125,14 +124,14 @@ func InitBroker(pipe chan<- string) {
 				msgRecv := time.Now().UnixMilli()
 				if err != nil {
 					log.Printf("[Broker]: Error receiving from backend: %v", err)
-					continue // Skip to next ready socket
+					return
 				}
 				log.Printf("[Broker]: Received from worker (backend): %v", frames)
 
 				// Basic validation:
 				if len(frames) < 2 {
 					log.Printf("[Broker]: Malformed message from worker (too few frames): %v", frames)
-					continue
+					return
 				}
 
 				// Check if it's a REGISTER message (sent by worker to self-identify)
@@ -148,34 +147,6 @@ func InitBroker(pipe chan<- string) {
 				// Expected format: [worker_id, "", application_payload_from_worker...]
 				clientZMQID := FindClient(frames[0]) // This is now the client's ZMQ ID for routing
 				// frames[1] should be the empty delimiter
-
-				//============TEST CONNECTION =========/////////
-				if len(frames) >= 2 && frames[2] == "START-CONN-TEST" {
-					msgToClient := []string{clientZMQID}
-					fmt.Println("**DEBUG ***", frames)
-					msgToClient = append(msgToClient, frames[1:]...)
-					msgToClient = append(msgToClient, frames[0])
-					log.Printf("[Broker]: Forwarding worker reply to client %s: %v", clientZMQID, msgToClient)
-
-					_, err = frontend.SendMessage(msgToClient)
-					if err != nil {
-						log.Printf("[Broker]: WARN: Failed to forward message from worker to client %s: %v", clientZMQID, err)
-					}
-					continue
-				}
-
-				if len(frames) >= 2 && frames[2] == "CONN TEST DONE" {
-					log.Printf("[Broker]: Forwarding worker reply to client %s: %v", clientZMQID, frames)
-					msgToClient := []string{clientZMQID}
-					msgToClient = append(msgToClient, frames[1:]...)
-					msgToClient = append(msgToClient, frames[0])
-					_, err = frontend.SendMessage(msgToClient)
-					if err != nil {
-						log.Printf("[Broker]: WARN: Failed to forward message from worker to client %s: %v", clientZMQID, err)
-					}
-					continue
-				}
-				//============TEST CONNECTION =========/////////
 
 				if len(frames) == 2 && frames[1] == "SENDDATA" {
 					log.Printf("[Broker]: Forwarding worker reply to client %s: %v", clientZMQID, frames)

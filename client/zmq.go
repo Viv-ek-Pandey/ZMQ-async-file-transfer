@@ -10,7 +10,6 @@ import (
 
 func NewZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 
-	log.Printf("\n[Client] -  Making New Socket with config %+v", config.AppConfig.Client)
 	socket, err := zmq.NewSocket(zmq.DEALER)
 	if err != nil {
 		return nil, err
@@ -32,15 +31,12 @@ func NewZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 	}
 	socket.SetIdentity(id)
 
-	// socket.SetIdentity(id)
-	log.Println("Starting Client:", id)
-
 	err = socket.Connect(tcpAddr)
 	if err != nil {
 		log.Panicln("[Client]: failed to connect tcpAddr :", tcpAddr)
 		return nil, err
 	}
-	log.Println("[Client]: connected to tcpAddr:", tcpAddr)
+	log.Printf("[Client#%s] : connected to tcpAddr: %s", id, tcpAddr)
 
 	return socket, err
 

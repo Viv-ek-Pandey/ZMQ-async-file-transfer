@@ -2,12 +2,15 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	zmq "github.com/pebbe/zmq4"
 )
@@ -42,6 +45,167 @@ type ZMQSocketInfo struct {
 	RemotePort int
 }
 
+type ZmqConnMetaData struct {
+	Conn     *zmq.Socket
+	ClientId string
+	WorkerId string
+}
+
+// CSVLogger holds the CSV writer and file handle
+type CSVLogger struct {
+	writer *csv.Writer
+	file   *os.File
+}
+
+// InitializeCSVLogger creates a new CSV file and returns a logger
+func InitializeCSVLogger(cID string, wID string) (*CSVLogger, error) {
+	// Create log directory if it doesn't exist
+	timestamp := time.Now().Format("15-04-05")
+	logDir := fmt.Sprintf("log/%v", timestamp)
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create log directory: %v", err)
+	}
+
+	// Create filename with current timestamp
+	filename := fmt.Sprintf("%s-%s.csv", cID, wID)
+	filepath := filepath.Join(logDir, filename)
+
+	// Create the file
+	file, err := os.Create(filepath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create CSV file: %v", err)
+	}
+
+	writer := csv.NewWriter(file)
+
+	// Write CSV header
+	header := []string{
+		"timestamp",
+		"local_addr",
+		"local_port",
+		"remote_addr",
+		"remote_port",
+		"state",
+		"send_queue_bytes",
+		"send_queue_mb",
+		"recv_queue_bytes",
+		"rtt_ms",
+		"congestion_window",
+		"ss_threshold",
+		"bytes_sent",
+		"bytes_sent_mb",
+		"bytes_retrans",
+		"bytes_retrans_mb",
+		"retrans_percent",
+		"retrans_count",
+		"send_rate_mbps",
+		"delivery_rate_mbps",
+	}
+
+	if err := writer.Write(header); err != nil {
+		file.Close()
+		return nil, fmt.Errorf("failed to write CSV header: %v", err)
+	}
+
+	writer.Flush()
+
+	return &CSVLogger{
+		writer: writer,
+		file:   file,
+	}, nil
+}
+
+// Close flushes and closes the CSV logger
+func (logger *CSVLogger) Close() error {
+	if logger.writer != nil {
+		logger.writer.Flush()
+	}
+	if logger.file != nil {
+		return logger.file.Close()
+	}
+	return nil
+}
+
+// LogConnectionData writes connection data to CSV
+func (logger *CSVLogger) LogConnectionData(socket ZmqConnMetaData, processConn TCPConnectionInfo, detailedConn *TCPConnectionInfo) error {
+	timestamp := time.Now().Format("15:04:05")
+
+	// Initialize default values
+	var (
+		sendQueueMB    = float64(processConn.SendQ) / (1024 * 1024)
+		rtt            = ""
+		cwnd           = ""
+		ssThresh       = ""
+		bytesSent      = ""
+		bytesSentMB    = ""
+		bytesRetrans   = ""
+		bytesRetransMB = ""
+		retransPercent = ""
+		retransCount   = ""
+		sendRate       = ""
+		deliveryRate   = ""
+	)
+
+	// Fill in detailed connection info if available
+	if detailedConn != nil {
+		if detailedConn.RTT > 0 {
+			rtt = fmt.Sprintf("%.3f", detailedConn.RTT)
+		}
+		if detailedConn.CWND > 0 {
+			cwnd = strconv.Itoa(detailedConn.CWND)
+			ssThresh = strconv.Itoa(detailedConn.SSThresh)
+		}
+		if detailedConn.BytesSent > 0 {
+			bytesSent = strconv.FormatInt(detailedConn.BytesSent, 10)
+			bytesSentMB = fmt.Sprintf("%.2f", float64(detailedConn.BytesSent)/(1024*1024))
+		}
+
+		bytesRetrans = strconv.FormatInt(detailedConn.BytesRetrans, 10)
+		bytesRetransMB = fmt.Sprintf("%.2f", float64(detailedConn.BytesRetrans)/(1024*1024))
+
+		if detailedConn.BytesSent > 0 {
+			retransPercent = fmt.Sprintf("%.3f", float64(detailedConn.BytesRetrans)/float64(detailedConn.BytesSent)*100)
+		}
+
+		retransCount = strconv.Itoa(detailedConn.RetransCount)
+
+		if detailedConn.SendRate > 0 {
+			sendRate = fmt.Sprintf("%.1f", detailedConn.SendRate)
+			deliveryRate = fmt.Sprintf("%.1f", detailedConn.DeliveryRate)
+		}
+	}
+
+	record := []string{
+		timestamp,
+		processConn.LocalAddr,
+		strconv.Itoa(processConn.LocalPort),
+		processConn.RemoteAddr,
+		strconv.Itoa(processConn.RemotePort),
+		processConn.State,
+		strconv.Itoa(processConn.SendQ),
+		fmt.Sprintf("%.2f", sendQueueMB),
+		strconv.Itoa(processConn.RecvQ),
+		rtt,
+		cwnd,
+		ssThresh,
+		bytesSent,
+		bytesSentMB,
+		bytesRetrans,
+		bytesRetransMB,
+		retransPercent,
+		retransCount,
+		sendRate,
+		deliveryRate,
+	}
+
+	if err := logger.writer.Write(record); err != nil {
+		return fmt.Errorf("failed to write CSV record: %v", err)
+	}
+
+	logger.writer.Flush()
+	return nil
+}
+
 // ParseSSOutput parses ss -ti output and returns connection info
 func ParseSSOutput(targetPort int) ([]TCPConnectionInfo, error) {
 	cmd := exec.Command("ss", "-ti", "dst", fmt.Sprintf(":%d", targetPort))
@@ -49,7 +213,6 @@ func ParseSSOutput(targetPort int) ([]TCPConnectionInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to run ss command: %v", err)
 	}
-	// fmt.Println(string(output))
 
 	var connections []TCPConnectionInfo
 	lines := strings.Split(string(output), "\n")
@@ -103,6 +266,7 @@ func parseConnectionLine(line string) (TCPConnectionInfo, error) {
 		RemotePort: remotePort,
 	}, nil
 }
+
 func parseDetailLine(conn *TCPConnectionInfo, line string) {
 	extractInt := func(pattern string) int {
 		re := regexp.MustCompile(pattern)
@@ -230,8 +394,6 @@ func GetProcessTCPConnections(targetPort int) ([]TCPConnectionInfo, error) {
 		return nil, fmt.Errorf("failed to run ss command: %v", err)
 	}
 
-	fmt.Println(string(output))
-
 	var connections []TCPConnectionInfo
 	lines := strings.Split(string(output), "\n")
 
@@ -281,68 +443,25 @@ func parseProcessConnectionLine(line string) TCPConnectionInfo {
 	}
 }
 
-// CreateZMQSocket creates and connects a ZMQ DEALER socket
-func CreateZMQSocket(endpoint string) (*zmq.Socket, error) {
-	socket, err := zmq.NewSocket(zmq.DEALER)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create ZMQ socket: %v", err)
-	}
-
-	// Set socket identity (optional)
-	identity := fmt.Sprintf("client-%d", os.Getpid())
-	socket.SetIdentity(identity)
-
-	// Connect to endpoint
-	err = socket.Connect(endpoint)
-	if err != nil {
-		socket.Close()
-		return nil, fmt.Errorf("failed to connect to %s: %v", endpoint, err)
-	}
-
-	return socket, nil
-}
-
-type ZmqConnMetaData struct {
-	Conn     *zmq.Socket
-	ClientId string
-	WorkerId string
-}
-
-// MatchZMQToTCPByProcess matches ZMQ sockets using process-based correlation
-func MatchZMQToTCPByProcess(zmqSockets []ZmqConnMetaData, targetPort int) {
-	// fmt.Println("=== ZMQ SOCKET TO TCP CONNECTION MAPPING (Process-based) ===\n")
-
+// MatchZMQToTCPByProcess matches ZMQ sockets using process-based correlation and logs to CSV
+func MatchZMQToTCPByProcess(zmqSockets []ZmqConnMetaData, logger *CSVLogger) error {
 	// Get detailed TCP info using ss -ti
+	targetPort := 5559
 	tcpConnections, err := ParseSSOutput(targetPort)
 	if err != nil {
-		fmt.Printf("❌ Failed to get TCP connection details: %v\n", err)
-		return
+		return fmt.Errorf("failed to get TCP connection details: %v", err)
 	}
 
 	// Get process TCP connections using ss -tup
 	processConnections, err := GetProcessTCPConnections(targetPort)
 	if err != nil {
-		fmt.Printf("❌ Failed to get process connections: %v\n", err)
-		return
+		return fmt.Errorf("failed to get process connections: %v", err)
 	}
 
-	// fmt.Printf("Found %d TCP connections from this process to port %d\n", len(processConnections), targetPort)
-	// fmt.Printf("Found %d detailed TCP connection stats\n\n", len(tcpConnections))
-
-	// If we have the same number of ZMQ sockets and TCP connections,
-	// we can make reasonable correlations
-	// if config.AppConfig.Client.NumberOfWorkers == len(processConnections) {
-	fmt.Printf("🔗 Correlating %d ZMQ sockets with %d TCP connections:\n\n",
-		len(zmqSockets), len(processConnections))
-
+	// Correlate ZMQ sockets with TCP connections and log to CSV
 	for i, socket := range zmqSockets {
 		if i < len(processConnections) {
 			processConn := processConnections[i]
-
-			fmt.Printf("🔌 ZMQ Socket Client Id #%s Worker ID $%s(Type: %v):\n", socket.ClientId, socket.WorkerId, getSocketTypeString(socket.Conn))
-			fmt.Printf("   Process Connection: %s:%d → %s:%d\n",
-				processConn.LocalAddr, processConn.LocalPort,
-				processConn.RemoteAddr, processConn.RemotePort)
 
 			// Find matching detailed connection info
 			var detailedConn *TCPConnectionInfo
@@ -353,69 +472,12 @@ func MatchZMQToTCPByProcess(zmqSockets []ZmqConnMetaData, targetPort int) {
 				}
 			}
 
-			if detailedConn != nil {
-				printDetailedConnectionInfo(detailedConn)
-			} else {
-				fmt.Printf("   ⚠️  No detailed stats available for this connection\n")
+			// Log the connection data to CSV
+			if err := logger.LogConnectionData(socket, processConn, detailedConn); err != nil {
+				return fmt.Errorf("failed to log connection data: %v", err)
 			}
-			fmt.Println()
 		}
 	}
 
-}
-
-func getSocketTypeString(socket *zmq.Socket) string {
-	socketType, err := socket.GetType()
-	if err != nil {
-		return "UNKNOWN"
-	}
-
-	switch socketType {
-	case zmq.DEALER:
-		return "DEALER"
-	case zmq.ROUTER:
-		return "ROUTER"
-	case zmq.PUSH:
-		return "PUSH"
-	case zmq.PULL:
-		return "PULL"
-	case zmq.PUB:
-		return "PUB"
-	case zmq.SUB:
-		return "SUB"
-	case zmq.REQ:
-		return "REQ"
-	case zmq.REP:
-		return "REP"
-	default:
-		return fmt.Sprintf("TYPE_%d", int(socketType))
-	}
-}
-
-func printDetailedConnectionInfo(conn *TCPConnectionInfo) {
-	fmt.Printf("   📊 TCP Stats:\n")
-	fmt.Printf("      State: %s\n", conn.State)
-	fmt.Printf("      Send Queue: %d bytes (%.2f MB)\n", conn.SendQ, float64(conn.SendQ)/(1024*1024))
-	fmt.Printf("      Recv Queue: %d bytes\n", conn.RecvQ)
-	if conn.RTT > 0 {
-		fmt.Printf("      RTT: %.3f ms\n", conn.RTT)
-	}
-	if conn.CWND > 0 {
-		fmt.Printf("      Congestion Window: %d\n", conn.CWND)
-		fmt.Printf("      SS Threshold: %d\n", conn.SSThresh)
-	}
-	if conn.BytesSent > 0 {
-		fmt.Printf("      Bytes Sent: %d (%.2f MB)\n", conn.BytesSent, float64(conn.BytesSent)/(1024*1024))
-	}
-	// if conn.BytesRetrans > 0 {
-	retransPercent := float64(conn.BytesRetrans) / float64(conn.BytesSent) * 100
-	fmt.Printf("      Bytes Retransmitted: %d (%.2f MB, %.3f%%)\n",
-		conn.BytesRetrans, float64(conn.BytesRetrans)/(1024*1024), retransPercent)
-	fmt.Printf("      Retransmission Events: %d\n", conn.RetransCount)
-	// }
-	if conn.SendRate > 0 {
-		fmt.Printf("      Send Rate: %.1f Mbps\n", conn.SendRate)
-		fmt.Printf("      Delivery Rate: %.1f Mbps\n", conn.DeliveryRate)
-	}
-
+	return nil
 }

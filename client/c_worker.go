@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	zmq "github.com/pebbe/zmq4"
 )
 
 func ClientWorker(clientID string, wg *sync.WaitGroup) {
@@ -35,8 +37,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 	log.Printf("[Client %s]: Sent CONNECT request.", clientID)
 
 	// --- 2. Receive "CONNECTED" reply ---
-	// Client (DEALER) receives only the application frames back,
-	// as the ROUTER broker strips its routing frames.
+
 	replyFrames, err := socket.RecvMessage(0)
 	if err != nil {
 		log.Println("[Client]: error in recv CONNECT reply: ", err)
@@ -61,83 +62,16 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 		}
 		// log.Printf("[Client %s]: Metadata message sent!", clientID)
 
-		// //===========TEST CONNECTION=================//
-		// // --- 4. Receive "START-CONN-TEST" signal ---
-		// // log.Printf("\n\n ** WAITING FOR START CONN TEST SIGNAL ** \n\n")
-		// replyFrames, err = socket.RecvMessage(0) // RecvMessage here must match the broker's send
-		// if err != nil {
-		// 	fmt.Printf("\nerror in recv reply after METADATA for client %s: [%v]\n", clientID, err)
-		// 	return
-		// }
-		// log.Printf("[Client %s]: Got reply after METADATA: %v", clientID, replyFrames)
-
-		// var workerId string
-
-		// if len(replyFrames) >= 2 && replyFrames[1] == "START-CONN-TEST" {
-		// 	log.Printf("[Client %s]: Received START-CONN-TEST signal, starting conn test.", clientID)
-		// 	file, err := os.Open("100MB.txt")
-		// 	if err != nil {
-		// 		log.Println("[Client]: Error opening file:", err)
-		// 		return
-		// 	}
-		// 	defer file.Close()
-		// 	testMsgNumber := 1
-		// 	chunkBuf := make([]byte, 1048576)
-		// 	workerId = replyFrames[2]
-
-		// 	for {
-		// 		bytesRead, err := file.Read(chunkBuf)
-		// 		if err != nil && err != io.EOF {
-		// 			log.Println("Error reading chunk:", err)
-		// 			break
-		// 		}
-		// 		if bytesRead == 0 {
-		// 			break // done
-		// 		}
-		// 		if testMsgNumber == 10 {
-		// 			// wg.Add(1)
-		// 			// go CheckConn(socket, clientID, workerId, wg)
-		// 		}
-		// 		dataToSend := chunkBuf[:bytesRead]
-		// 		dataMsg := []string{"", "TestConn", string(dataToSend)}
-		// 		_, err = socket.SendMessage(dataMsg)
-		// 		if err != nil {
-		// 			log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
-		// 		}
-		// 		testMsgNumber++
-		// 	}
-		// } else {
-		// 	fmt.Println("**FAILED TO RECV START CONN TEST MSG**")
-		// 	return
-		// }
-		// log.Printf("[Client %s]: Waiting for  reply after TEST CONN: %v", clientID, replyFrames)
-		// replyFrames, err = socket.RecvMessage(0) // RecvMessage here must match the broker's send
-		// if err != nil {
-		// 	fmt.Printf("\nerror in recv reply after Test CONN for client %s: [%v]\n", clientID, err)
-		// 	return
-		// }
-		// log.Printf("[Client %s]: Got reply after TEST CONN: %v", clientID, replyFrames)
-		// if len(replyFrames) >= 1 && replyFrames[1] == "CONN TEST DONE" {
-
-		// } else {
-		// 	log.Println("*****CONN TEST FAILED!!***")
-		// 	return
-		// }
-		// //===========TEST CONNECTION=================//
-		//TO-DO*****
-		// IF BAD CONNECTION SEND RECONNECT MESSAGE TO WORKER
-
-		//============Good connection! procceed!==============//
-
 		//===================SEND DATA===================//
+
 		replyFrames, err = socket.RecvMessage(0)
 		if err != nil {
 			fmt.Printf("\nerror in recv reply after TestConn for client %s: [%v]\n", clientID, err)
 			return
 		}
-		// log.Printf("[Client %s]: Got reply after CONNECTION TEST: %v", clientID, replyFrames)
+		log.Printf("[Client %s]: Got reply AFTER METADATA: %v, len: %d", clientID, replyFrames, len(replyFrames))
 		var workerId string
-		if len(replyFrames) >= 1 && replyFrames[1] == "SENDDATA" {
+		if len(replyFrames) >= 1 && replyFrames[0] == "SENDDATA" {
 			log.Printf("[Client %s]: Received SENDDATA signal, starting file transfer.", clientID)
 			file, err := os.Open(filePath)
 			if err != nil {
@@ -145,6 +79,14 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				return
 			}
 			defer file.Close()
+			workerId = replyFrames[1]
+
+			csvLogger, err := InitializeCSVLogger(clientID, workerId)
+			if err != nil {
+				log.Printf("[Client %s]: Failed to initialize CSV logger: %v", clientID, err)
+				return
+			}
+			defer csvLogger.Close()
 
 			chunkBuf := make([]byte, chunkSize)
 			chunkNumber := 1
@@ -170,15 +112,17 @@ func ClientWorker(clientID string, wg *sync.WaitGroup) {
 				// log.Printf("\n[Client]: %s - Sent chunk :%d", clientID, chunkNumber)
 
 				if (!config.AppConfig.Common.NoAck) && (config.AppConfig.Common.AckAfter > 0) && (chunkNumber%config.AppConfig.Common.AckAfter == 0 || chunkNumber == int(totalChunks)) {
-					// wait for ACK before sending the next chunk
-					wg.Add(1)
-					go CheckConn(socket, clientID, workerId, wg)
+					//log tcp connection info
+					err = logTCPStats(socket, clientID, workerId, csvLogger)
+					if err != nil {
+						log.Printf("[Client %s]: Failed to log TCP stats: %v", clientID, err)
+					}
+
 					ackFrames, err := socket.RecvMessage(0)
 					if err != nil {
 						log.Printf("\nerror recving  ACK for chunk %d: %v", chunkNumber, err)
 						break
 					}
-					// Expected shape: [workerID, clientID, "ACK", chunkNum]
 					if len(ackFrames) < 2 || ackFrames[1] != "ACK" {
 						log.Printf("\ninvalid ACK message: %v", ackFrames)
 						break
@@ -226,4 +170,25 @@ func getTotalChunks(chunkSize int64, filePath string) (int64, error) {
 	}
 	totalChunks := (fileInfo.Size() + chunkSize - 1) / chunkSize
 	return totalChunks, nil
+}
+func logTCPStats(socket *zmq.Socket, clientID, workerId string, csvLogger *CSVLogger) error {
+
+	zmqSocket := ZmqConnMetaData{
+		Conn:     socket,
+		ClientId: clientID,
+		WorkerId: workerId,
+	}
+
+	// Create a slice with just this socket for the matching function
+	zmqSockets := []ZmqConnMetaData{zmqSocket}
+
+	// Extract port from broker address
+	// targetPort, err := extractPortFromAddress(config.AppConfig.Client.BrokerTCPAddress)
+	// if err != nil {
+	// 	log.Printf("Failed to extract port from broker address, using default 5559: %v", err)
+	// 	targetPort = 5559
+	// }
+
+	// Use the configurable TCP matching and logging function
+	return MatchZMQToTCPByProcess(zmqSockets, csvLogger)
 }

@@ -4,8 +4,6 @@ import (
 	"client/config"
 	"client/utils"
 	"sync"
-
-	zmq "github.com/pebbe/zmq4"
 )
 
 var wg sync.WaitGroup
@@ -23,25 +21,21 @@ func main() {
 	wg.Wait()
 }
 
-func CheckConn(socket *zmq.Socket, cId string, wId string, wg *sync.WaitGroup) {
-	targetPort := 5559
+// func CheckConn(socket *zmq.Socket, wg *sync.WaitGroup) {
+// 	targetPort := 5559
 
-	// Parse TCP connections
-	// fmt.Printf("\nParsing TCP connections to port %d...\n", targetPort)
-	// _, err := ParseSSOutput(targetPort)
-	// if err != nil {
-	// 	log.Fatalf("Failed to parse ss output: %v", err)
-	// }
+// 	// Parse TCP connections
+// 	// fmt.Printf("\nParsing TCP connections to port %d...\n", targetPort)
+// 	// _, err := ParseSSOutput(targetPort)
+// 	// if err != nil {
+// 	// 	log.Fatalf("Failed to parse ss output: %v", err)
+// 	// }
 
-	// fmt.Printf("Found %d TCP connections\n\n", len(tcpConnections))
+// 	// fmt.Printf("Found %d TCP connections\n\n", len(tcpConnections))
 
-	// Match ZMQ sockets to TCP connections using process-based approach
-	zmqSocketWithMeta := ZmqConnMetaData{
-		Conn:     socket,
-		ClientId: cId,
-		WorkerId: wId,
-	}
-	MatchZMQToTCPByProcess([]ZmqConnMetaData{zmqSocketWithMeta}, targetPort)
-	wg.Done()
+// 	// Match ZMQ sockets to TCP connections using process-based approach
 
-}
+// 	MatchZMQToTCPByProcess(socket, targetPort)
+// 	wg.Done()
+
+// }

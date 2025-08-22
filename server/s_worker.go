@@ -160,7 +160,7 @@ func ServerWorker(pipe chan<- string, workerID string, outputFilename string) {
 	// Worker replies to the client (via broker).
 	// Worker sends: ["", "SENDDATA"]
 	// log.Printf("[Worker %s]: Sending SENDDATA signal for Client %s.", workerID, clientZMQID)
-	_, err = responder.SendMessage("", "SENDDATA")
+	_, err = responder.SendMessage("SENDDATA")
 	if err != nil {
 		log.Printf("[Worker %s]: Error sending SENDDATA message: %v", workerID, err)
 		return
