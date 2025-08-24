@@ -27,22 +27,3 @@ func main() {
 	wg.Wait()
 	fmt.Println("** DONE **")
 }
-
-// func CheckConn(socket *zmq.Socket, wg *sync.WaitGroup) {
-// 	targetPort := 5559
-
-// 	// Parse TCP connections
-// 	// fmt.Printf("\nParsing TCP connections to port %d...\n", targetPort)
-// 	// _, err := ParseSSOutput(targetPort)
-// 	// if err != nil {
-// 	// 	log.Fatalf("Failed to parse ss output: %v", err)
-// 	// }
-
-// 	// fmt.Printf("Found %d TCP connections\n\n", len(tcpConnections))
-
-// 	// Match ZMQ sockets to TCP connections using process-based approach
-
-// 	MatchZMQToTCPByProcess(socket, targetPort)
-// 	wg.Done()
-
-// }

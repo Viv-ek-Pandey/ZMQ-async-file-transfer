@@ -4,8 +4,9 @@ package utils
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
-	"strconv"
+	"sync"
 	"time"
 )
 
@@ -36,13 +37,38 @@ func InitChunkTimingCSV(workerID string) (*csv.Writer, *os.File, error) {
 	return writer, logFile, nil
 }
 
-func LogChunkTiming(writer *csv.Writer, chunkNumber int, start time.Time, end time.Time) {
-	duration := end.Sub(start)
+func LogChunkTiming(wg *sync.WaitGroup, workerWriter *csv.Writer, workerLogChan <-chan []string) {
 
-	startStr := start.Format("15:04:05.000000")
-	endStr := end.Format("15:04:05.000000")
+	defer wg.Done()
+	defer func() {
+		if workerWriter != nil {
+			workerWriter.Flush()
+		}
+	}()
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
 
-	microseconds := duration.Microseconds()
+	for {
+		select {
+		case row, ok := <-workerLogChan:
+			if !ok {
+				if workerWriter != nil {
+					workerWriter.Flush()
+				}
+				return
+			}
+			if workerWriter != nil {
+				if err := workerWriter.Write(row); err != nil {
+					log.Printf("worker csv write err: %v", err)
+				}
+			}
 
-	writer.Write([]string{strconv.Itoa(chunkNumber), startStr, endStr, strconv.FormatInt(microseconds, 10)})
+		case <-ticker.C:
+			if workerWriter != nil {
+				workerWriter.Flush()
+			}
+
+		}
+	}
+
 }

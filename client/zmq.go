@@ -13,13 +13,13 @@ import (
 	zmq "github.com/pebbe/zmq4"
 )
 
-func NewZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
+func newZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 
 	socket, err := zmq.NewSocket(zmq.DEALER)
 	if err != nil {
 		return nil, err
 	}
-	err = socket.SetRcvtimeo(time.Minute * 20)
+	err = socket.SetRcvtimeo(time.Minute * 10)
 	if err != nil {
 		return nil, err
 	}

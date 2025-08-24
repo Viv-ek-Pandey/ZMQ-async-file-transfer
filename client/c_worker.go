@@ -15,10 +15,10 @@ import (
 )
 
 func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
-	socket, err := NewZmqSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
+	socket, err := newZmqSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
 	if err != nil {
 		log.Printf("\nerror in creating new socket [%v]\n", err)
-		return
+		log.Panic(err)
 	}
 	nxt <- struct{}{}
 
@@ -31,7 +31,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 	chunkSize := config.AppConfig.Client.ChunkSize
 
 	// ------ Initial "CONNECT" message ----------
-	_, err = socket.SendMessage([]string{"", "CONNECT"})
+	_, err = socket.SendMessage([]string{"CONNECT"})
 	if err != nil {
 		log.Panicln("error in sending --CONNECT-- msg", err)
 	}
@@ -42,24 +42,24 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 	replyFrames, err := socket.RecvMessage(0)
 	if err != nil {
 		log.Println("[Client]: error in recv CONNECT reply: ", err)
-		return
+		log.Panic(err)
 	}
 	// fmt.Println("[Client] - got CONNECT reply", replyFrames)
 
-	if replyFrames[1] == "CONNECTED" {
+	if replyFrames[0] == "CONNECTED" {
 		log.Println("connected cID :", clientID)
 		totalChunks, err := getTotalChunks(chunkSize, filePath)
 		if err != nil {
-			return
+			log.Panic(err)
 		}
 
-		msg := []string{"", "METADATA", fmt.Sprintf("%d", totalChunks)}
+		msg := []string{"METADATA", fmt.Sprintf("%d", totalChunks)}
 		// log.Printf("[Client %s]: Sending metadata message: %v", clientID, msg)
 
 		_, err = socket.SendMessage(msg) // Use ... to send each string as a separate frame
 		if err != nil {
 			fmt.Printf("\nerror in sending {msg-MetaData} for client %s, err :[%v]\n", clientID, err)
-			return
+			log.Panic(err)
 		}
 		// log.Printf("[Client %s]: Metadata message sent!", clientID)
 
@@ -67,8 +67,8 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 
 		replyFrames, err = socket.RecvMessage(0)
 		if err != nil {
-			fmt.Printf("\nerror in recv reply after TestConn for client %s: [%v]\n", clientID, err)
-			return
+			fmt.Printf("\nerror in recv reply after METADATA for client %s: [%v]\n", clientID, err)
+			log.Panic(err)
 		}
 		// log.Printf("[Client %s]: Got reply AFTER METADATA: %v, len: %d", clientID, replyFrames, len(replyFrames))
 		var workerId string
@@ -77,7 +77,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 			file, err := os.Open(filePath)
 			if err != nil {
 				log.Println("[Client]: Error opening file:", err)
-				return
+				log.Panic(err)
 			}
 			defer file.Close()
 			workerId = replyFrames[1]
@@ -85,7 +85,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 			csvLogger, err := InitializeCSVLogger(clientID, workerId)
 			if err != nil {
 				log.Printf("[Client %s]: Failed to initialize CSV logger: %v", clientID, err)
-				return
+				log.Panic(err)
 			}
 			defer csvLogger.Close()
 
@@ -105,7 +105,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 				// Include client-sent timestamp as a frame after data
 				dataToSend := chunkBuf[:bytesRead]
 				hash := sha256.Sum256(dataToSend)
-				dataMsg := []string{"", "CHUNK", strconv.Itoa(chunkNumber), string(dataToSend), string(hash[:]), strconv.FormatInt(sentAt, 10)}
+				dataMsg := []string{"CHUNK", strconv.Itoa(chunkNumber), string(dataToSend), string(hash[:]), strconv.FormatInt(sentAt, 10)}
 				_, err = socket.SendMessage(dataMsg)
 				if err != nil {
 					log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
@@ -124,7 +124,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 						log.Printf("\nerror recving  ACK for chunk %d: %v", chunkNumber, err)
 						break
 					}
-					if len(ackFrames) < 2 || ackFrames[1] != "ACK" {
+					if len(ackFrames) < 2 || ackFrames[0] != "ACK" {
 						log.Printf("\ninvalid ACK message: %v", ackFrames)
 						break
 					}
@@ -137,12 +137,12 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 			replyFrames, err = socket.RecvMessage(0)
 			if err != nil {
 				fmt.Printf("\nerror in recv reply after chunks for client %s: [%v]\n", clientID, err)
-				return
+				log.Panic(err)
 			}
 
 			// log.Printf("[Client %s]: Got reply after CHUNKS: %v", clientID, replyFrames)
-			if len(replyFrames) >= 1 && replyFrames[1] == "DONE" {
-				_, err = socket.SendMessage("", "Done")
+			if len(replyFrames) >= 1 && replyFrames[0] == "DONE" {
+				_, err = socket.SendMessage("Done")
 				if err != nil {
 					log.Printf("\nerror in sending {DONE} client : %s   |  err [%v]\n", clientID, err)
 				}
@@ -151,7 +151,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 			// checksum, err := utils.ComputeSHA256(filePath)
 			// if err != nil {
 			// 	log.Println("Checksum error:", err)
-			// 	return
+			// 	log.Panic(err)
 			// }
 			// log.Println(" checksum is:", checksum)
 		}
@@ -167,8 +167,7 @@ func getTotalChunks(chunkSize int64, filePath string) (int64, error) {
 	fileInfo, err := os.Stat(filePath)
 
 	if err != nil {
-		log.Println("error getting file info: ", err)
-		return 0, err
+		log.Panic(err)
 	}
 	totalChunks := (fileInfo.Size() + chunkSize - 1) / chunkSize
 	return totalChunks, nil

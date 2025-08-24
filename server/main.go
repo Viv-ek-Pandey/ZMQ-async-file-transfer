@@ -16,7 +16,7 @@ func main() {
 	runtime.GOMAXPROCS(1)
 	pipe := make(chan struct{}, numWorkers)
 	wg.Add(1)
-	go InitBroker(pipe)
+	go InitBroker()
 	for i := 0; i < numWorkers; i++ {
 		workerID := utils.GetRandID()
 		filename := fmt.Sprintf("%s%d.txt", config.AppConfig.Server.GeneratedFileNamePrefix, i+1)

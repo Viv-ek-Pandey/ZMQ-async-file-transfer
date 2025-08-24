@@ -9,7 +9,9 @@ common:
 
 client:
   broker_tcp_address: "tcp://localhost:5559" #"tcp://172.31.0.66:5559" 
-  chunk_size:  8   # chunk size in bytes   #1048576 1mb
-  number_of_workers: 5
-  file_path: "New.txt"
+  chunk_size:  1048576   # chunk size in bytes   #1048576 1mb
+  number_of_workers: 2
+  file_path: "100MB_text_file.txt"
   high_water_mark: 0 # block send if {number} message in que
+
+

@@ -2,7 +2,10 @@ package utils
 
 import (
 	"encoding/csv"
+	"log"
 	"os"
+	"sync"
+	"time"
 )
 
 // InitBrokerTimingCSV creates/overwrites a CSV file to log broker timings.
@@ -24,14 +27,38 @@ func InitBrokerTimingCSV() (*csv.Writer, *os.File, error) {
 	return w, f, nil
 }
 
-// func WriteBrokerTimingRow(w *csv.Writer, clientID, workerID, msgType string, chunkNo string, durationMicros int64) error {
-// 	if w == nil {
-// 		return nil
-// 	}
-// 	rec := []string{clientID, workerID, msgType, chunkNo, fmt.Sprintf("%d", durationMicros)}
-// 	if err := w.Write(rec); err != nil {
-// 		return err
-// 	}
-// 	w.Flush()
-// 	return nil
-// }
+func LogBrokerTimmings(wg *sync.WaitGroup, brokerLogChan chan []string, brokerWriter *csv.Writer) {
+
+	defer wg.Done()
+	defer func() {
+		if brokerWriter != nil {
+			brokerWriter.Flush()
+		}
+	}()
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case row, ok := <-brokerLogChan:
+			if !ok {
+				if brokerWriter != nil {
+					brokerWriter.Flush()
+				}
+				return
+			}
+			if brokerWriter != nil {
+				if err := brokerWriter.Write(row); err != nil {
+					log.Printf("broker csv write err: %v", err)
+				}
+			}
+
+		case <-ticker.C:
+			if brokerWriter != nil {
+				brokerWriter.Flush()
+			}
+
+		}
+	}
+
+}
