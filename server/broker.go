@@ -69,7 +69,7 @@ func InitBroker() {
 					log.Printf("[Broker]: Error receiving from backend: %v", err)
 					log.Panic(err)
 				}
-				log.Printf("[Broker]: Received from worker (backend): %v", frames)
+				// log.Printf("[Broker]: Received from worker (backend): %v", frames)
 
 				// Basic validation:
 				if len(frames) < 2 {
@@ -179,7 +179,7 @@ func InitBroker() {
 					wmap.Store(workerID, "")
 
 				case "CHUNK":
-					// log.Printf("[Broker]: Forwarding chunk %s from client %s to worker %s", frames[3], clientZMQID, workerID)
+					// log.Printf("[Broker]: Forwarding chunk %s from client %s to worker %s", frames[2], clientZMQID, workerID)
 					brkRecvAt := strconv.FormatInt(msgRecv, 10)
 					brkSendAt := strconv.FormatInt(time.Now().UnixMilli(), 10)
 					frames = append(frames, brkRecvAt, brkSendAt) // Append broker's timestamp

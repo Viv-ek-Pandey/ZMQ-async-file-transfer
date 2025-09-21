@@ -24,7 +24,7 @@ type TCPConnectionInfo struct {
 	State             string
 	SendQ             int
 	RecvQ             int
-	RTT               float64
+	RTT               string
 	CWND              int
 	SSThresh          int
 	BytesSent         int64
@@ -32,6 +32,7 @@ type TCPConnectionInfo struct {
 	RetransCount      int
 	SendRate          float64
 	DeliveryRate      float64
+	RcvWndLimited     string
 }
 
 // ZMQSocketInfo holds ZMQ socket information
@@ -118,8 +119,8 @@ func (logger *CSVLogger) Close() error {
 	return nil
 }
 
-// LogConnectionData writes connection data to CSV
-func (logger *CSVLogger) LogConnectionData(processConn TCPConnectionInfo, detailedConn *TCPConnectionInfo) error {
+// Kernel level TCP Data  to CSV
+func (logger *CSVLogger) LogConnectionData(processConn TCPConnectionInfo, detailedConn *TCPConnectionInfo) (error, string) {
 	timestamp := time.Now().Format("15:04:05")
 
 	// Initialize default values
@@ -140,9 +141,8 @@ func (logger *CSVLogger) LogConnectionData(processConn TCPConnectionInfo, detail
 
 	// Fill in detailed connection info if available
 	if detailedConn != nil {
-		if detailedConn.RTT > 0 {
-			rtt = fmt.Sprintf("%.3f", detailedConn.RTT)
-		}
+		rtt = detailedConn.RTT
+
 		if detailedConn.CWND > 0 {
 			cwnd = strconv.Itoa(detailedConn.CWND)
 			ssThresh = strconv.Itoa(detailedConn.SSThresh)
@@ -167,6 +167,8 @@ func (logger *CSVLogger) LogConnectionData(processConn TCPConnectionInfo, detail
 		}
 	}
 
+	forServerLog := fmt.Sprintf("Rtt : %s, cnwd : %s, ssThresh : %s, sendRate : %sMBps, rwnd_limited: %s", rtt, cwnd, ssThresh, sendRate, detailedConn.RcvWndLimited)
+
 	record := []string{
 		timestamp,
 		processConn.LocalAddr,
@@ -190,11 +192,11 @@ func (logger *CSVLogger) LogConnectionData(processConn TCPConnectionInfo, detail
 	}
 
 	if err := logger.writer.Write(record); err != nil {
-		return fmt.Errorf("failed to write CSV record: %v", err)
+		return fmt.Errorf("failed to write CSV record: %v", err), ""
 	}
 
 	logger.writer.Flush()
-	return nil
+	return nil, forServerLog
 }
 
 // ParseSSOutput parses ss -ti output and returns connection info
@@ -279,7 +281,9 @@ func parseDetailLine(conn *TCPConnectionInfo, line string) {
 
 	// RTT (smoothed / variance)
 	if m := regexp.MustCompile(`rtt:([\d.]+)/([\d.]+)`).FindStringSubmatch(line); len(m) == 3 {
-		conn.RTT, _ = strconv.ParseFloat(m[1], 64)
+		conn.RTT = m[0]
+		// fmt.Println("parsed RTT", m[0])
+
 		// variance := m[2] if you want
 	}
 
@@ -288,6 +292,9 @@ func parseDetailLine(conn *TCPConnectionInfo, line string) {
 	conn.BytesSent = extractInt64(`bytes_sent:(\d+)`)
 	conn.BytesRetrans = extractInt64(`bytes_retrans:(\d+)`)
 	conn.RetransCount = extractInt(`retrans:\d+/(\d+)`)
+	if m := regexp.MustCompile(`rwnd_limited:(\d+ms\([\d.]+%\))`).FindStringSubmatch(line); len(m) != 0 {
+		conn.RcvWndLimited = m[0]
+	}
 
 	// Handle Mbps or Gbps
 	if m := regexp.MustCompile(`send ([\d.]+)([GM]bps)`).FindStringSubmatch(line); len(m) == 3 {
@@ -405,16 +412,15 @@ func parseProcessConnectionLineNew(line string) TCPConnectionInfo {
 	}
 }
 
-// MatchZMQToTCPByProcess matches ZMQ sockets using process-based correlation and logs to CSV
-func MatchZMQToTCPByProcess(logger *CSVLogger, cID string) error {
+// Get kernel level tcp data for this socket
+func GetKernelTcpData(logger *CSVLogger, cID string) (error, string) {
 	// Get detailed TCP info using ss -ti
 	targetPort := 5559
 	tcpConnections, err := ParseSSOutput(targetPort)
 	if err != nil {
-		return fmt.Errorf("failed to get TCP connection details: %v", err)
+		return fmt.Errorf("failed to get TCP connection details: %v", err), ""
 	}
 
-	// Get process TCP connections using ss -tup
 	tmp, _ := clientPortMap.Load(cID)
 	processConnection := tmp.(TCPConnectionInfo)
 
@@ -426,11 +432,11 @@ func MatchZMQToTCPByProcess(logger *CSVLogger, cID string) error {
 			break
 		}
 	}
-
+	var forServerLog string
 	// Log the connection data to CSV
-	if err := logger.LogConnectionData(processConnection, detailedConn); err != nil {
-		return fmt.Errorf("failed to log connection data: %v", err)
+	if err, forServerLog = logger.LogConnectionData(processConnection, detailedConn); err != nil {
+		return fmt.Errorf("failed to log connection data: %v", err), ""
 	}
 
-	return nil
+	return nil, forServerLog
 }

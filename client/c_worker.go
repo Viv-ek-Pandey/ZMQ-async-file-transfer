@@ -10,16 +10,15 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
-	zmq "github.com/pebbe/zmq4"
 )
 
-func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
-	socket, err := newZmqSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
+func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}, limit <-chan sendFrom) {
+	socket, err := newZmqDealerSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
 	if err != nil {
 		log.Printf("\nerror in creating new socket [%v]\n", err)
 		log.Panic(err)
 	}
+
 	nxt <- struct{}{}
 
 	defer func() {
@@ -91,6 +90,7 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 
 			chunkBuf := make([]byte, chunkSize)
 			chunkNumber := 1
+			tcpStatsForServerMsg := "????"
 			log.Printf("[Client#%s] Sending Data", clientID)
 			for {
 				bytesRead, err := file.Read(chunkBuf)
@@ -105,16 +105,19 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, nxt chan struct{}) {
 				// Include client-sent timestamp as a frame after data
 				dataToSend := chunkBuf[:bytesRead]
 				hash := sha256.Sum256(dataToSend)
-				dataMsg := []string{"CHUNK", strconv.Itoa(chunkNumber), string(dataToSend), string(hash[:]), strconv.FormatInt(sentAt, 10)}
+				dataMsg := []string{"CHUNK", strconv.Itoa(chunkNumber), string(dataToSend), string(hash[:]), strconv.FormatInt(sentAt, 10), tcpStatsForServerMsg}
+
 				_, err = socket.SendMessage(dataMsg)
 				if err != nil {
 					log.Printf("\nerror in sending {DATA(chunks)} client : %s   |  err [%v]", clientID, err)
 				}
 				// log.Printf("\n[Client]: %s - Sent chunk :%d", clientID, chunkNumber)
-
+				if (chunkNumber+1)%config.AppConfig.Common.AckAfter == 0 {
+					tcpStatsForServerMsg, _ = logTCPStats(clientID, csvLogger)
+				}
 				if (!config.AppConfig.Common.NoAck) && (config.AppConfig.Common.AckAfter > 0) && (chunkNumber%config.AppConfig.Common.AckAfter == 0 || chunkNumber == int(totalChunks)) {
 					//log tcp connection info
-					err = logTCPStats(socket, clientID, workerId, csvLogger)
+					tcpStatsForServerMsg, err = logTCPStats(clientID, csvLogger)
 					if err != nil {
 						log.Printf("[Client %s]: Failed to log TCP stats: %v", clientID, err)
 					}
@@ -172,15 +175,8 @@ func getTotalChunks(chunkSize int64, filePath string) (int64, error) {
 	totalChunks := (fileInfo.Size() + chunkSize - 1) / chunkSize
 	return totalChunks, nil
 }
-func logTCPStats(socket *zmq.Socket, clientID, workerId string, csvLogger *CSVLogger) error {
+func logTCPStats(clientID string, csvLogger *CSVLogger) (string, error) {
 
-	// Extract port from broker address
-	// targetPort, err := extractPortFromAddress(config.AppConfig.Client.BrokerTCPAddress)
-	// if err != nil {
-	// 	log.Printf("Failed to extract port from broker address, using default 5559: %v", err)
-	// 	targetPort = 5559
-	// }
-
-	// Use the configurable TCP matching and logging function
-	return MatchZMQToTCPByProcess(csvLogger, clientID)
+	err, forServerLog := GetKernelTcpData(csvLogger, clientID)
+	return forServerLog, err
 }

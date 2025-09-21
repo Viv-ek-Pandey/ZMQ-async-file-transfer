@@ -123,9 +123,9 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 			if len(msg) >= 6 && msg[0] == "CHUNK" {
 				chunkNumberStr := msg[1]
 				clientSent, _ := (strconv.Atoi(msg[4]))
-				brokerRecv, _ := (strconv.Atoi(msg[5]))
+				brokerRecv, _ := (strconv.Atoi(msg[6]))
 				clientToBrokerRtt := brokerRecv - clientSent
-				brokerSent, _ := strconv.Atoi(msg[6])
+				brokerSent, _ := strconv.Atoi(msg[7])
 				brokerToWorkerRtt := int(chunkMessageRecv) - brokerSent
 				rtt := strconv.FormatInt(chunkMessageRecv-chunkWaitStart, 10)
 
@@ -133,7 +133,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 
 				// chunknumber , clientsent , brkRecv,client(send)-broker(recv), brokersent  ,worker rec,broker(send)-worker(recv),  worker loop-recv rtt
 				workerLogChan <- []string{chunkNumberStr, getTimeStringFromUnixMilliString(msg[4]),
-					getTimeStringFromUnixMilliString(msg[5]), strconv.Itoa(clientToBrokerRtt), getTimeStringFromUnixMilliString(msg[6]), getTimeStringFromUnixMilliString(strconv.Itoa(int(chunkMessageRecv))), strconv.Itoa(brokerToWorkerRtt), rtt}
+					getTimeStringFromUnixMilliString(msg[6]), strconv.Itoa(clientToBrokerRtt), getTimeStringFromUnixMilliString(msg[7]), getTimeStringFromUnixMilliString(strconv.Itoa(int(chunkMessageRecv))), strconv.Itoa(brokerToWorkerRtt), rtt}
 				// ======================CSV Logging=========================
 
 				if !config.AppConfig.Server.NoWrite {
@@ -153,13 +153,14 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 				// log.Printf("[Worker %s]: Wrote chunk %s for Client %s. Received: %d/%d", workerID, chunkNumberStr, clientZMQID, receivedChunks, totalExpectedChunks)
 
 				if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && (chunkNumberStr == strconv.FormatInt(int64(totalExpectedChunks), 10) || receivedChunks%config.AppConfig.Common.AckAfter == 0) {
+					clientTcpInfo := msg[5]
 					if _, err := responder.SendMessage("ACK", chunkNumberStr, workerID); err != nil {
 						// log.Printf("[Worker %s]: Error sending ACK for chunk %s to client %s: %v", workerID, ackChunkNum, clientZMQID, err)
 					}
 					ackTime := time.Now().UnixMilli()
 					ackDelta := ackTime - lastAck
 					lastAck = ackTime
-					workerLogChan <- []string{fmt.Sprintf("Delta From Start/Prev Ack  Time Millisecond :  %d", ackDelta)}
+					workerLogChan <- []string{fmt.Sprintf("Delta From Start/Prev Ack  Time Millisecond :  %d", ackDelta), fmt.Sprintf("Client TCP Info : [%s]", clientTcpInfo)}
 					// log.Printf("[Worker %s]: Sent ACK for chunk %s to client %s.", workerID, ackChunkNum, clientZMQID)
 
 				}

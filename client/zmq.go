@@ -13,7 +13,7 @@ import (
 	zmq "github.com/pebbe/zmq4"
 )
 
-func newZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
+func newZmqDealerSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 
 	socket, err := zmq.NewSocket(zmq.DEALER)
 	if err != nil {
@@ -51,6 +51,7 @@ func newZmqSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 var clientPortMap sync.Map
 var usedLocalPorts sync.Map // localPort(int) -> bool
 
+// Map zmq socket to actual tcp port
 func MapClientToTCPPort(targetPort int, cID string) error {
 	pid := os.Getpid()
 
