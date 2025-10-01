@@ -1,18 +1,15 @@
 package main
 
 import (
+	"encoding/binary"
 	"log"
 	"server/config"
-	"server/utils"
-	"strconv"
-	"sync"
-	"time"
 
 	zmq "github.com/pebbe/zmq4"
 )
 
-// wmap stores the mapping between workerID and assigned clientID.
-var wmap sync.Map
+// // cmap stores clientID -> assigned workerID mapping (for failover support).
+// var cmap = make(map[string]string)
 
 func InitBroker() {
 	defer func() {
@@ -27,18 +24,77 @@ func InitBroker() {
 	defer frontend.Close()
 	defer backend.Close()
 
-	//===================== CSV Logging ============================
-	brokerWriter, brokerFile, _ := utils.InitBrokerTimingCSV()
-	defer func() {
-		if brokerFile != nil {
-			brokerFile.Close()
-		}
-	}()
-	brokerLogChan := make(chan []string, 10000)
+	//MONITOR
 
-	wg.Add(1)
-	go utils.LogBrokerTimmings(&wg, brokerLogChan, brokerWriter)
-	//===================== CSV Logging ============================
+	// Create monitor endpoint
+	err = frontend.Monitor("inproc://router-monitor", zmq.EVENT_ALL)
+	if err != nil {
+		log.Printf("[Broker]: Error setting up monitor: %v", err)
+	} else {
+		monitor, err := zmq.NewSocket(zmq.PAIR)
+		if err != nil {
+			log.Printf("[Broker]: Error creating monitor socket: %v", err)
+		} else {
+			err = monitor.Connect("inproc://router-monitor")
+			if err != nil {
+				log.Printf("[Broker]: Error connecting monitor: %v", err)
+				monitor.Close()
+			} else {
+				// Start monitoring goroutine
+				go func() {
+					defer monitor.Close()
+					log.Println("[Monitor]: Frontend monitoring started")
+
+					for {
+						// Receive the event as a multipart message
+						parts, err := monitor.RecvMessageBytes(0)
+						if err != nil {
+							log.Printf("[Monitor]: Error receiving event: %v", err)
+							break
+						}
+
+						if len(parts) < 2 {
+							continue
+						}
+
+						// Parse event data
+						if len(parts[0]) < 6 {
+							continue
+						}
+
+						event := zmq.Event(binary.LittleEndian.Uint16(parts[0][0:2]))
+						// value := binary.LittleEndian.Uint32(parts[0][2:6])
+						addr := string(parts[1])
+
+						switch event {
+						case zmq.EVENT_CONNECT_DELAYED:
+							log.Printf("[Monitor]: Client connect DELAYED from %s", addr)
+						case zmq.EVENT_CONNECT_RETRIED:
+							log.Printf("[Monitor]: Client connect RETRIED from %s", addr)
+						case zmq.EVENT_CONNECTED:
+							log.Printf("[Monitor]: Client connected from %s", addr)
+						case zmq.EVENT_DISCONNECTED:
+							log.Printf("[Monitor]: Client disconnected from %s", addr)
+						case zmq.EVENT_ACCEPTED:
+							log.Printf("[Monitor]: Connection accepted from %s", addr)
+						case zmq.EVENT_BIND_FAILED:
+							log.Printf("[Monitor]: Bind failed on %s", addr)
+						case zmq.EVENT_LISTENING:
+							log.Printf("[Monitor]: Socket listening on %s", addr)
+						case zmq.EVENT_CLOSE_FAILED:
+							log.Printf("[Monitor]: Close failed on %s", addr)
+						default:
+							// log.Printf("[Monitor]: Event %d on %s (value: %d)", event, addr, value)
+						}
+					}
+
+					log.Println("[Monitor]: Frontend monitoring stopped")
+				}()
+			}
+		}
+	}
+
+	//monitor ======
 
 	poller := zmq.NewPoller()
 	poller.Add(frontend, zmq.POLLIN)
@@ -62,9 +118,7 @@ func InitBroker() {
 				//               OR
 				// [worker_identity, "DONE"]
 
-				msgWaitStart := time.Now().UnixMilli()
 				frames, err := s.RecvMessage(0)
-				msgRecv := time.Now().UnixMilli()
 				if err != nil {
 					log.Printf("[Broker]: Error receiving from backend: %v", err)
 					log.Panic(err)
@@ -82,14 +136,9 @@ func InitBroker() {
 				//replace index 0 with client ID
 				frames[0] = clientZMQID
 
-				//======================== CSV LOGGING=============================
-				rtt := strconv.FormatInt(msgRecv-msgWaitStart, 10)
-				brokerLogChan <- []string{clientZMQID, workerZMQID, msgType, rtt}
-				//======================== CSV LOGGING=============================
-
 				switch msgType {
 				case "REGISTER":
-					wmap.Store(workerZMQID, "") // Store worker as available
+					wmap[workerZMQID] = "" // Store worker as available
 					log.Printf("[Broker]: Registered new worker: %s", workerZMQID)
 
 				case "SENDDATA":
@@ -125,9 +174,7 @@ func InitBroker() {
 				// OR
 				// Client sends: ["Done"]
 
-				msgWaitStart := time.Now().UnixMilli()
 				frames, err := s.RecvMessage(0)
-				msgRecv := time.Now().UnixMilli()
 				if err != nil {
 					log.Printf("[Broker]: Error receiving from frontend: %v", err)
 					continue
@@ -141,7 +188,6 @@ func InitBroker() {
 				}
 
 				clientZMQID, msgType := frames[0], frames[1]
-
 				workerID := FindWorker(clientZMQID) // Find or assign a worker for this client
 
 				if workerID == "" {
@@ -151,10 +197,6 @@ func InitBroker() {
 					}
 					continue // Skip to next ready socket
 				}
-				//======================== CSV LOGGING=============================
-				rtt := strconv.FormatInt(msgRecv-msgWaitStart, 10)
-				brokerLogChan <- []string{clientZMQID, workerID, frames[1], rtt}
-				//======================== CSV LOGGING=============================
 
 				frames[0] = workerID
 
@@ -175,14 +217,20 @@ func InitBroker() {
 					}
 
 				case "Done":
-					log.Printf("[Worker %s]: Done - Setting free", workerID)
-					wmap.Store(workerID, "")
+					log.Printf("[Worker %s]: Done ", workerID)
+					// wmap.Store(workerID, "")
+					// // Clean up client-to-worker mapping
+					// cmap.Range(func(key, value any) bool {
+					// 	if val, ok := value.(string); ok && val == workerID {
+					// 		cmap.Delete(key)
+					// 		return false // Found and deleted, stop iteration
+					// 	}
+					// 	return true
+					// })
 
 				case "CHUNK":
 					// log.Printf("[Broker]: Forwarding chunk %s from client %s to worker %s", frames[2], clientZMQID, workerID)
-					brkRecvAt := strconv.FormatInt(msgRecv, 10)
-					brkSendAt := strconv.FormatInt(time.Now().UnixMilli(), 10)
-					frames = append(frames, brkRecvAt, brkSendAt) // Append broker's timestamp
+
 					_, err := backend.SendMessage(frames)
 					if err != nil {
 						log.Printf("[Broker]: WARN: Failed to forward chunk to worker %s for client %s: %v", workerID, clientZMQID, err)
@@ -196,47 +244,55 @@ func InitBroker() {
 	} // End for {} (main poller loop)
 }
 
+// wmap stores workerID -> clientID assignment.
+var wmap = make(map[string]string)
+
+// cmap stores clientID -> assigned workerID mapping (for failover support).
+var cmap = make(map[string]string)
+
 // FindWorker assigns a worker to a client or returns an already assigned one.
 func FindWorker(cID string) string {
+	// // Check if client already has an assigned worker (failover)
+	// if workerID, exists := cmap[cID]; exists && workerID != "" {
+	// 	if assignedClient, workerExists := wmap[workerID]; workerExists && assignedClient == cID {
+	// 		// log.Printf("[Broker:FindWorker]: Client %s reconnecting to existing worker %s", cID, workerID)
+	// 		return workerID
+	// 	}
+	// }
+
 	var assignedWorkerID, newWorkerID string
 
-	wmap.Range(func(key, value any) bool {
-		if val, ok := value.(string); ok {
-			if val == cID {
-				// Client is already assigned
-				assignedWorkerID = key.(string)
-				return false // No need to search further
-			}
-			if val == "" && newWorkerID == "" {
-				// Remember first available worker
-				newWorkerID = key.(string)
-			}
+	// Find either existing assignment or first available worker
+	for workerID, client := range wmap {
+		if client == cID {
+			assignedWorkerID = workerID
+			break
 		}
-		return true
-	})
+		if client == "" && newWorkerID == "" {
+			newWorkerID = workerID
+		}
+	}
 
 	// Return existing assignment if found
 	if assignedWorkerID != "" {
+		cmap[cID] = assignedWorkerID
 		return assignedWorkerID
 	}
 
 	// Assign new worker if available
 	if newWorkerID != "" {
-		wmap.Store(newWorkerID, cID)
-		// log.Printf("[Broker:FindWorker]: Assigned client %s to new worker %s.", cID, newWorkerID)
+		wmap[newWorkerID] = cID
+		cmap[cID] = newWorkerID
+		log.Printf("[Broker:FindWorker]: Assigned client %s to new worker %s.", cID, newWorkerID)
 	}
 
-	return newWorkerID // Could still be "" if none available
+	return newWorkerID
 }
 
 // FindClient retrieves the clientID assigned to a specific worker.
 func FindClient(wID string) string {
-	// log.Println("[Broker] - Finding client for wId :", wID)
-	val, ok := wmap.Load(wID)
-	if ok {
-		if clientID, isString := val.(string); isString {
-			return clientID
-		}
+	if clientID, exists := wmap[wID]; exists {
+		return clientID
 	}
 	return ""
 }

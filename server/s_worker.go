@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"server/config"
 	"server/utils"
 	"strconv"
-	"time"
 )
 
 // ServerWorker represents a worker handling file chunks.
@@ -15,6 +13,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 	defer func() {
 		wg.Done()
 	}()
+
 	if !config.AppConfig.Server.NoWrite {
 		// Create/truncate the output file.
 		truncateFile(outputFilename, workerID)
@@ -28,19 +27,6 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 	}
 	defer responder.Close()
 
-	// ======================CSV Logging=========================
-	workerWriter, workerFile, _ := utils.InitChunkTimingCSV(workerID)
-	defer func() {
-		if workerFile != nil {
-			workerFile.Close()
-		}
-	}()
-	workerLogChan := make(chan []string, 10000)
-
-	wg.Add(1)
-	go utils.LogChunkTiming(&wg, workerWriter, workerLogChan)
-	// ======================CSV Logging=========================
-
 	// 2. Register the worker with the broker
 	_, err = responder.SendMessage("REGISTER")
 	if err != nil {
@@ -48,6 +34,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 		log.Panic(err)
 	}
 	// log.Printf("[Worker %s]: Sent REGISTER message to broker.", workerID)
+
 	for {
 		var totalExpectedChunks int // Total chunks as parsed from METADATA
 
@@ -85,56 +72,57 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 		}
 		// log.Printf("[Worker %s]: SENDDATA signal sent for Client %s.", workerID, clientZMQID)
 		var file *os.File
-		if !config.AppConfig.Server.NoWrite {
-			// Reopen file for actual writing (using O_TRUNC to clear content if previous write was incomplete)
+		var receivedChunks int
 
-			file, err = os.OpenFile(outputFilename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-			if err != nil {
-				log.Printf("[Worker %s]: Error opening file '%s' for writing: %v", workerID, outputFilename, err)
-				log.Panic(err)
-			}
-			defer file.Close()
+		// Open file for writing (append mode to continue from where we left off)
+		file, err = os.OpenFile(outputFilename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			log.Printf("[Worker %s]: Error opening file '%s' for writing: %v", workerID, outputFilename, err)
+			log.Panic(err)
 		}
-
-		receivedChunks := 0
-
-		//for total time to get all data
-		transferStartTime := time.Now().UnixMilli()
-		lastAck := transferStartTime
+		defer file.Close()
 
 		// Main loop for receiving and writing chunks
 		log.Printf("[Worker#%s] Recving Chunk", workerID)
 		for receivedChunks < totalExpectedChunks {
-			// log.Printf("[Worker %s]: Waiting for chunk %d...", workerID, receivedChunks+1)
+			log.Printf("[Worker %s]: Waiting for chunk %d...", workerID, receivedChunks+1)
 
 			// --- 5. Receive Chunk Message from Broker ---
-			chunkWaitStart := time.Now().UnixMilli()
 			msg, err := responder.RecvMessage(0)
-			chunkMessageRecv := time.Now().UnixMilli()
 
 			if err != nil {
 				log.Printf("[Worker %s]: Error receiving chunk message: %v", workerID, err)
 				log.Panic(err)
 			}
 
-			// log.Printf("[Worker %s]: Received chunk message: %v", workerID, msg) // Too noisy for data chunks
+			// log.Printf("[Worker %s]: Received chunk message: %v", workerID, msg)
 
-			// Expected frames: ["CHUNK", chunkNumberStr, chunkData, hash,clientSentAtStr, brkRecv,brokerSentAtStr]
-			if len(msg) >= 6 && msg[0] == "CHUNK" {
+			// Check if this is a METADATA message (client reconnecting)
+			// if len(msg) >= 2 && msg[0] == "METADATA" {
+			// 	log.Printf("[Worker %s]: RECONNECTED!", workerID)
+			// 	// Check if file exists to determine if we're resuming
+			// 	if fileInfo, err := os.Stat(outputFilename); err == nil {
+			// 		log.Printf("[Worker %s]: File exists with size %d bytes, will append new data", workerID, fileInfo.Size())
+			// 	} else {
+			// 		log.Printf("[Worker %s]: Creating new file", workerID)
+			// 	}
+			// 	// Send SENDDATA signal to the reconnecting client
+			// 	_, err = responder.SendMessage("SENDDATA")
+			// 	if err != nil {
+			// 		log.Printf("[Worker %s]: Error sending SENDDATA message to reconnecting client: %v", workerID, err)
+			// 		log.Panic(err)
+			// 	}
+			// 	continue // Continue processing chunks
+			// }
+
+			// Expected frames: ["CHUNK", chunkNumberStr, chunkData, hash]
+			if len(msg) >= 4 && msg[0] == "CHUNK" {
 				chunkNumberStr := msg[1]
-				clientSent, _ := (strconv.Atoi(msg[4]))
-				brokerRecv, _ := (strconv.Atoi(msg[6]))
-				clientToBrokerRtt := brokerRecv - clientSent
-				brokerSent, _ := strconv.Atoi(msg[7])
-				brokerToWorkerRtt := int(chunkMessageRecv) - brokerSent
-				rtt := strconv.FormatInt(chunkMessageRecv-chunkWaitStart, 10)
-
-				// ======================CSV Logging=========================
-
-				// chunknumber , clientsent , brkRecv,client(send)-broker(recv), brokersent  ,worker rec,broker(send)-worker(recv),  worker loop-recv rtt
-				workerLogChan <- []string{chunkNumberStr, getTimeStringFromUnixMilliString(msg[4]),
-					getTimeStringFromUnixMilliString(msg[6]), strconv.Itoa(clientToBrokerRtt), getTimeStringFromUnixMilliString(msg[7]), getTimeStringFromUnixMilliString(strconv.Itoa(int(chunkMessageRecv))), strconv.Itoa(brokerToWorkerRtt), rtt}
-				// ======================CSV Logging=========================
+				cNum, _ := strconv.Atoi(chunkNumberStr)
+				if cNum != receivedChunks+1 {
+					log.Panicf("\n expected : %d  - got %d", receivedChunks+1, cNum)
+					log.Panic("wrong chunk number!")
+				}
 
 				if !config.AppConfig.Server.NoWrite {
 					// hashFromClient := msg[4]
@@ -142,7 +130,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 					// if hashFromClient != string(hash[:]) {
 					// 	log.Printf("[Worker %s] : Chunk HASH MISSMATCH ", workerID)
 					// }
-					_, err := file.Write([]byte(msg[3])) // Write to file
+					_, err := file.Write([]byte(msg[2])) // Write to file
 					if err != nil {
 						log.Printf("[Worker %s]: Error writing chunk %s to file '%s': %v", workerID, chunkNumberStr, outputFilename, err)
 						log.Panic(err)
@@ -150,18 +138,15 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 				}
 
 				receivedChunks++
-				// log.Printf("[Worker %s]: Wrote chunk %s for Client %s. Received: %d/%d", workerID, chunkNumberStr, clientZMQID, receivedChunks, totalExpectedChunks)
+				// log.Printf("[Worker %s]: Wrote chunk %s . Received: %d/%d", workerID, chunkNumberStr, receivedChunks, totalExpectedChunks)
 
 				if !config.AppConfig.Common.NoAck && config.AppConfig.Common.AckAfter > 0 && (chunkNumberStr == strconv.FormatInt(int64(totalExpectedChunks), 10) || receivedChunks%config.AppConfig.Common.AckAfter == 0) {
-					clientTcpInfo := msg[5]
+					log.Println("sending ACk ")
+					// time.Sleep(time.Second * 5)
 					if _, err := responder.SendMessage("ACK", chunkNumberStr, workerID); err != nil {
 						// log.Printf("[Worker %s]: Error sending ACK for chunk %s to client %s: %v", workerID, ackChunkNum, clientZMQID, err)
 					}
-					ackTime := time.Now().UnixMilli()
-					ackDelta := ackTime - lastAck
-					lastAck = ackTime
-					workerLogChan <- []string{fmt.Sprintf("Delta From Start/Prev Ack  Time Millisecond :  %d", ackDelta), fmt.Sprintf("Client TCP Info : [%s]", clientTcpInfo)}
-					// log.Printf("[Worker %s]: Sent ACK for chunk %s to client %s.", workerID, ackChunkNum, clientZMQID)
+					// log.Printf("[Worker %s]: Sent ACK for chunk %s.", workerID, chunkNumberStr)
 
 				}
 
@@ -171,43 +156,24 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 			}
 		}
 		log.Printf("[Worker#%s] Recv Complete", workerID)
-		transferEndTime := time.Now().UnixMilli()
-
-		totalTransferTime := transferEndTime - transferStartTime
-		workerLogChan <- []string{fmt.Sprintf("TOTAL Time in MilliSec : %d", totalTransferTime)}
 
 		// log.Printf("[Worker %s]: All expected chunks (%d) received(%d) and written to file successfully.", workerID, totalExpectedChunks, receivedChunks)
 
+		checksum, err := utils.ComputeSHA256(outputFilename)
+		if err != nil {
+			log.Printf("[Worker %s]: Error computing SHA256 checksum for file '%s': %v", workerID, outputFilename, err)
+		}
+		log.Printf("[Worker %s]: SHA256 Checksum of received file '%s': %s", workerID, outputFilename, checksum)
+
 		//send done after all expected chunk recvd
-		_, err = responder.SendMessage("DONE")
+		_, err = responder.SendMessage("DONE", checksum)
 		if err != nil {
 			log.Printf("[Worker %s]: Error sending DONE message: %v", workerID, err)
 			log.Panic(err)
 		}
+		break // break so worker is free for next client!
 	}
-	close(workerLogChan)
-	// if !config.AppConfig.Server.NoWrite {
-	// 	// Compute checksum of the received file
-	// 	finalFile, err := os.Open(outputFilename)
-	// 	if err != nil {
-	// 		log.Printf("[Worker %s]: Error opening file '%s' for checksum: %v", workerID, outputFilename, err)
-	// 		log.Panic(err)
-	// 	}
-	// 	defer finalFile.Close()
 
-	// 	hash := sha256.New()
-	// 	_, err = io.Copy(hash, finalFile)
-	// 	if err != nil {
-	// 		log.Printf("[Worker %s]: Error computing checksum for '%s': %v", workerID, outputFilename, err)
-	// 		log.Panic(err)
-	// 	}
-
-	// 	checksum := hex.EncodeToString(hash.Sum(nil))
-	// 	log.Printf("[Worker %s]: SHA256 Checksum of received file '%s': %s", workerID, outputFilename, checksum)
-
-	// }
-	// pipe <- struct{}{}
-	// log.Printf("[Worker %s]: Done. Signaled completion.", workerID)
 }
 
 func truncateFile(fileName string, wId string) {
@@ -217,11 +183,4 @@ func truncateFile(fileName string, wId string) {
 		log.Panic(err)
 	}
 	file.Close()
-}
-
-func getTimeStringFromUnixMilliString(str string) string {
-	ms, _ := strconv.ParseInt(str, 10, 64)
-	t := time.UnixMilli(ms)
-
-	return t.Format("15:04:05.000")
 }

@@ -12,7 +12,7 @@ var idCounter int64
 
 func GetRandID() string {
 	next := atomic.AddInt64(&idCounter, 1)
-	return fmt.Sprintf("C%d", next)
+	return fmt.Sprintf("%d", next)
 }
 
 func ComputeSHA256(filePath string) (string, error) {

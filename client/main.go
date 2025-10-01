@@ -8,9 +8,11 @@ import (
 	"sync"
 )
 
-type sendFrom struct {
-	clientID    string
-	chunkNumber int
+type FailoverInfo struct {
+	ClientID    string
+	ChunkNumber int
+	FilePath    string
+	ChunkSize   int64
 }
 
 var wg sync.WaitGroup
@@ -18,18 +20,28 @@ var wg sync.WaitGroup
 func main() {
 	runtime.GOMAXPROCS(1)
 
-	limit := make(chan sendFrom, 1)
+	failoverChan := make(chan FailoverInfo, 10) // Channel for failover events
 
 	numWorkers := config.AppConfig.Client.NumberOfWorkers
-	nxt := make(chan struct{})
+
+	// Start failover handler
+	go handleFailover(failoverChan, &wg, failoverChan)
+
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		randID := utils.GetRandID()
-		go ClientWorker(randID, &wg, nxt, limit)
-		<-nxt
+		go ClientWorker(randID, &wg, failoverChan)
 	}
 
 	// -------------------------
 	wg.Wait()
 	fmt.Println("** DONE **")
+}
+
+func handleFailover(failoverChan <-chan FailoverInfo, wg *sync.WaitGroup, sendFailoverChan chan<- FailoverInfo) {
+	for failoverInfo := range failoverChan {
+
+		go ClientWorkerWithResume(failoverInfo.ClientID, wg, sendFailoverChan, failoverInfo.ChunkNumber)
+
+	}
 }

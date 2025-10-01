@@ -15,21 +15,11 @@ func newZmqDealerSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = socket.SetRcvtimeo(time.Minute * 10)
+	err = socket.SetRcvtimeo(time.Minute * 3)
 	if err != nil {
 		return nil, err
 	}
 
-	if config.AppConfig.Common.RecvBufSize != 0 && config.AppConfig.Common.SendBufSize != 0 {
-		log.Println("[Worker]: Overwriting kernel default TCP buffer size")
-		socket.SetRcvbuf(config.AppConfig.Common.RecvBufSize)
-		socket.SetSndbuf(config.AppConfig.Common.SendBufSize)
-	}
-
-	if config.AppConfig.Server.HighWaterMark > 0 {
-		socket.SetSndhwm(config.AppConfig.Server.HighWaterMark)
-		log.Printf("\n[Worker]: Setting High Water Mark %v\n", config.AppConfig.Server.HighWaterMark)
-	}
 	socket.SetIdentity(id)
 
 	err = socket.Connect(tcpAddr)
@@ -50,18 +40,13 @@ func getBrokerRouters() (*zmq.Socket, *zmq.Socket, error) {
 		return nil, nil, fmt.Errorf("[Broker]: Error creating frontend ROUTER: %w", err)
 	}
 
-	if config.AppConfig.Common.RecvBufSize != 0 && config.AppConfig.Common.SendBufSize != 0 {
-		log.Println("[Broker]: Overwriting kernel default TCP buffer size")
-		frontend.SetRcvbuf(config.AppConfig.Common.RecvBufSize)
-		frontend.SetSndbuf(config.AppConfig.Common.SendBufSize)
-	}
+	frontend.SetRcvtimeo(180 * time.Second)
+	frontend.SetTcpKeepalive(1)
+	frontend.SetTcpKeepaliveIdle(300)
+	frontend.SetTcpKeepaliveIntvl(300)
 
-	if config.AppConfig.Server.HighWaterMark > 0 {
-		if err := frontend.SetRcvhwm(config.AppConfig.Server.HighWaterMark); err != nil {
-			return nil, nil, fmt.Errorf("[Broker]: Error setting High Water Mark: %w", err)
-		}
-		log.Printf("[Broker-Frontend]: Setting HighWaterMark %v\n", config.AppConfig.Server.HighWaterMark)
-	}
+	frontend.SetHeartbeatIvl(2 * time.Second)
+	frontend.SetHeartbeatTimeout(1 * time.Second)
 
 	if err := frontend.Bind(config.AppConfig.Server.FrontendTCPAddress); err != nil {
 		return nil, nil, fmt.Errorf("[Broker]: Failed to bind frontend ROUTER: %w", err)

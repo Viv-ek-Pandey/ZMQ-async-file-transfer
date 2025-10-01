@@ -85,11 +85,11 @@ func validateConfig(cfg *Config) error {
 	if cfg.Client.NumberOfWorkers <= 0 {
 		return fmt.Errorf("client.number_of_workers must be a positive integer")
 	}
-	if cfg.Client.FilePath == "" {
-		return fmt.Errorf("client.file_path cannot be empty")
-	} else if _, err := os.Stat(cfg.Client.FilePath); os.IsNotExist(err) {
-		return fmt.Errorf("client.file_path '%s' does not exist", cfg.Client.FilePath)
-	}
+	// if cfg.Client.FilePath == "" {
+	// 	return fmt.Errorf("client.file_path cannot be empty")
+	// } else if _, err := os.Stat(cfg.Client.FilePath); os.IsNotExist(err) {
+	// 	return fmt.Errorf("client.file_path '%s' does not exist", cfg.Client.FilePath)
+	// }
 	if cfg.Client.HighWaterMark < 0 { // HWM can be 0 (infinite)
 		return fmt.Errorf("client.high_water_mark must be a non-negative integer (0 for infinite)")
 	}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"runtime"
 	"server/config"
 	"server/utils"
@@ -26,5 +25,4 @@ func main() {
 
 	wg.Wait()
 
-	log.Println("**DONE**")
 }
