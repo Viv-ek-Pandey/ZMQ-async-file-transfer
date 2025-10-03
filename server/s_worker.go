@@ -97,7 +97,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 
 			// log.Printf("[Worker %s]: Received chunk message: %v", workerID, msg)
 
-			// Check if this is a METADATA message (client reconnecting)
+			// Check if this is a METADATA message (client reconnecting, new client with same identity)
 			// if len(msg) >= 2 && msg[0] == "METADATA" {
 			// 	log.Printf("[Worker %s]: RECONNECTED!", workerID)
 			// 	// Check if file exists to determine if we're resuming
@@ -115,7 +115,7 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 			// 	continue // Continue processing chunks
 			// }
 
-			// Expected frames: ["CHUNK", chunkNumberStr, chunkData, hash]
+			// Expected frames: ["CHUNK", chunkNumberStr, chunkData]
 			if len(msg) >= 4 && msg[0] == "CHUNK" {
 				chunkNumberStr := msg[1]
 				cNum, _ := strconv.Atoi(chunkNumberStr)
@@ -147,7 +147,6 @@ func ServerWorker(pipe chan<- struct{}, workerID string, outputFilename string) 
 						// log.Printf("[Worker %s]: Error sending ACK for chunk %s to client %s: %v", workerID, ackChunkNum, clientZMQID, err)
 					}
 					// log.Printf("[Worker %s]: Sent ACK for chunk %s.", workerID, chunkNumberStr)
-
 				}
 
 			} else {

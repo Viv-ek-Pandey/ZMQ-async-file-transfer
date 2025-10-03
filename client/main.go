@@ -25,6 +25,7 @@ func main() {
 	numWorkers := config.AppConfig.Client.NumberOfWorkers
 
 	// Start failover handler
+	//For testing set-identity kill the client worker and start a new worker with same identity
 	go handleFailover(failoverChan, &wg, failoverChan)
 
 	for i := 0; i < numWorkers; i++ {
@@ -40,8 +41,6 @@ func main() {
 
 func handleFailover(failoverChan <-chan FailoverInfo, wg *sync.WaitGroup, sendFailoverChan chan<- FailoverInfo) {
 	for failoverInfo := range failoverChan {
-
 		go ClientWorkerWithResume(failoverInfo.ClientID, wg, sendFailoverChan, failoverInfo.ChunkNumber)
-
 	}
 }

@@ -18,7 +18,6 @@ func ClientWorker(clientID string, wg *sync.WaitGroup, failoverChan chan<- Failo
 }
 
 func ClientWorkerWithResume(clientID string, wg *sync.WaitGroup, failoverChan chan<- FailoverInfo, startChunk int) {
-	fmt.Printf("🚀 Starting new client  with identity %s, resuming from chunk %d\n", clientID, startChunk)
 
 	socket, err := newZmqDealerSocket(clientID, config.AppConfig.Client.BrokerTCPAddress)
 	if err != nil {

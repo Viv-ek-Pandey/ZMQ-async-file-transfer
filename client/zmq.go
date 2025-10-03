@@ -15,10 +15,8 @@ func newZmqDealerSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 	}
 	socket.SetIdentity(id)
 
-	// Set receive timeout (milliseconds)
 	socket.SetRcvtimeo(180 * time.Second)
 
-	// TCP keepalive: -1 = system default, 0 = disabled, 1 = enabled
 	socket.SetTcpKeepalive(1)
 
 	// TCP keepalive idle (secs before starting probes)
@@ -41,8 +39,6 @@ func newZmqDealerSocket(id string, tcpAddr string) (*zmq.Socket, error) {
 		log.Panicln("[Client]: failed to connect tcpAddr :", tcpAddr)
 		return nil, err
 	}
-
-	// MapClientToTCPPort(5559, id)
 
 	return socket, err
 

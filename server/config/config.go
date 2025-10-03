@@ -81,9 +81,6 @@ func validateConfig(cfg *Config) error {
 	if cfg.Server.GeneratedFileNamePrefix == "" {
 		return fmt.Errorf("server.generated_file_name_prefix cannot be empty")
 	}
-	if cfg.Server.HighWaterMark < 0 { // HWM can be 0 (infinite)
-		return fmt.Errorf("server.high_water_mark must be a non-negative integer (0 for infinite)")
-	}
 
 	return nil
 }

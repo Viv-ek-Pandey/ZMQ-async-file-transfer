@@ -8,8 +8,11 @@ import (
 	zmq "github.com/pebbe/zmq4"
 )
 
-// // cmap stores clientID -> assigned workerID mapping (for failover support).
-// var cmap = make(map[string]string)
+// wmap stores workerID -> clientID assignment.
+var wmap = make(map[string]string)
+
+// cmap stores clientID -> assigned workerID mapping
+var cmap = make(map[string]string)
 
 func InitBroker() {
 	defer func() {
@@ -114,7 +117,7 @@ func InitBroker() {
 				//               OR
 				// [worker_identity, "SENDDATA"]
 				//               OR
-				// [worker_identity, "ACK", chunkNum, worker_ZMQ_identity]
+				// [worker_identity, "ACK", chunkNum]
 				//               OR
 				// [worker_identity, "DONE"]
 
@@ -170,7 +173,7 @@ func InitBroker() {
 				// OR
 				// Client sends: ["METADATA", totalChunks]
 				// OR
-				// Client sends: ["CHUNK", ChunkNum, ChunkData, clientSentAt]
+				// Client sends: ["CHUNK", ChunkNum, ChunkData]
 				// OR
 				// Client sends: ["Done"]
 
@@ -218,15 +221,6 @@ func InitBroker() {
 
 				case "Done":
 					log.Printf("[Worker %s]: Done ", workerID)
-					// wmap.Store(workerID, "")
-					// // Clean up client-to-worker mapping
-					// cmap.Range(func(key, value any) bool {
-					// 	if val, ok := value.(string); ok && val == workerID {
-					// 		cmap.Delete(key)
-					// 		return false // Found and deleted, stop iteration
-					// 	}
-					// 	return true
-					// })
 
 				case "CHUNK":
 					// log.Printf("[Broker]: Forwarding chunk %s from client %s to worker %s", frames[2], clientZMQID, workerID)
@@ -244,21 +238,8 @@ func InitBroker() {
 	} // End for {} (main poller loop)
 }
 
-// wmap stores workerID -> clientID assignment.
-var wmap = make(map[string]string)
-
-// cmap stores clientID -> assigned workerID mapping (for failover support).
-var cmap = make(map[string]string)
-
 // FindWorker assigns a worker to a client or returns an already assigned one.
 func FindWorker(cID string) string {
-	// // Check if client already has an assigned worker (failover)
-	// if workerID, exists := cmap[cID]; exists && workerID != "" {
-	// 	if assignedClient, workerExists := wmap[workerID]; workerExists && assignedClient == cID {
-	// 		// log.Printf("[Broker:FindWorker]: Client %s reconnecting to existing worker %s", cID, workerID)
-	// 		return workerID
-	// 	}
-	// }
 
 	var assignedWorkerID, newWorkerID string
 
